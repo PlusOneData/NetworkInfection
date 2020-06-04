@@ -116,7 +116,7 @@ getStats <- function(gCollection){
 
 n <- 1000
 ed <- n * 4
-prob.infect <- .3
+prob.infect <- .1
 gmma <- 14
 
 #################
@@ -142,27 +142,11 @@ set.seed(4321); plot(sw, vertex.label = '', vertex.size = 3)
 #################
 
 set.seed(4321)
-test1 <- createTimeline(sfree, 30, .3)
-test0 <- createTimeline(rn, 30, .3)
-test2 <- createTimeline(sw, 30, .3)
+test1 <- createTimeline(sfree, 30, prob.infect)
+test0 <- createTimeline(rn, 30, prob.infect)
+test2 <- createTimeline(sw, 30, prob.infect)
 
 set.seed(4321); plot(test0[[10]], vertex.label = '', vertex.size = 5)
-
-# # Commented out because it seems to be a repeat of keepLarge function
-# lrg_comp_1 <- test1[[1]] %>%
-#   components() %>%
-#   {
-#     comp_id <- which.max(.$csize);
-#     comp_v <- which(.$membership == comp_id)
-#     comp_v
-#   }
-
-# Scale free has multiple components; reduce to just he largest
-lrg_comp_1 <- keepLargeComponent(test1[[1]])
-for(x in 1:length(test1)){
-  test1[[x]] <- test1[[x]] %>%
-    {. - V(.)[!V(.) %in% lrg_comp_1]} 
-}
 
 #################
 ## Generate data files and plots
