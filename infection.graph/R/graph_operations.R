@@ -37,17 +37,17 @@ initG <- function(g, n, onlyLarge = T){
 #' @export
 nextTurn <- function(g, prob.infect){
 
-  V(g)[infected]$counter = V(g)[infected]$counter + 1
+  igraph::V(g)[infected]$counter = igraph::V(g)[infected]$counter + 1
 
   # Probabilistically get adjacent nodes to infect
   infect_adja <- g %>%
     # Ego gets neighboring nodes a mindist away
-    ego(nodes = V(.)[infected], mindist = 1) %>%
+    igraph::ego(nodes = igraph::V(.)[infected], mindist = 1) %>%
     # Turn list of neighbors into an unique, atomic list
     unlist() %>%
     unique() %>%
     # If not infected or recovered, randomly infect
-    {V(g)[.][!infected & !recovered]} %>%
+    {igraph::V(g)[.][!infected & !recovered]} %>%
     {
       l <- length(.)
       bool <- runif(l) <= prob.infect
@@ -55,18 +55,18 @@ nextTurn <- function(g, prob.infect){
     }
 
   # Infect adjacent nodes
-  V(g)[infect_adja]$infected <- T
-  V(g)[infect_adja]$color <- "red"
+  igraph::V(g)[infect_adja]$infected <- T
+  igraph::V(g)[infect_adja]$color <- "red"
 
   # Recover infected nodes
   ## Infected nodes have a probability of infected days/20 to recover
-  infectedNodes <- V(g)[infected]
+  infectedNodes <- igraph::V(g)[infected]
   propRecover <- infectedNodes$counter/20
   rollDice <- runif(length(infectedNodes))
   # Update recovered nodes
-  V(g)[infectedNodes]$recovered <- rollDice < propRecover
-  V(g)[recovered]$infected <- F
-  V(g)[recovered]$color <- "green"
+  igraph::V(g)[infectedNodes]$recovered <- rollDice < propRecover
+  igraph::V(g)[recovered]$infected <- F
+  igraph::V(g)[recovered]$color <- "green"
 
   g
 }
