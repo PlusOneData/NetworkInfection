@@ -1,6 +1,5 @@
 library(igraph)
 library(infection.graph)
-?random.graph.game
 
 # Select largest component from Scale Free network because infection may begin in smaller component
 keepLargeComponent <- function(g){
@@ -120,21 +119,25 @@ ed <- n * 4
 prob.infect <- .1
 gmma <- 14
 
+di <- default_infect(init_num = 1, rate = prob.infect)
+dr <- default_recover(max_recovery_time = 20)
+model <- infection_model(components = list(di,dr))
+
 #################
 ## Initialize graph networks
 #################
 
 # Erdos-Renyi network: constant probability to connect nodes
 set.seed(4321); rn <- sample_gnm(n, ed, directed = F) %>%
-  initG(1)
+  model$init_model()
 
 # Scale free network
 set.seed(4321); sfree <- sample_fitness_pl(n, ed, 2.2) %>%
-  initG(5)
+  model$init_model()
 
 # Small world network
 set.seed(4321); sw <-  sample_smallworld(1, n, 4, .1) %>%
-  initG(1)
+  model$init_model()
 
 set.seed(4321); plot(sw, vertex.label = '', vertex.size = 3)
 
@@ -143,20 +146,18 @@ set.seed(4321); plot(sw, vertex.label = '', vertex.size = 3)
 #################
 
 set.seed(4321)
-test1 <- createTimeline(sfree, 30, prob.infect)
-test0 <- createTimeline(rn, 30, prob.infect)
-test2 <- createTimeline(sw, 30, prob.infect)
-
-set.seed(4321); plot(test0[[10]], vertex.label = '', vertex.size = 5)
+test0 <- createTimeline(rn, 30, model)
+test1 <- createTimeline(sfree, 30, model)
+test2 <- createTimeline(sw, 60, model)
 
 #################
 ## Generate data files and plots
 #################
 
 # Plot snapshot of final state
+set.seed(4321); plot(test0[[30]], vertex.label = '', vertex.size = 3)
 set.seed(4321); plot(test1[[30]], vertex.label = '', vertex.size = 3)
-set.seed(4321); plot(test0[[15]], vertex.label = '', vertex.size = 3)
-set.seed(4321); plot(test2[[15]], vertex.label = '', vertex.size = 3)
+set.seed(4321); plot(test2[[60]], vertex.label = '', vertex.size = 3)
 
 #Windows permission issue, cannot save to other folder for some reason
 #need to save in current directory and manually move to images

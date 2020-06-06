@@ -1,4 +1,10 @@
-# Select largest component from Scale Free network because infection may begin in smaller component
+#' Isolate Largest Component
+#'
+#' Some networks generate small disconnected nodes or component. Use \code{keepLargeComponent} to
+#' isolate the largest component so infection can spread in the model.
+#'
+#' @param g An \code{igraph}
+#' @return The graph \code{g} pruned of small disconnected components
 #' @export
 keepLargeComponent <- function(g){
   lrgComp <- g %>%
@@ -15,69 +21,56 @@ keepLargeComponent <- function(g){
   return(g)
 }
 
-# Initialize graph with infected values
+#' Initialize graph with infected values
+#'
+#' Given a graph \code{g} and an infection model, prunes the disconnected components
+#' from \code{g} and initializes the graph using the model components stored in model
+#'
+#' @param g An \code{igraph}
+#' @param model An infection model initalized with components
+#' @param onlyLarge Boolean indicating whether to prune \code{g} or not
+#' @return A graph \code{g} initialized with properties to run the model
 #' @export
-initG <- function(g, n, onlyLarge = T){
+initG <- function(g, model, onlyLarge = T){
   # Drop smaller disconnected components
   if(onlyLarge){
     g <- keepLargeComponent(g)
   }
 
-  # Create an array of n infected and g-n uninfected. Assign to infected property
-  igraph::V(g)$infected <- c(rep(T, n), rep(F, igraph::vcount(g)-n)) %>%
-    sample() # reorders the arrangement of infected nodes
-  igraph::V(g)$color <- ifelse(igraph::V(g)$infected, 'red', 'blue')
-  igraph::V(g)$counter <- 0 # Used to compute recovery time
-  igraph::V(g)$recovered <- F
+  g <- model$init_model(g)
 
   g
 }
 
-# Execute modification to next time step
+#' Execute modification to next time step
+#'
+#' Run a single time step of the model on graph \code{g}
+#'
+#' @param g An \code{igraph}
+#' @param model An infection model with components
+#' @return A graph \code{g} modified by actions stored in model
 #' @export
-nextTurn <- function(g, prob.infect){
+nextTurn <- function(g, model){
 
-  igraph::V(g)[infected]$counter = igraph::V(g)[infected]$counter + 1
-
-  # Probabilistically get adjacent nodes to infect
-  infect_adja <- g %>%
-    # Ego gets neighboring nodes a mindist away
-    igraph::ego(nodes = igraph::V(.)[infected], mindist = 1) %>%
-    # Turn list of neighbors into an unique, atomic list
-    unlist() %>%
-    unique() %>%
-    # If not infected or recovered, randomly infect
-    {igraph::V(g)[.][!infected & !recovered]} %>%
-    {
-      l <- length(.)
-      bool <- runif(l) <= prob.infect
-      .[bool]
-    }
-
-  # Infect adjacent nodes
-  igraph::V(g)[infect_adja]$infected <- T
-  igraph::V(g)[infect_adja]$color <- "red"
-
-  # Recover infected nodes
-  ## Infected nodes have a probability of infected days/20 to recover
-  infectedNodes <- igraph::V(g)[infected]
-  propRecover <- infectedNodes$counter/20
-  rollDice <- runif(length(infectedNodes))
-  # Update recovered nodes
-  igraph::V(g)[infectedNodes]$recovered <- rollDice < propRecover
-  igraph::V(g)[recovered]$infected <- F
-  igraph::V(g)[recovered]$color <- "green"
-
+  g <- model$next_turn(g)
   g
 }
 
-# Process time increments and model the infection
+#' Process time increments and model the infection
+#'
+#' Computes a time series of \code{t} steps on graph \code{g} as t_0 using model. The graph
+#' must already be initialized. Run \code{initG(g, model)} prior to this function.
+#'
+#' @param g An \code{igraph}
+#' @param t Number of time steps to compute
+#' @param model An infection model
+#' @return A list of networks at each time step
 #' @export
-createTimeline <- function(g, t, prob.infect){
+createTimeline <- function(g, t, model){
   timedNetworks <- list(g)
 
   for( x in 2:t){
-    timedNetworks[[x]] <- nextTurn(timedNetworks[[x-1]], prob.infect)
+    timedNetworks[[x]] <- nextTurn(timedNetworks[[x-1]], model)
   }
   timedNetworks
 }

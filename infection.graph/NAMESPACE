@@ -2,7 +2,10 @@
 
 export(animate_system)
 export(createTimeline)
+export(default_infect)
+export(default_recover)
 export(getStats)
+export(infection_model)
 export(initG)
 export(keepLargeComponent)
 export(nextTurn)
