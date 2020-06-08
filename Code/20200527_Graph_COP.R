@@ -27,7 +27,7 @@ initG <- function(g, n, onlyLarge = T){
   # Create an array of n infected and g-n uninfected. Assign to infected property
   V(g)$infected <- c(rep(T, n), rep(F, vcount(g)-n)) %>%
     sample() # reorders the arrangement of infected nodes
-  V(g)$color <- ifelse(V(g)$infected, 'red', 'blue')
+  V(g)$color <- ifelse(V(g)$infected, "#d95f02", "#7570b3")
   V(g)$counter <- 0 # Used to compute recovery time
   V(g)$recovered <- F
   
@@ -56,7 +56,7 @@ nextTurn <- function(g, prob.infect){
   
   # Infect adjacent nodes
   V(g)[infect_adja]$infected <- T
-  V(g)[infect_adja]$color <- "red"
+  V(g)[infect_adja]$color <- "#d95f02"
   
   # Recover infected nodes
   ## Infected nodes have a probability of infected days/20 to recover
@@ -66,7 +66,7 @@ nextTurn <- function(g, prob.infect){
   # Update recovered nodes
   V(g)[infectedNodes]$recovered <- rollDice < propRecover
   V(g)[recovered]$infected <- F
-  V(g)[recovered]$color <- "green"
+  V(g)[recovered]$color <- "#1b9e77"
   
   g
 }
@@ -197,5 +197,3 @@ ggplot(rbind(stats1, stats0, stats2)) +
 
 ggsave('../Images/2000603_SIR_Distro.pdf')
 
-ggplot(stats0) +
-  geom_line(aes(time, value, color = type))
