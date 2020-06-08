@@ -2,6 +2,119 @@ library(igraph)
 library(infection.graph)
 ?random.graph.game
 
+# Select largest component from Scale Free network because infection may begin in smaller component
+keepLargeComponent <- function(g){
+  lrgComp <- g %>%
+    components() %>%
+    {
+      comp_id <- which.max(.$csize); # csize = numeric vector giving sizes of the clusters
+      comp_v <- which(.$membership == comp_id) # collect all vertices belonging to comp_id
+      comp_v
+    }
+  
+  # Remove all vertices not in largest component
+  g <- g - V(g)[!V(g) %in% lrgComp]
+  
+  return(g)
+}
+
+# Initialize graph with infected values
+initG <- function(g, n, onlyLarge = T){
+  # Drop smaller disconnected components
+  if(onlyLarge){
+    g <- keepLargeComponent(g)
+  }
+  
+  # Create an array of n infected and g-n uninfected. Assign to infected property
+  V(g)$infected <- c(rep(T, n), rep(F, vcount(g)-n)) %>%
+    sample() # reorders the arrangement of infected nodes
+  V(g)$color <- ifelse(V(g)$infected, "#d95f02", "#7570b3")
+  V(g)$counter <- 0 # Used to compute recovery time
+  V(g)$recovered <- F
+  
+  g
+}
+
+# Execute modification to next time step
+nextTurn <- function(g, prob.infect){
+  
+  V(g)[infected]$counter = V(g)[infected]$counter + 1
+  
+  # Probabilistically get adjacent nodes to infect
+  infect_adja <- g %>%
+    # Ego gets neighboring nodes a mindist away
+    ego(nodes = V(.)[infected], mindist = 1) %>%
+    # Turn list of neighbors into an unique, atomic list
+    unlist() %>%
+    unique() %>%
+    # If not infected or recovered, randomly infect
+    {V(g)[.][!infected & !recovered]} %>%
+    {
+      l <- length(.)
+      bool <- runif(l) <= prob.infect
+      .[bool]
+    }
+  
+  # Infect adjacent nodes
+  V(g)[infect_adja]$infected <- T
+  V(g)[infect_adja]$color <- "#d95f02"
+  
+  # Recover infected nodes
+  ## Infected nodes have a probability of infected days/20 to recover
+  infectedNodes <- V(g)[infected]
+  propRecover <- infectedNodes$counter/20
+  rollDice <- runif(length(infectedNodes))
+  # Update recovered nodes
+  V(g)[infectedNodes]$recovered <- rollDice < propRecover
+  V(g)[recovered]$infected <- F
+  V(g)[recovered]$color <- "#1b9e77"
+  
+  g
+}
+
+# Process time increments and model the infection
+createTimeline <- function(g, t, prob.infect){
+  timedNetworks <- list(g)
+  
+  for( x in 2:t){
+    timedNetworks[[x]] <- nextTurn(timedNetworks[[x-1]], prob.infect)
+  }
+  timedNetworks
+}
+
+# Turn time series into gif
+animate_system <- function(g_list, main, filepath){
+  animation::saveGIF({
+    lapply(1:length(g_list), function(i){
+      set.seed(4321); plot(g_list[[i]],
+                           main = main, 
+                           sub = paste('Turn:', i - 1), 
+                           vertex.label = '', 
+                           vertex.size = 3)
+    })
+  },
+  movie.name = filepath,
+  ani.width = 600,
+  ani.height = 600,
+  interval = 1
+  )
+}
+
+# Generate stats on SIR components
+getStats <- function(gCollection){
+  gCollection %>%
+    lapply(function(x){
+      infected <- V(x)$infected %>% sum
+      recovered <- V(x)$recovered %>% sum
+      susceptible <- vcount(x) - infected - recovered
+      
+      data.frame(infected, recovered, susceptible)
+    }) %>%
+    do.call('rbind', .) %>%
+    dplyr::mutate(time = 1:nrow(.)) %>%
+    tidyr::gather(type, value, -time)
+}
+
 n <- 1000
 ed <- n * 4
 prob.infect <- .1
@@ -85,5 +198,3 @@ ggplot(rbind(stats1, stats0, stats2)) +
 
 ggsave('../Images/2000603_SIR_Distro.pdf')
 
-ggplot(stats0) +
-  geom_line(aes(time, value, color = type))
