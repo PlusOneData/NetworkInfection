@@ -1,4 +1,5 @@
 library(igraph)
+library(infection.graph)
 ?random.graph.game
 
 # Select largest component from Scale Free network because infection may begin in smaller component
@@ -116,7 +117,7 @@ getStats <- function(gCollection){
 
 n <- 1000
 ed <- n * 4
-prob.infect <- .3
+prob.infect <- .1
 gmma <- 14
 
 #################
@@ -142,9 +143,9 @@ set.seed(4321); plot(sw, vertex.label = '', vertex.size = 3)
 #################
 
 set.seed(4321)
-test1 <- createTimeline(sfree, 30, .3)
-test0 <- createTimeline(rn, 30, .3)
-test2 <- createTimeline(sw, 30, .3)
+test1 <- createTimeline(sfree, 30, prob.infect)
+test0 <- createTimeline(rn, 30, prob.infect)
+test2 <- createTimeline(sw, 30, prob.infect)
 
 set.seed(4321); plot(test0[[10]], vertex.label = '', vertex.size = 5)
 
