@@ -17,9 +17,9 @@ default_infect <- setRefClass(
   methods = list(
     init = function(g) {
       "Initialize the graph with init_num infected nodes and set infected to red and susceptible to blue"
-      igraph::V(g)$infected <- c(rep(T, init_num), rep(F, igraph::vcount(g)-init_num)) %>%
+      igraph::V(g)$infected <- c(rep(1, init_num), rep(0, igraph::vcount(g)-init_num)) %>%
         sample() # reorders the arrangement of infected nodes
-      igraph::V(g)$color <- ifelse(igraph::V(g)$infected, 'red', 'blue')
+      igraph::V(g)$color <- ifelse(igraph::V(g)$infected==1, 'red', 'blue')
       return(g)
     },
     donext = function(g) {
@@ -27,20 +27,20 @@ default_infect <- setRefClass(
       # Probabilistically get adjacent nodes to infect
       infect_adja <- g %>%
         # Ego gets neighboring nodes a mindist away
-        igraph::ego(nodes = igraph::V(.)[infected], mindist = 1) %>%
+        igraph::ego(nodes = igraph::V(.)[infected==1], mindist = 1) %>%
         # Turn list of neighbors into an unique, atomic list
         unlist() %>%
         unique() %>%
         # If not infected or recovered, randomly infect
-        {igraph::V(g)[.][!infected & !recovered]} %>%
+        {igraph::V(g)[.][infected==0]} %>%
         {
           l <- length(.)
-          bool <- runif(l) <= prob.infect
+          bool <- runif(l) <= rate
           .[bool]
         }
 
       # Infect adjacent nodes
-      igraph::V(g)[infect_adja]$infected <- T
+      igraph::V(g)[infect_adja]$infected <- 1
       igraph::V(g)[infect_adja]$color <- "red"
 
       return(g)

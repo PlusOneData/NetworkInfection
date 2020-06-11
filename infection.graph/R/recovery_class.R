@@ -20,15 +20,15 @@ default_recover <- setRefClass(
     },
     donext = function(g) {
       "Increments counter and computes whether a nodes state should be moved to recovered"
-      igraph::V(g)[infected]$counter = igraph::V(g)[infected]$counter + 1
+      igraph::V(g)[infected==1]$counter = igraph::V(g)[infected==1]$counter + 1
       # Recover infected nodes
       ## Infected nodes have a probability of infected days/20 to recover
-      infectedNodes <- igraph::V(g)[infected]
+      infectedNodes <- igraph::V(g)[infected==1]
       propRecover <- infectedNodes$counter/max_recovery_time
       rollDice <- runif(length(infectedNodes))
       # Update recovered nodes
       igraph::V(g)[infectedNodes]$recovered <- rollDice < propRecover
-      igraph::V(g)[recovered]$infected <- F
+      igraph::V(g)[recovered]$infected <- 2
       igraph::V(g)[recovered]$color <- "green"
 
       return(g)

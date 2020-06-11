@@ -70,7 +70,7 @@ createTimeline <- function(g, t, model){
   timedNetworks <- list(g)
 
   for( x in 2:t){
-    timedNetworks[[x]] <- nextTurn(timedNetworks[[x-1]], model)
+    timedNetworks[[x]] <- model$next_turn(timedNetworks[[x-1]])
   }
   timedNetworks
 }

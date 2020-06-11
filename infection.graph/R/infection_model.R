@@ -30,7 +30,7 @@ infection_model <- setRefClass(
       }
       return(g)
     },
-    keepLargeComponent <- function(g){
+    keepLargeComponent = function(g){
       "Prunes smaller disconnected components off of graph"
       lrgComp <- g %>%
         igraph::components() %>%

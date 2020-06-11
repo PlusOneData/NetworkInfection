@@ -22,6 +22,8 @@ executes them.
 
 \item{\code{init_model(g)}}{Initializes g using the init function of each component}
 
+\item{\code{keepLargeComponent(g)}}{Prunes smaller disconnected components off of graph}
+
 \item{\code{next_turn(g)}}{Modifies g using the donext function of each component}
 }}
 

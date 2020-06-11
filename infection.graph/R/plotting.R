@@ -29,8 +29,8 @@ animate_system <- function(g_list, main, filepath){
 getStats <- function(gCollection){
   gCollection %>%
     lapply(function(x){
-      infected <- V(x)$infected %>% sum
-      recovered <- V(x)$recovered %>% sum
+      infected <- (V(x)$infected==1) %>% sum
+      recovered <- (V(x)$infected==2) %>% sum
       susceptible <- vcount(x) - infected - recovered
 
       data.frame(infected, recovered, susceptible)
