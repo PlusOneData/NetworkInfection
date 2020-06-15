@@ -1,4 +1,8 @@
-# Turn time series into gif
+#' Generate infection gif
+#'
+#' @param g_list A list of graphs representing each time step
+#' @param main Title of the animated plot
+#' @param filepath Name of the file
 #' @export
 animate_system <- function(g_list, main, filepath){
   animation::saveGIF({
@@ -17,13 +21,16 @@ animate_system <- function(g_list, main, filepath){
   )
 }
 
-# Generate stats on SIR components
+#' Generate stats on SIR components
+#'
+#' Computes the number of susceptible, infected, and recovered nodes in the graph
+#' @param gCollection List of networks at each timestep
 #' @export
 getStats <- function(gCollection){
   gCollection %>%
     lapply(function(x){
-      infected <- V(x)$infected %>% sum
-      recovered <- V(x)$recovered %>% sum
+      infected <- (V(x)$infected==1) %>% sum
+      recovered <- (V(x)$infected==2) %>% sum
       susceptible <- vcount(x) - infected - recovered
 
       data.frame(infected, recovered, susceptible)
