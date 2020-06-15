@@ -1,5 +1,6 @@
 library(igraph)
 library(infection.graph)
+library(animation)
 
 n <- 1000
 ed <- n * 4
@@ -55,20 +56,20 @@ set.seed(4321); plot(test2[[60]], vertex.label = '', vertex.size = 3)
 # Generate gifs
 animate_system(test0, 
                paste0("Random Network of size ~", n), 
-               '20200603_Random_1000.gif')
+               '20200615_Random_1000.gif')
 
 animate_system(test1, 
                paste0("Scale Free Network of size ~", n), 
-               '20200603_ScaleFree_1000.gif')
+               '20200615_ScaleFree_1000.gif')
 
 animate_system(test2, 
                paste0("Small World Network of size ~", n), 
-               '20200603_SmallWorld_1000.gif')
+               '20200615_SmallWorld_1000.gif')
 
 # Save timeline as data files
-readr::write_rds(test0, "../Data/20200603_Random_1000_1-15.rds")
-readr::write_rds(test1, "../Data/20200603_ScaleFree_1000_1-15.rds")
-readr::write_rds(test2, "../Data/20200603_SmallWorld_1000_1-15.rds")
+readr::write_rds(test0, "./Data/20200615_Random_1000_1-15.rds")
+readr::write_rds(test1, "./Data/20200615_ScaleFree_1000_1-15.rds")
+readr::write_rds(test2, "./Data/20200615_SmallWorld_1000_1-15.rds")
 
 # Generate stat blocks of each network
 stats0 <- getStats(test0)
@@ -88,5 +89,5 @@ ggplot(rbind(stats1, stats0, stats2)) +
   labs(title = "SIR Distribution") +
   scale_color_brewer(type = 'qual')
 
-ggsave('../Images/2000603_SIR_Distro.pdf')
+ggsave('./Images/2000615_SIR_Distro.pdf')
 
