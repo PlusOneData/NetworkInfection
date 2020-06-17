@@ -2,12 +2,12 @@ library(igraph)
 library(infection.graph)
 library(animation)
 
-n <- 1000
+n <- 100
 ed <- n * 4
 prob.infect <- .1
 gmma <- 14
 
-covid_di <- default_infect(init_num = 1, rate = prob.infect)
+covid_di <- density_infect(init_num = 1, transRate = prob.infect)
 covid_dr <- default_recover(max_recovery_time = 20)
 covid_model <- infection_model(components = list(covid_di, covid_dr))
 
