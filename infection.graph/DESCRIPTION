@@ -17,4 +17,5 @@ RoxygenNote: 7.1.0
 Imports:
   igraph,
   dplyr,
-  tidyr
+  tidyr,
+  purrr

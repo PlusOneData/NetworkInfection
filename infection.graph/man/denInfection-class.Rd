@@ -4,7 +4,7 @@
 \name{denInfection-class}
 \alias{denInfection-class}
 \alias{density_infect}
-\title{Density  Infection Class}
+\title{Density Infection Class}
 \description{
 A default class to implement spreading an infection from initial nodes based on
 infection density.

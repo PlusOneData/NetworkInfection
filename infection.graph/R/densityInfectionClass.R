@@ -1,4 +1,4 @@
-#' Density  Infection Class
+#' Density Infection Class
 #'
 #' A default class to implement spreading an infection from initial nodes based on
 #' infection density.
@@ -25,24 +25,31 @@ density_infect <- setRefClass(
     donext = function(g) {
       "Infect nodes adjacent to currently infected nodes"
       # Probabilistically get adjacent nodes to infect
-      infect_adja <- g %>%
-        # Ego gets neighboring nodes a mindist away
-        igraph::ego(nodes = igraph::V(.)[infected==1], mindist = 1) %>%
-        # Turn list of neighbors into an unique, atomic list
-        unlist() %>%
-        unique() %>%
-        # If not infected or recovered, randomly infect
-        {igraph::V(g)[.][infected==0]} %>%
-        {
-          l <- length(.)
-          print(l)
-          bool <- runif(l) <= transRate
-          .[bool]
-        }
+      print("In donext")
 
-      # Infect adjacent nodes
-      igraph::V(g)[infect_adja]$infected <- 1
-      igraph::V(g)[infect_adja]$color <- "red"
+      infectedStatus <- g %>%
+        #get susceptible nodes' neighbors
+        igraph::ego(nodes = igraph::V(.)[infected==0], mindist = 1) %>%
+        # get number of infected neighbors
+        purrr::map_lgl(.x = .,.f = function(x){
+           print(x$infected)
+
+           infN<- sum(x$infected == 1)
+
+          #prob infection
+          probInf  <- infN*transRate
+          #infected status
+          infStatus <- rbinom(1,1,min(probInf,1))
+
+          lglInf <- as.logical(infStatus)
+
+          print(infN)
+          return(lglInf)
+        })
+
+
+        igraph::V(g)[infected == 0][infectedStatus]$infected <- 1
+        igraph::V(g)[infected == 1]$color <- "red"
 
       return(g)
     }
