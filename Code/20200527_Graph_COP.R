@@ -1,6 +1,9 @@
 library(igraph)
 library(infection.graph)
 library(animation)
+library(grid)
+
+source("testing_modules.R")
 
 n <- 1000
 ed <- n * 4
@@ -8,8 +11,9 @@ prob.infect <- .1
 gmma <- 14
 
 covid_di <- default_infect(init_num = 1, rate = prob.infect)
+covid_test <- testing(init_num = 10)
 covid_dr <- default_recover(max_recovery_time = 20)
-covid_model <- infection_model(components = list(covid_di, covid_dr))
+covid_model <- infection_model(components = list(covid_test, covid_di, covid_dr))
 
 flu_di <- default_infect(init_num = 7, rate = 0.01)
 flu_dr <- default_recover(max_recovery_time = 7)
@@ -37,7 +41,7 @@ set.seed(4321); plot(sw, vertex.label = '', vertex.size = 3)
 ## Progress models through time steps
 #################
 
-set.seed(4321)
+set.seed(4321);
 test0 <- createTimeline(rn, 30, covid_model)
 test1 <- createTimeline(sfree, 30, covid_model)
 test2 <- createTimeline(sw, 60, covid_model)
@@ -76,9 +80,22 @@ stats0 <- getStats(test0)
 stats1 <- getStats(test1)
 stats2 <- getStats(test2)
 
+testing_stats0 <- getStats(lapply(test0, function(g){
+  return(subgraph(g, V(g)[tested]))
+}))
+testing_stats1 <- getStats(lapply(test1, function(g){
+  return(subgraph(g, V(g)[tested]))
+}))
+testing_stats2 <- getStats(lapply(test2, function(g){
+  return(subgraph(g, V(g)[tested]))
+}))
+
 stats0$model <- 'random'
 stats1$model <- 'scale free'
 stats2$model <- 'small world'
+testing_stats0$model <- 'random_test'
+testing_stats1$model <- 'scale free test'
+testing_stats2$model <- 'small world test'
 
 # Plot stats
 library(ggplot2)
@@ -91,3 +108,18 @@ ggplot(rbind(stats1, stats0, stats2)) +
 
 ggsave('./Images/2000615_SIR_Distro.pdf')
 
+plot1 <- ggplot(stats0) +
+  geom_line(aes(time, value, color = type), size = 1.5) +
+  facet_wrap(~model) +
+  theme_bw() +
+  labs(title = "SIR Distribution") +
+  scale_color_brewer(type = 'qual')
+
+plot2 <- ggplot(testing_stats0) +
+  geom_line(aes(time, value, color = type), size = 1.5) +
+  facet_wrap(~model) +
+  theme_bw() +
+  labs(title = "SIR Distribution") +
+  scale_color_brewer(type = 'qual')
+
+grid.draw(rbind(ggplotGrob(plot1), ggplotGrob(plot2)))
