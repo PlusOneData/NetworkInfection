@@ -1,0 +1,105 @@
+---
+title: "CDC GUidance"
+output: html_document
+---
+
+## Prevent transmission among employees
+
+1) ACTIVELY ENCOURAGE SICK EMPLOYEES TO STAY HOME
+- symptomatic employees should notify their superivosr and stay home
+- sick employees should follow CDC [home isolation guidance](https://www.cdc.gov/coronavirus/2019-ncov/hcp/disposition-in-home-patients.html)
+- employees with sick members of their household should notify supervisors
+2) Consider conducting daily in person or virtual health checks 
+- check temp and/or symptoms of employees before they enter the facility. 
+    - complete health checks while following social distancing protocols
+    - Follow guidance on confidentiality of medical records
+    - make screenings as private as possible
+3) Identify where and how workers might be exposed to COVID-19 at work
+- Employers are responsible for providing a safe and healthy workplace and must conduct a hazard assessment of the workplace to id potential COVID related hazards. Use engineering, admin, work procedure, and PPE controls to protect workers from identified hazards. 
+    - conduct hazard assessment and implement appropriate controls
+    - When engineering or admin controls cannot fully protect workers, appropriate ppe must be selected and workers trained in its use.
+- Encourage workers to wear a cloth face covering at work if the hazard assessment has determined they do not require respiratory PPE. 
+    - Cloth face covering contain a wearer's resp droplets and protect those around them
+    - Cloth face coverings are not PPE and may prevent individuals from spreading but may not protect the wearers from exposure to the virus that causes COVID 19
+- Remind employees and customers that the CDC encourages wearing cloth face coverings, especially in areas with significant community based transmission. 
+- Cloth face coverings do not replace the need for social distancing. 
+4) Separate sick employees:
+- Employees who appear to have symptoms upon arrival or who become sick at work should be separated immediately and sent home. 
+- Have a procedure in place for an employee who becomes sick to be transported to their home or an appropriate healthcare provider. 
+5)  Take action if an employee is suspected or confirmed of having COVID-19
+- In most cases it is not necessary to close down the facility. If it has been less than 7 days since the sick employee has been in the facility, close off any areas used for prolonged periods (how long?) by the sick person:
+    - wait 24hrs before cleaning and disinfecting to minimize potential for other employees to be exposed to respiratory droplets. if not feasible, wait as long as possible. 
+    - During waiting period, open outside doors and windows to increase air flow. 
+- If it has been more than 7 days since the person used the facility, additional clean and disinfection is not necessary. Continue routinely cleaning and disinfecting high touch areas. 
+- Follow CDC cleaning and [disinfecting recommendations](https://www.cdc.gov/coronavirus/2019-ncov/community/organizations/cleaning-disinfection.html)
+    - clean dirty surfaces with soap and water before disinfecting
+    - use [EPA approved products](https://www.epa.gov/pesticide-registration/list-n-disinfectants-use-against-sars-cov-2-covid-19) to disinfect
+        - time to disinfection varies by active ingredient and concentration
+    - always wear gloves and gowns appropriate for the chemicals being used when you're cleaning and disinfecting
+    - Additional PPE may be required when cleaning and disinfecting
+- Determine which employees may have been exposed to the virus and may need to take additional precautions
+    - inform employees of possible exposure while maintaining confidentiality in accordance with ADA
+    - Most workplaces should follow public health recommendations and instruct potentially exposed employees to stay home for 14 das, telework if possible, and self monitor for symptoms.
+    - Critical infrastructure workplaces should follow appropriate guidance. Employers in CI have an obligation to manage potentially exposed workers return to work in ways that best protect health of workforce and general public.
+6) Educate employees about steps they can take to protect themselves at work and at home
+    - Encourage employees to follow new policies and procedures related to illness, cleaning and disinfecting, and work meetings and travel
+    - Encourage employees to stay home if sick
+    - Encourage employees to inform supervisors if they have a sick member of thier household.
+    - Encourage employees to practice good hand hygiene 
+    - Routinely clean and disinfect frequently touched objects 
+    - Avoid sharing materials or equipment
+    - Practice social distancing
+7) For Employees using public transport
+- If feasible, offer employees inventives to use forms of transport that minimize close contact with others (biking, walking, etc)
+- Ask employees to follow the CDC guidance on how to protect yourself while using transport 
+    - hand hygiene, cover coughs, avoid touching face, practice social distancing, bring sanitizing wipes and hand sanitzer
+
+### Maintain Health Business Operations
+
+Establish a workplace coordinator who will be responsible for COVID 19 issues adn their impcct at the workplace. 
+
+1) Implement flexible sick leave and supportive policies and practices
+- ensure sick leave polivies are flexible and consisten with public health guidance and that employees are aware of and understand these policies. 
+- maintain flexible policies that permit employees to stay home to care for a sick family member or take care of children due to school or childcare closures. Allow sick leave donations and advances. 
+- Employers that do not offer sick leave could offer a non-punitive emergency sick leave.
+- Empoyers should not require a covid 19 test result or healthcare providers note for employees who are sick to validate their illness, quality for sick leave, or return to work.
+    - while this is permitted under ADA, its not practical when healthcare systems are over burdened and people are advised not to seek healthcare unless symptoms progress to a certian level. 
+    - Under ADA employers may require employees to stay home if they represent a direct threat to others (see ADA notes).
+- Connect employees to employee assistance program resources. 
+2) Protect employees at higher risk for severe illness through supportive policies and practices. This includes older adults and those with underlying health conditions(see ada about obtaining this info in a compliant manner)
+- support and encourage telework
+- offer vulnerable employees rules that minimize contact with customers and other employees
+3) Communicate supportive workplace policies clearly and frequently via multiple methods and in preferred languages
+- Train workers how implementing COVID policies may impact exisiting health and safety practices
+- Communicate changes to contractors or on site visitors and are able to comply with the policies
+- Create and test communication systems that employees can use to self report if they are sick and that an employer can use to communicate potential exposures or closures
+- Consider using a hotline or other method for employees to voice concerns anonymously
+4) Assess your essential functions and the reliance that others and the community have on your services or products
+- 
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

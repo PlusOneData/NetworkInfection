@@ -1,0 +1,82 @@
+---
+title: "ADA Pandemic Guidance"
+output: html_document
+---
+
+
+[This document](https://www.eeoc.gov/laws/guidance/pandemic-preparedness-workplace-and-americans-disabilities-act#secB) helps set the bounds on what employers can do to monitor the health of employees. 
+
+
+### Americans with Disabilities Act Pandemic Guidance
+
+> "The ADA, which protects applicants and employees from disability discrimination, is relevant to pandemic preparation in at least three major ways. First, the ADA regulates employers’ disability-related inquiries and medical examinations for all applicants and employees, including those who do not have ADA disabilities.(7) Second, the ADA prohibits covered employers from excluding individuals with disabilities from the workplace for health or safety reasons unless they pose a "direct threat" (i.e. a significant risk of substantial harm even with reasonable accommodation).(8) Third, the ADA requires reasonable accommodations for individuals with disabilities (absent undue hardship) during a pandemic.(9)"
+
+
+### Direct Threat
+
+If an individual with a disability poses a direct threat despite reasonable accommodation, they are not proted under ADA non discrimination provisions. This assessment must be based on objective, factual information. EEOC's regulations identify four factors to consider
+1) duration of the risk
+2) nature and severity of the potential harm
+3) likelihood that potential harm will occur
+4) imminence of the potential harm
+
+**Direct threat in Pandemic Setting**
+
+The pandemic illness has to be significantly more severe than seasonal influenza to pose a direct threat. An assessment by the CDC or public health authorities would qualify as objective evidence needed for a disabilit related inquiry or medical examination. 
+
+> "Based on guidance of the CDC and public health authorities as of March 2020, the COVID-19 pandemic meets the direct threat standard.  The CDC and public health authorities have acknowledged community spread of COVID-19 in the United States and have issued precautions to slow the spread, such as significant restrictions on public gatherings.  In addition, numerous state and local authorities have issued closure orders for businesses, entertainment and sport venues, and schools in order to avoid bringing people together in close quarters due to the risk of contagion.  These facts manifestly support a finding that a significant risk of substantial harm would be posed by having someone with COVID-19, or symptoms of it, present in the workplace at the current time.  At such time as the CDC and state/local public health authorities revise their assessment of the spread and severity of COVID-19, that could affect whether a direct threat still exists." 28 June 2020
+
+### Pre-pandemic planning
+
+- Employer may not ask about immunocompromised status unless there is objective evidence that pandemic symptoms will cause a direct threat. 
+
+ **ADA-COMPLIANT PRE-PANDEMIC EMPLOYEE SURVEY**
+Directions: Answer "yes" to the whole question without specifying the factor that applies to you. Simply check "yes" or "no" at the bottom of the page.
+
+In the event of a pandemic, would you be unable to come to work because of any one of the following reasons:
+
+- If schools or day-care centers were closed, you would need to care for a child;  
+- If other services were unavailable, you would need to care for other dependents;  
+- If public transport were sporadic or unavailable, you would be unable to travel to work; and/or;  
+- If you or a member of your household fall into one of the categories identified by the CDC as being at high risk for serious complications from the pandemic influenza virus, you would be advised by public health authorities not to come to work (e.g., pregnant women; persons with compromised immune systems due to cancer, HIV, history of organ transplant or other medical conditions; persons less than 65 years of age with underlying chronic conditions; or persons over 65).
+
+Answer: YES______ , NO_______
+
+- Employer may require new entering employees to have a post offer medical exam as long as entering employess undergo the same exam. 
+
+
+### During a pandemic
+
+- An employer may send an employee home if they display ILI/CLI
+
+- An employer may request information of an employee who reports feeling ill at work, orwho call in sick, to determine if they have CLI
+
+- An employer may measure an employee's body temperature, the findings would be subject to ADA confidentiality requirements.
+
+- An employer may ask about exposure during travel, including personal travel
+
+- An employer may ask about underlying medical conditions identified by the CDC is the pandemic is severe enough that employees will face a direct threat if they contract the disease. If an employee voluntarily discloses this information the employer must keep it confidential. (no covid specific guidance provided here as of 28 June 2020)
+
+- An employer may encourage telework to prevent the spread of the disease, and employees with disabilities that put them at high risk for complications may request telework as a reasonable accommodation. (no guidance specific to covid, 28 June 2020)
+
+- An employer may require the use of PPE and must provide reasonable accommodations for individuals with disabilities (eg non-latex gloves, gowns deisgned for wheelchairs etc)
+
+- An employer cannot require employees be vaccinated if they have an ADA exemption or strongly held religious belief, practice or observance that prevents them from being vaccinated. 
+
+- Employers must continue to provide reasonable accommodations to individuals unrealted to the pandemic. 
+
+> "The rapid spread of COVID-19 has disrupted normal work routines and may have resulted in unexpected or increased requests for reasonable accommodation.  Although employers and employees should address these requests as soon as possible, the extraordinary circumstances of the COVID-19 pandemic may result in delay in discussing requests and in providing accommodation where warranted.  Employers and employees are encouraged to use interim solutions to enable employees to keep working as much as possible." 28 June 2020
+
+
+- An employer may ask an individual why they did not report for work if they suspect it was for a medical reason. 
+
+**Hiring**
+
+- Employer may screen job applicatns for symptoms after making a conditional offer as long as it does so for all entering employees
+
+- Employer may take temp after making a conditional offer. 
+
+- Employer may delay start start for an applicatn with COVID-19 
+
+- An employer may withdraw an offer if the employee needs to start immediately and has CLI 
+

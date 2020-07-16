@@ -1,0 +1,150 @@
+---
+title: "OSHA Recs and Guidance"
+output: html_document
+---
+
+[OSHA Guidance](https://www.osha.gov/Publications/OSHA3990.pdf)
+
+
+1) Develop a plan in accordance with [State and Local Guidance](https://www.osha.gov/stateplans)
+
+> "In addition, the OSH Act’s General Duty Clause,
+> Section 5(a)(1), requires employers to provide their employees
+> with a workplace free from recognized hazards likely to cause
+> death or serious physical harm."
+
+2) consider work place exposures
+
+- meeting the customers, public, coworkers
+- high risk (people who travel to areas with increased spread, healthcare wokers who interact with covid patients w/o ppe, ) or sick individuals 
+- home and community risk factors
+- worker's risk for severe illness 
+
+3) Prepare to implement basic Infection prevention measures
+
+- encourage frequent and thorough handwashing by customers, woekers, and any else visiting the worksite. Provide alcohol based hand rubs when running water not immediately available 
+- Encourage workers to stay home when sick
+- Encourage workers to cover their cough and sneezes
+- provide disposable tissue and trash receptacles
+- Increase physical distancing via tele-work, flexible hours to reduce contacts
+- Discourage sharing phones, desks, offices, or other equipment 
+- Regularly clean and disinfect surfaces with EPA approved cleaning products. 
+
+4) Identify and Isolate ill people
+- Promptly identify and isolate potentially ill people
+- Educate wokers on symptoms and encourage self monitoring. 
+- Develop a reporting system for employees to inform employers of symptoms or confirmed illness
+- Develop policies and procedures for immediately isolating individuals with signs of covid 19 and train workers to implement them. Identify potential isolation rooms where sick people can wait until they can be safely removed from the workplace
+- Take steps to limit resp. secretions of any person who may have covid. Provide a face mask, if feasible and available,  and ask the person to wear it. Face masks on potentially ill people are not considered PPE because they are used to contain to the potentially infectious resp. secretions at the source. 
+-If possible, Isolate suspected and confirmed cases using barriers, especially if providing medial screening, triage or other healthcare activities on site. 
+- Protect workers in close contact (within 6 feet or 2m) of a sick person with additional engineering, admin controls, safe work practices, and PPE. Worker whose position require repeated close contact are classified at medium, high, or very high exposure risk
+
+5) Develop, Implement, and Communicate workplace flexibilities and protections. 
+- **ACTIVELY ENCOURAGE SICK EMPLOYEES TO STAY HOME**.
+- Ensure flexible and consistent sick leave policies in line with public health recommendations and that those policies are clearly communicated
+- Encourage companies that your business contracts with also have flexible and constistent sick leave policies in line with publc health recommendations
+- Do NOT require a healthcare provider's note for employees with acute respiratory illness to validate the illness. These may be difficult to obtain if medical facilities are over burdened. 
+- Maintain Flexvil policies that permit employees to care for sick loved ones. Be aware that more employees may ned to stay home to care of sick children or family members than usual. 
+- Informed workers who feel safe at work at less likely to be unnecessarily absent. Provide adequate, usable, and appropriate training, education, and informational material about business essentia job functions and worker health and safety. 
+- Work with insurance companies and SLTT health agencies to provide info to workers and customers about medical care in the event of a covid 19 outbreak. 
+
+## Implement Workplace Controls
+- The best way to remove a hazard from the workplace is to systematically remove it from the workplace, rather than relying on workers to reduce their exposure. The most effective controls are the following:
+    - Engineering Controls
+    - Administrative Controls
+    - Safe Work Practices 
+    - PPE
+- [CDC Guidance for Businesses and Employers Responding to the Coronavirus Disease](https://www.cdc.gov/coronavirus/2019-ncov/community/guidance-business-response.html?CDC_AA_refVal=https%3A%2F%2Fwww.cdc.gov%2Fcoronavirus%2F2019-ncov%2Fspecific-groups%2Fguidance-business-response.html)
+
+1) Engineering Controls
+- These involve isolating employees from work related hazards. These controls reduce exposure without relying on worker behacior and can be the most cost effective to implement. 
+    - Installing high-efficiency air filters
+    - Increasing ventilations rates in the work env
+    - Installing physical barriers, such as clear plastic sneeze gaurds
+    - Installing drive through customer service
+    - Specialized negative pressure vent rooms in settings that would aersolize SARS COV 2 virus (eg healthcare settings)
+2) Administrative Controls
+- Changes in work policy or procedure to reduce or minimize exposure. 
+    - Encouraging sick workers to stay home
+    - minimizing contact among workers, clients, and customers by via virtual communications
+    - Establishing alternating days or extra shifts that reduce the density of people in a workspace. 
+    - Discontinuing non-essential travel to locatins with ongoing outbreaks (not sure how this would work in the US)
+    - Developing emergency comms plans, including forums for ansering worker's questions
+    - Providing up to date education and training on COVID 19
+    - Train workers to use ppe effectively 
+3) Safe Work Practices
+- These are types of admin controls that reduce the duration, frequency, or intensity of exposure to a hazard. 
+    - Provid resoureces and work environment that promotes personal hygiene. EG touchless trash cans, hand soap, hand sanitizer, disinfectants, disposable towels for cleaning work surfaces. 
+    - Requiring regular handwashing or sanitizing. 
+    - Posh handwashing signs in restrooms.
+4) Personal Protective Equipment 
+- PPE may prevent some exposure but should not replace engineering and admin controls. PPE includes gloves, google,s face shields, face masks, and respiratory protection. All types of PPE must be:
+    - Selected based on the hazard to the worker
+    - Properly fitted and refitted
+    - Consistently and properly worn when required
+    - Regularly inspected, maintained, and replaced as needed
+    - Properly removed, cleaned, and stored or disposed of.
+- Employers are obligated to privde workers with PPE needed to keep them safe while performing their jobs. The types of PPE required during COVID outbreaks will be based on the risk of being infected while working.
+    - [OSHA respiratory protection tool](https://www.osha.gov/SLTC/etools/respiratory/index.html)
+5) Follow existing Standards
+- OSHA PPE standard 29 CFR 1910 Subpart I details use of gloves, eye protection, and respiratory protection. [link here](https://www.osha.gov/laws-regs/regulations/standardnumber/1910#1910_Subpart_I)
+- General Duty Clause, Section 5(a)(1) of OSH Act requires employers to furnish a place of employment free from recognized hazards that are causing or likely to cause death or serious physical harm. [link here](www.osha.gov/laws-regs/oshact/completeoshact)
+- OSHA's Bloodborne Pathogens standard (20 CFR 1910.1030) applies to occupational exposures to human blood or other potentially infectious bodily fluids, though usually not respiratory secretions. However, the provisions provide a framework that may help control some sources of the virus, including exposure to bodily fluids not covered in the standard (eg resp. secretions)
+
+## Classifying worker exposure to SARS-CoV-2
+
+1) Very High Risk  = exposure to known or suspected Covid 19 sources during specific medical, post mortem or lab procedures that produce aerosols, collect or handle specimens. 
+2) High  Risk = exposure to known or suspected covid 19 sources in enclosed environments 
+3) Medium Risk = In areas with community transmision, this is any high density work place eg schools, high volume retail, and densily populated work environments
+4) Lower Risk = jobs that do not require contact with people known or suspected to have covid, nor frequent close contact with the general public. Workers in this category have minimal occupational contact with the public AND other co-workers. 
+
+### How to protect lower risk workers
+- Follow general guidance as provided above. 
+    - distancing
+    - flexible sick leave/ care leave
+    - ability to track and trace ill individuals
+    - ability to isolate ill individuals
+    - encourage hand hygiene
+- Additional engineering controls are not recommended for workers in lower exposure risk group. 
+- Additional ppe is not recommended 
+
+
+## How to protect medium risk workers
+- Follow general guidance
+1) Engineering
+- Install physical barriers "sneeze gaurds"
+2) Admin Controls 
+- Offer facemasks to ill employees and customers to contain respiratory secretions until they are able to leave the workplace. If masks are unavailable, offer a face shield. 
+- Keep customers informed about symptoms of COVID 19 and ask sick customers to minimize contact with workers until healthy again. Post signs and use automated messages to communicate with customers.
+- Where appropriate, limit customers' and public's access to work space 
+- Consider strategies to minimize face to face contact 
+- Communitcate the availability of medical screening or other worker health resources. 
+3) PPE
+- Select PPE vased on function, fit, decon ability, disposal, and cost. Durable ppe may be more cost effective in the long run. 
+- PPE may include gloves, gown, face mask, and a face sheild or goggles. 
+
+## High or Very High Risk workers 
+- follow general guidance
+1) Engineering controls
+- Appropriate vent
+- place patients in Airborne infection isolation room 
+- Use iso rooms when performing aerosol-generating procedures
+- take BSL3 precautions when handling samples
+2) Admin Controls
+- cohort patients when single rooms arent available
+- post signs about reporting symptoms
+- consider offering enhanced medical monitoring to hcw
+- provide psych and behavioral support is available 
+3) Safe Work Practice
+- Provide hand sanitizer for use int eh field
+4) PPE
+- gloves, gown, face shield or goggles, and either a face mask or respirator 
+
+
+
+
+
+
+
+
+
