@@ -16,44 +16,44 @@
 #'
 #' A default class to implement testing on initial nodes.
 #' A graph of n nodes with an \code{$infected} property have their \code{$detected} property set to T or F. 
-#' When \code{$donext} is called 1 is added to the \code{$testCounter} property and is evaluated against \code{testDelay}. 
+#' When \code{$donext} is called 1 is added to the \code{$outbreakDay} property and 
+#' 1 is added to the \code{$testCounter} property if a an infection was previously detected.
 #' If \code{$testCounter} is equal to or greater than \code{testDelay} and \code{$detected} is TRUE, the node becomes recovered.
 #'
 #' @field testDelay
+#' @field testFrequency
 #' @export default_testing
-default_infect <- setRefClass(
+default_testing <- setRefClass(
   "testing",
-  fields = list(init_num="numeric",
-                rate="numeric"
+  fields = list(testDelay="numeric",
+                testFrequency="numeric"
   ),
   methods = list(
     init = function(g) {
-      "Initialize the graph with init_num infected nodes and set infected to red and susceptible to blue"
-      igraph::V(g)$infected <- c(rep(1, init_num), rep(0, igraph::vcount(g)-init_num)) %>%
-        sample() # reorders the arrangement of infected nodes
-      igraph::V(g)$color <- ifelse(igraph::V(g)$infected==1, 'red', 'blue')
+      "Check whether or not nodes are infected"
+      igraph::V(g)$detected <- ifelse(igraph::V(g)$infected ==1, 1, 0)
+      "Set test delay counter"
+      igraph::V(g)$testCounter <- 0
+      igraph::V(g)$outbreakDay <- 0
       return(g)
     },
     donext = function(g) {
-      "Infect nodes adjacent to currently infected nodes"
-      # Probabilistically get adjacent nodes to infect
-      infect_adja <- g %>%
-        # Ego gets neighboring nodes a mindist away
-        igraph::ego(nodes = igraph::V(.)[infected==1], mindist = 1) %>%
-        # Turn list of neighbors into an unique, atomic list
-        unlist() %>%
-        unique() %>%
-        # If not infected or recovered, randomly infect
-        {igraph::V(g)[.][infected==0]} %>%
-        {
-          l <- length(.)
-          bool <- runif(l) <= rate
-          .[bool]
-        }
       
-      # Infect adjacent nodes
-      igraph::V(g)[infect_adja]$infected <- 1
-      igraph::V(g)[infect_adja]$color <- "red"
+      "add a day to the outbreak day counter"
+      igraph::V(g)$outbreakDay <- igraph::V(g)$outbreakDay + 1 
+      
+      "Test for disease at certain intervals"
+      if((max(igraph::V(g)$outbreakDay) %% testFrequency) == 0){ 
+      "Test whether or not nodes are infected"
+      igraph::V(g)$detected <- ifelse(igraph::V(g)$infected ==1, 1, 0)
+      }
+      
+      "increment or reset testCounter for detected cases"
+      igraph::V(g)$testCounter <- ifelse(igraph::V(g)$detected == 1,igraph::V(g)$testCounter +1, 0)
+      
+      "Check testCounter and Remove detected nodes"
+      igraph::V(g)$infected <- ifelse(igraph::V(g)$testCounter == testDelay,2, igraph::V(g)$infected)
+      igraph::V(g)$color <- ifelse(igraph::V(g)$testCounter == testDelay,"green", igraph::V(g)$color)
       
       return(g)
     }
