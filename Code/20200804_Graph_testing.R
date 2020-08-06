@@ -11,7 +11,7 @@ gmma <- 14
 
 covid_di <- default_infect(init_num = 1, rate = prob.infect)
 covid_dr <- default_recover(max_recovery_time = 20)
-covid_dt <- default_testing(testDelay = 3, testFrequency = 2, falseNegRate = 0.03, falsePosRate = 0.001)
+covid_dt <- default_testing(testDelay = 3, testFrequency = 2, falseNegRate = 0.03, falsePosRate = 0.001, propTested = 1)
 covid_model <- infection_model(components = list(covid_di, covid_dr, covid_dt))
 
 flu_di <- default_infect(init_num = 7, rate = 0.01)
@@ -59,20 +59,20 @@ set.seed(4321); plot(test2[[60]], vertex.label = '', vertex.size = 3)
 # Generate gifs
 animate_system(test0, 
                paste0("Random Network of size ~", n), 
-               '20200805_FPFN_Random_1000.gif')
+               '20200805_FPFN_1_Random_1000.gif')
 
 animate_system(test1, 
                paste0("Scale Free Network of size ~", n), 
-               '20200805_FPFN_ScaleFree_1000.gif')
+               '20200805_FPFN_1_ScaleFree_1000.gif')
 
 animate_system(test2, 
                paste0("Small World Network of size ~", n), 
-               '20200805_FPFN_SmallWorld_1000.gif')
+               '20200805_FPFN_1_SmallWorld_1000.gif')
 
 # Save timeline as data files
-readr::write_rds(test0, "./Data/20200805_FPFN_Random_1000_1-15.rds")
-readr::write_rds(test1, "./Data/20200805_FPFN_ScaleFree_1000_1-15.rds")
-readr::write_rds(test2, "./Data/20200805_FPFN_SmallWorld_1000_1-15.rds")
+readr::write_rds(test0, "./Data/20200805_FPFN_1_Random_1000_1-15.rds")
+readr::write_rds(test1, "./Data/20200805_FPFN_1_ScaleFree_1000_1-15.rds")
+readr::write_rds(test2, "./Data/20200805_FPFN_1_SmallWorld_1000_1-15.rds")
 
 # Generate stat blocks of each network
 stats0 <- getStats(test0)
@@ -92,5 +92,5 @@ ggplot(rbind(stats1, stats0, stats2)) +
   labs(title = "SIR Distribution") +
   scale_color_brewer(type = 'qual')
 
-ggsave('./Images/2000805_SIR_Distro_FPFN_testing.pdf')
+ggsave('./Images/2000805_SIR_Distro_FPFN_1_testing.pdf')
 
