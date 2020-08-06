@@ -73,7 +73,7 @@ default_testing <- setRefClass(
       
       
       "Check testCounter and report nodes that have completed delay period"
-      igraph::V(g)$reported <- ifelse(igraph::V(g)$testCounter == testDelay,1, igraph::V(g)$reported)
+      igraph::V(g)$reported <- ifelse(igraph::V(g)$testCounter == testDelay,1, 0)
       igraph::V(g)$color <- ifelse(igraph::V(g)$reported == 1,"yellow", igraph::V(g)$color)
       
       return(g)

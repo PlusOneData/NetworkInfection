@@ -20,10 +20,12 @@
 #'
 #' @field leaveDuration Number time steps a reported case is place on leave
 #'
-#' @export default_testing
-default_testing <- setRefClass(
-  "testing",
-  fields = list(leaveDuration="numeric"
+#' @export default_leave
+default_leave <- setRefClass(
+  "leave",
+  fields = list(
+    leaveDuration="numeric",
+    max_recovery_time="numeric"
   ),
   methods = list(
     init = function(g) {
@@ -57,7 +59,7 @@ default_testing <- setRefClass(
       igraph::V(g)$infected <- ifelse(igraph::V(g)$leave == TRUE, 3,igraph::V(g)$infected)
       
       "Set leave color"
-      igraph::V(g)$color <- ifelse(igraph::V(g)$leave == TRUE,"aquamarine", igraph::V(g)$color)
+      igraph::V(g)$color <- ifelse(igraph::V(g)$leave == TRUE,"orange", igraph::V(g)$color)
   
       return(g)
     }
