@@ -7,7 +7,7 @@ ed <- n * 4
 prob.infect <- .1
 gmma <- 14
 
-covid_di <- default_infect(init_num = 1, rate = prob.infect)
+covid_di <- default_infect(init_num = 3, rate = prob.infect)
 covid_dr <- default_recover(max_recovery_time = 20)
 covid_model <- infection_model(components = list(covid_di, covid_dr))
 
