@@ -1,15 +1,24 @@
 library(igraph)
 library(infection.graph)
 library(animation)
+source("./Code/ppeInfect_Module.R")
+source("./Code/PPE_Module.R")
+source("./Code/testingModule.R")
+source("./Code/leaveModule.R")
 
 n <- 1000
 ed <- n * 4
 prob.infect <- .1
 gmma <- 14
 
-covid_di <- default_infect(init_num = 3, rate = prob.infect)
+
+
+covid_ppe <- default_ppe(faceCovering = 0.9, eyeProtection = 0.9, distancing = .85, compliance = .95)
+covid_di <- ppe_infect(init_num = 1, rate = prob.infect)
 covid_dr <- default_recover(max_recovery_time = 20)
-covid_model <- infection_model(components = list(covid_di, covid_dr))
+covid_dt <- default_testing(testDelay = 1, testFrequency = 2, falseNegRate = 0.03, falsePosRate = 0.001, propTested = 1)
+covid_lv <- default_leave(leaveDuration = 10, max_recovery_time = 20)
+covid_model <- infection_model(components = list(covid_ppe, covid_di, covid_dr,covid_dt, covid_lv ))
 
 flu_di <- default_infect(init_num = 7, rate = 0.01)
 flu_dr <- default_recover(max_recovery_time = 7)
@@ -38,8 +47,8 @@ set.seed(4321); plot(sw, vertex.label = '', vertex.size = 3)
 #################
 
 set.seed(4321)
-test0 <- createTimeline(rn, 30, covid_model)
-test1 <- createTimeline(sfree, 30, covid_model)
+test0 <- createTimeline(rn, 60, covid_model)
+test1 <- createTimeline(sfree, 60, covid_model)
 test2 <- createTimeline(sw, 60, covid_model)
 
 #################
@@ -54,22 +63,25 @@ set.seed(4321); plot(test2[[60]], vertex.label = '', vertex.size = 3)
 #Windows permission issue, cannot save to other folder for some reason
 #need to save in current directory and manually move to images
 # Generate gifs
+
+fileDate <- format(Sys.Date(),"%Y%m%d")
+
 animate_system(test0, 
-               paste0("Random Network of size ~", n), 
-               '20200615_Random_1000.gif')
+               sprintf("Random Network of size ~ %s", n), 
+               sprintf('%s_comp95_90_Random_1000.gif',fileDate ))
 
 animate_system(test1, 
-               paste0("Scale Free Network of size ~", n), 
-               '20200615_ScaleFree_1000.gif')
+               sprintf("Scale Free Network of size ~ %s", n), 
+               sprintf('%s_comp95_90_ScaleFree_1000.gif',fileDate))
 
 animate_system(test2, 
-               paste0("Small World Network of size ~", n), 
-               '20200615_SmallWorld_1000.gif')
+               sprintf("Small World Network of size ~%s", n), 
+               sprintf('%s_comp95_90_SmallWorld_1000.gif',fileDate))
 
 # Save timeline as data files
-readr::write_rds(test0, "./Data/20200615_Random_1000_1-15.rds")
-readr::write_rds(test1, "./Data/20200615_ScaleFree_1000_1-15.rds")
-readr::write_rds(test2, "./Data/20200615_SmallWorld_1000_1-15.rds")
+readr::write_rds(test0, "./Data/20200807_comp95_90_Random_1000_1-15.rds")
+readr::write_rds(test1, "./Data/20200807_comp95_90_ScaleFree_1000_1-15.rds")
+readr::write_rds(test2, "./Data/20200807_comp95_90_SmallWorld_1000_1-15.rds")
 
 # Generate stat blocks of each network
 stats0 <- getStats(test0)
@@ -89,5 +101,7 @@ ggplot(rbind(stats1, stats0, stats2)) +
   labs(title = "SIR Distribution") +
   scale_color_brewer(type = 'qual')
 
-ggsave('./Images/2000615_SIR_Distro.pdf')
+plotStatsFile <- sprintf('./Images/%s_SIR_Distro_comp95_90_testing.pdf',fileDate)
+
+ggsave(plotStatsFile)
 
