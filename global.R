@@ -13,6 +13,7 @@ library(htmltools)
 library(ggplot2)
 library(shinycssloaders)
 library(shinyWidgets)
+library(knitr)
 
 # Import custom modules
 source("./Code/ppeInfect_Module.R")

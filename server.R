@@ -127,7 +127,7 @@ shinyServer(function(input, output, session) {
                        radiusCalculation = JS(" Math.sqrt(d.nodesize)+6"),
                        # Changing the color displayed to yellow to make it easier to distinguish between red and orange
                        colourScale = JS('d3.scaleOrdinal().domain(["blue", "green", "yellow", "red"]).range(["#0000FF", "#008000", "#FFFF00", "#FF0000"])'),
-                       Group = 'group', charge = -500, bounded = TRUE, clickAction = clickJS)
+                       Group = 'group', charge = -100, bounded = FALSE, zoom=TRUE, clickAction = clickJS)
     
     # Assign all vertex.attributes to the forceNetwork object
     names <- c("infProbReduction", "infected", "color", "counter", "recovered", "tested", "detected", "testCounter", "outbreakDay", "reported", "leave","leaveCounter")
@@ -256,7 +256,7 @@ shinyServer(function(input, output, session) {
     } else if (input$tabs == "Small World Force Network") {
       "Summary stats for SWFN."
     } else {
-      "Summary stats for Original."
+      return()
     }
   })
   
@@ -282,7 +282,7 @@ shinyServer(function(input, output, session) {
       stats[stats$time == input$day,]
       
     } else {
-      "Summary stats for Original."
+      return()
     }
   },
   striped = TRUE,
@@ -290,5 +290,16 @@ shinyServer(function(input, output, session) {
   align = 'c',
   bordered = TRUE
   )
+  
+  # getPage<-function() {
+  #   return(includeHTML("NetworkInfection.html"))
+  # }
+  # output$inc<-renderUI({includeHTML("NetworkInfection.html")})
+  
+  # Ensure that the number of infected cannot exceed the total number of nodes
+  observe({
+    val <- input$n
+    updateSliderInput(session, "init_num", max = val)
+  })
   
 })

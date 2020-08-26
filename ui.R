@@ -7,7 +7,7 @@ shinyUI(
         ),
         
         # Application title
-        titlePanel("COVID-19 Model Parameters"),
+        titlePanel("COVID-19 Network Model"),
         
         # Sidebar with a slider input for various model parameters
         sidebarLayout(
@@ -31,7 +31,7 @@ shinyUI(
                     sliderInput("n",
                                 "Number of People:",
                                 min = 10,
-                                max = 100,
+                                max = 500,
                                 value = 50),
                     sliderInput("init_num",
                                 "Initial Number Infected:",
@@ -89,7 +89,7 @@ shinyUI(
                                 "Percent Complying with Policies:",
                                 min = 0.0,
                                 max = 1.0,
-                                value = 0.5),
+                                value = 0.8),
                     checkboxGroupInput("npi", "Select Policy Measures:",
                                        choiceNames =
                                            list(
@@ -189,7 +189,12 @@ shinyUI(
                                          ')
                                      ),
                                      forceNetworkOutput("smallForce") %>% withSpinner(color="#0dc5c1")),
-                            tabPanel("Original", plotOutput("test0Plot"))
+                            tabPanel("Summary",
+                                     tags$iframe(src = './NetworkInfection.html', # put myMarkdown.html to /www
+                                                 width = '100%', height = '800px', 
+                                                 frameborder = 0, scrolling = 'auto'))
+                                     #htmlOutput("inc"))
+                                     #includeMarkdown("NetworkInfection.Rmd"))
                             #tabPanel("Scale Free", plotOutput("test1Plot")),
                             #tabPanel("Small World", plotOutput("test2Plot"))
                 )

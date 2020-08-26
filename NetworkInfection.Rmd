@@ -1,0 +1,72 @@
+---
+title: "Network Infection Walk Through"
+author:
+- Discovery Lab COVID-19 Task Force
+- Applied Intelligence, Accenture Federal Services
+date: "August 2020"
+output: html_document
+---
+
+# Why is the scale free model not spreading the virus under default conditions?
+
+# Overview
+
+The Discovery Lab COVID Response Team has constructed a susceptible-infectious-recovered (SIR) network model that predicts the spread of COVID-19 within individual offices, schools, or similar small-scale environments. The model is fully reactive and can be customized to adapt to the size of the population, various testing procedures, PPE and social distancing compliance, and leave procedures. Herein, we provide an introduction and overview to the SIR model and its associated network outputs. Questions and comments should be directed to Collin Schwantes: <collin.j.schwantes@accenturefederal.com>
+
+## Introduction
+
+This dashboard is designed to enable policy and decision makers to assess risk levels on an individual basis. By visualizing the state of each person (node) in an office or other work environment, the spread of the virus can be more easily understood and actions can be taken to mitigate it.
+
+The primary visual aids in this dashboard are force networks. Force networks are used to visualize networks by representing each entity (in this case, an individual) as a node, and connections between entities as edges. Both nodes and edges can have attributes, such as the infection status.
+
+## Workforce Impact
+
+The SIR and force network graphs are designed to give decision-makers the information needed to appropriately assess the risks of re-opening at various capacities and with various testing and distancing measures in place. By understanding how the virus spreads in a small-scale environment, actions can be taken to reduce overall contact and isolate the spread.
+
+The dashboard also enabled side-by-side comparison of the spread of the virus with certain measures in place, and the spread without. The "SIR Distribution" tab has a top level that will automatically respond to any changes in the controls, and a bottom level that will only update when the "Update Bottom SIR Plot" button is clicked. This stacked graph approach allows the previous state of modeling decisions to be compared with an updated state for a deeper visual understanding.
+
+Additionally, summary statistics have been included underneath the sidebar displaying information about the current state of each node. One metric of particular interest is the **to-do** mean time on leave, which represents the average amount of time all individuals on leave have been unable to work.
+
+## Defaults
+
+A number of default settings have been included in the dashboard. These defaults are based on research **include citation later** and serve as a best estimate for the spread of the virus for a given population size. Each of these defaults can be changed by the model controls explained below. To reset the graphs to their defaults, click the "Reset Model Inputs" button on the sidebar.
+
+## Model Controls
+
+1. Days Since Infection:
+Sliding scale to see the state of each force network graph on a given day since re-opening.
+2. Number of People:
+Total number of individuals in the environment.
+3. Initial Number Infected:
+Number of individuals initially infected with the virus on the first day of re-opening.
+
+## Testing Controls
+
+1. Number of Days for Results:
+The number of days between the time of testing and receiving results.
+2. Number of Days Between Testing:
+The number of days between each test being administered per person.
+3. Percent of Population Tested:
+The percentage of the population in the environment being tested.
+
+## PPE Compliance
+
+1. Percent Complying with Policies:
+Percentage of population that are complying with the below policies if checked.
+
+    + Face Coverings Required:
+    If checked, the odds of a node being infected or infecting someone else is reduced.
+  
+    + Eye Protection Required:
+    If checked, the odds of a node being infected or infecting someone else is reduced.
+      
+    + Social Distancing Required:
+    If checked, the odds of a node being infected or infecting someone else is reduced.
+
+## Recovery Controls
+
+1. Maximum Time to Recover:
+Maximum number of days until a virus-infected node will recover.
+
+2. Maximum Time on Leave:
+Maximum number of days that a virus-infected node can be on leave.
