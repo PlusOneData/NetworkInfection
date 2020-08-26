@@ -1,0 +1,42 @@
+/* basic positioning */
+.center {
+  margin: auto;
+}
+
+
+.legend {
+  list-style: none;
+  display: flex;
+  justify-content: center;
+}
+
+.legend li {
+  float: left;
+  margin-right: 10px;
+}
+
+.legend span {
+  border: 1px solid #ccc;
+  float: left;
+  width: 12px;
+  height: 12px;
+  margin: 2px;
+  text-align: center;
+}
+
+/* your colors */
+.legend .susceptible {
+  background-color: #0000FF;
+}
+
+.legend .infected {
+  background-color: #FF0000;
+}
+
+.legend .recovered {
+  background-color: #008000;
+}
+
+.legend .leave {
+  background-color: #FFFF00;
+}
