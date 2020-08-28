@@ -59,7 +59,7 @@ default_leave <- setRefClass(
       igraph::V(g)$infected <- ifelse(igraph::V(g)$leave == TRUE, 3,igraph::V(g)$infected)
       
       "Set leave color"
-      igraph::V(g)$color <- ifelse(igraph::V(g)$leave == TRUE,"orange", igraph::V(g)$color)
+      igraph::V(g)$color <- ifelse(igraph::V(g)$leave == TRUE,"yellow", igraph::V(g)$color)
   
       return(g)
     }
