@@ -7,34 +7,25 @@ shinyServer(function(input, output, session) {
   prob.infect <- .1
   gmma <- 14
   
-  faceCovering <- 1
-  eyeProtection <- 1.0
-  distancing <- 1.0
-  
-  # output$policies<-renderText({
-  # 
-  #   faceCovering <- "face" %in% input$npi
-  #   eyeProtection <- "eye" %in% input$npi
-  #   distancing <- "dist" %in% input$npi
-  # 
-  #   if (faceCovering){
-  #     s <- 8
-  #   } else if (eye){
-  #     s <- 5
-  #   } else if (distancing){
-  #     distancing <- 0.9
-  #   }
-  # })
-  
-  
   covid_model <- reactive({
-    if("face" %in% input$npi){
+    if("faceCovering" %in% input$npi){
       faceCovering <- 0.9
-    } else if ("eye" %in% input$npi){
-      eyeProtection <- 0.9
-    } else if ("dist" %in% input$npi){
-      distancing <- 0.85
+    } else {
+      faceCovering <- 1.0
     }
+    
+    if("eyeProtection" %in% input$npi){
+      eyeProtection <- 0.9
+    } else {
+      eyeProtection <- 1.0
+    }
+    
+    if("distancing" %in% input$npi){
+      distancing <- 0.85
+    } else {
+      distancing <- 1.0
+    }
+    
     covid_ppe <- default_ppe(faceCovering = faceCovering, eyeProtection = eyeProtection, distancing = distancing, compliance = input$compliance)
     covid_di <- ppe_infect(init_num = input$init_num, rate = prob.infect)
     covid_dr <- default_recover(max_recovery_time = input$max_recovery_time)
@@ -49,15 +40,20 @@ shinyServer(function(input, output, session) {
   #################
   
   # Erdos-Renyi network: constant probability to connect nodes
-  set.seed(4321); rn <- reactive({sample_gnm(n(), ed(), directed = F) %>%
+  sample_gnm_rep <- repeatable(sample_gnm, seed = 4321)
+  
+  set.seed(4321)
+  rn <- reactive({sample_gnm_rep(n(), ed(), directed = F) %>%
       covid_model()$init_model()})
   
   # Scale free network
-  set.seed(4321); sfree <- reactive({sample_fitness_pl(n(), ed(), 2.2) %>%
+  set.seed(4321)
+  sfree <- reactive({sample_fitness_pl(n(), ed(), 2.2) %>%
       covid_model()$init_model()})
   
   # Small world network
-  set.seed(4321); sw <-  reactive({sample_smallworld(1, n(), 4, .1) %>%
+  set.seed(4321)
+  sw <-  reactive({sample_smallworld(1, n(), 4, .1) %>%
       covid_model()$init_model()})
   
   #################
@@ -65,6 +61,11 @@ shinyServer(function(input, output, session) {
   #################
   
   set.seed(4321)
+  
+  
+  #createTimeline_rep <- repeatable(createTimeline, seed = 4321)
+  
+  
   test0 <- reactive({createTimeline(rn(), 60, covid_model())})
   test1 <- reactive({createTimeline(sfree(), 60, covid_model())})
   test2 <- reactive({createTimeline(sw(), 60, covid_model())})
@@ -124,7 +125,7 @@ shinyServer(function(input, output, session) {
     fn <- forceNetwork(Links = test_graph()$links, Nodes = test_graph()$nodes, 
                        Source = 'source', Target = 'target',
                        NodeID = 'name', Nodesize = 'size',
-                       radiusCalculation = JS(" Math.sqrt(d.nodesize)+6"),
+                       radiusCalculation = JS(" Math.sqrt(d.nodesize)+5"),
                        # Changing the color displayed to yellow to make it easier to distinguish between red and orange
                        colourScale = JS('d3.scaleOrdinal().domain(["blue", "green", "yellow", "red"]).range(["#0000FF", "#008000", "#FFFF00", "#FF0000"])'),
                        Group = 'group', charge = -100, bounded = FALSE, zoom=TRUE, clickAction = clickJS)
@@ -173,15 +174,17 @@ shinyServer(function(input, output, session) {
     
     stats = rbind(stats, df)
     stats[, c(1,3)] <- sapply(stats[, c(1,3)], as.integer)
+    stats$percent <- percent(stats$value / n())
     return(stats)
     
   }
   
   output$curvePlot <- renderPlot({
     # Generate stat blocks of each network
-    stats0 <- getStats(test0())
-    stats1 <- getStats(test1())
-    stats2 <- getStats(test2())
+    stats0 <- addLeave(test0())
+    stats1 <- addLeave(test1())
+    stats2 <- addLeave(test2())
+    
     
     stats0$model <- 'Random'
     stats1$model <- 'Scale Free'
@@ -200,13 +203,15 @@ shinyServer(function(input, output, session) {
   # Wait for the update button to be clicked to compare parameters changing
   sirPlot <- eventReactive(input$update,{
     # Generate stat blocks of each network
-    stats0 <- getStats(test0())
-    stats1 <- getStats(test1())
-    stats2 <- getStats(test2())
+    stats0 <- addLeave(test0())
+    stats1 <- addLeave(test1())
+    stats2 <- addLeave(test2())
     
     stats0$model <- 'Random'
     stats1$model <- 'Scale Free'
     stats2$model <- 'Small World'
+    
+    cbPalette <- c("#CC6666","#FFE338", "#66CC99", "#9999CC")
     
     # Plot stats
     sirPlot <- ggplot(rbind(stats1, stats0, stats2)) +
@@ -214,7 +219,12 @@ shinyServer(function(input, output, session) {
       facet_wrap(~model) +
       theme_bw() +
       #labs(title = "SIR Distribution") +
-      scale_color_brewer(type = 'qual')
+      #scale_color_brewer(type = 'qual') +
+      
+      
+      scale_color_manual( 
+        #values = c("red", "yellow", "green", "blue"))
+        values = cbPalette)
     sirPlot
   }, ignoreNULL = FALSE)
   
@@ -245,39 +255,136 @@ shinyServer(function(input, output, session) {
     shinyjs::reset("side-panel")
   })
   
-  output$summary <- renderText({
-    if (input$tabs == "SIR Distribution") {
-      "Summary stats for SIR."
-    } else if (input$tabs == "Random Force Network") {
-      "Summary stats for RFN."
-      #print(vertex.attributes(test0()[[input$day]], "color"))
-    } else if (input$tabs == "Scale Free Force Network") {
-      "Summary stats for SCFN."
-    } else if (input$tabs == "Small World Force Network") {
-      "Summary stats for SWFN."
+  
+  rfnDeg <- reactive({
+    round(mean(igraph::degree(test0()[[input$day]])),2)
+  })
+  
+  scfnDeg <- reactive({
+    round(mean(igraph::degree(test1()[[input$day]])),2)
+  })
+  
+  swfnDeg <- reactive({
+    round(mean(igraph::degree(test2()[[input$day]])),2)
+  })
+  
+  
+  avgLeave <- function(test){
+    total = 0
+    j = 0
+    for(i in 1:n()){
+      #print(vertex.attributes(test[[input$day]], i)[["leave"]])
+      #print(i)
+      if(vertex.attributes(test[[input$day]], i)[["leave"]] == TRUE) {
+        total = total + vertex.attributes(test[[input$day]], i)[["leaveCounter"]]
+        j = j + 1
+      }
+    }
+    if(total == 0  || j == 0) {
+      meanLeave <- 0
     } else {
-      return()
+      meanLeave <- total/j
+    }
+    round(meanLeave,2)
+  }
+  
+  dayDays <- function(days){
+    if (days == 1) {"Day"} else {"Days"}
+  }
+  
+  rfnLeaveCnt <- reactive({
+    avgLeave(test0())
+  })
+  
+  scfnLeaveCnt <- reactive({
+    avgLeave(test1())
+  })
+  
+  swfnLeaveCnt <- reactive({
+    avgLeave(test2())
+  })
+  
+  testCost <- reactive({
+    if("pcr" == input$testTypes){
+      testCost <- 100
+    } else if ("antigen" == input$testTypes){
+      testCost <- 5
+    } else if ("lamp" == input$testTypes){
+      testCost <- 20
     }
   })
   
+  ppeCost <- reactive({
+    if("masks" %in% input$ppeBought){
+      masks <- 0.75
+    } else {
+      masks <- 0
+    }
+    
+    if("shields" %in% input$ppeBought){
+      shields <- 1.10
+    } else {
+      shields <- 0
+    }
+    
+    if("handSan" %in% input$ppeBought){
+      handSan <- 0.2
+    } else {
+      handSan <- 0
+    }
+    if("gloves" %in% input$ppeBought){
+      gloves <- 0.15
+    } else {
+      gloves <- 0
+    }
+    
+    return(masks + shields + handSan + gloves)
+  })
+  
+  output$summary <- renderText({
+    if (input$tabs == "Random Force Network") {
+      totalLeave <- sum(vertex.attributes(test0()[[input$day]])[["leaveCounter"]])
+      paste("Mean Degree:", rfnDeg(), "Connections", "\nMean Time Out Of Office If On Leave:", rfnLeaveCnt(), dayDays(rfnLeaveCnt()), "\nCumulative Time Out On Leave:",  totalLeave, dayDays(totalLeave))
+    } else if (input$tabs == "Scale Free Force Network") {
+      totalLeave <- sum(vertex.attributes(test1()[[input$day]])[["leaveCounter"]])
+      paste("Mean Degree:", scfnDeg(), "Connections", "\nMean Time Out Of Office If On Leave:", scfnLeaveCnt(), dayDays(scfnLeaveCnt()), "\nCumulative Time Out On Leave:",  totalLeave, dayDays(totalLeave))
+    } else if (input$tabs == "Small World Force Network") {
+      totalLeave <- sum(vertex.attributes(test2()[[input$day]])[["leaveCounter"]])
+      paste("Mean Degree:", swfnDeg(), "Connections", "\nMean Time Out Of Office If On Leave:", swfnLeaveCnt(), dayDays(swfnLeaveCnt()), "\nCumulative Time Out On Leave:",  totalLeave, dayDays(totalLeave))
+    } else if (input$tabs == "SIR Distribution") {
+      bestAvgLeave <- mean(c(
+        sum(vertex.attributes(test0()[[input$day]])[["leaveCounter"]]), 
+        sum(vertex.attributes(test1()[[input$day]])[["leaveCounter"]]), 
+        sum(vertex.attributes(test2()[[input$day]])[["leaveCounter"]])))
+      paste(
+        #"Total Cumulative Leave Costs:", dollar(input$avgWage * bestAvgLeave), 
+        "Total Cumulative Tests Needed:", ceiling((input$day/input$testFrequency) * input$propTested * n()),
+        "\nTotal Cumulative Testing Costs:", dollar((input$day/input$testFrequency) * input$propTested * n() * testCost()),
+        "\nTotal Cumulative PPE Costs:", dollar((input$day * n() * ppeCost())))
+    } else {
+      return()
+    }
+    
+  })
   
   output$table <- renderTable({
     
     if (input$tabs == "SIR Distribution") {
-      "Summary stats for SIR."
+      df <- data.frame("Random" = dollar(input$avgWage * 8 * sum(vertex.attributes(test0()[[input$day]])[["leaveCounter"]])),
+                       "ScaleFree" = dollar(input$avgWage * 8 * sum(vertex.attributes(test1()[[input$day]])[["leaveCounter"]])),
+                       "SmallWorld" = dollar(input$avgWage * 8 * sum(vertex.attributes(test2()[[input$day]])[["leaveCounter"]])))
+      
+      df
       
     } else if (input$tabs == "Random Force Network") {
-      "Summary stats for SCFN."
       stats <- addLeave(test0())
       stats[stats$time == input$day,]
       
     } else if (input$tabs == "Scale Free Force Network") {
-      "Summary stats for SCFN."
       stats <- addLeave(test1())
       stats[stats$time == input$day,]
       
     } else if (input$tabs == "Small World Force Network") {
-      "Summary stats for SWFN."
       stats <- addLeave(test2())
       stats[stats$time == input$day,]
       
@@ -300,6 +407,7 @@ shinyServer(function(input, output, session) {
   observe({
     val <- input$n
     updateSliderInput(session, "init_num", max = val)
+    #View(vertex.attributes(test2()[[input$day]], 415)[["leave"]] == TRUE)
   })
   
 })

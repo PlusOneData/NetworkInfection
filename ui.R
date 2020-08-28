@@ -72,7 +72,7 @@ shinyUI(
                                 value = 0.8)
                 ),
                 bsPopover(id = "testing", title = "Testing",
-                          content = "more info",
+                          content = "Controls to adjust testing parameters.",
                           placement = "right",  
                           options = NULL),
                 br(),
@@ -102,19 +102,16 @@ shinyUI(
                                        choiceValues =
                                            list("faceCovering", "eyeProtection", "distancing"),
                                        selected = c("faceCovering", "eyeProtection", "distancing")
-                    ),
-                    textOutput("policies")
+                    )
                 ),
                 br(),
                 dropdownButton(
                     inputId = "recovery",
                     label = "Recovery Controls",
-                    #icon = icon("sliders"),
                     status = "primary",
                     circle = FALSE,
                     width = "100%",
                     tooltip = TRUE,
-                    # tooltipOptions(placement = "right", title = "Something"),
                     sliderInput("max_recovery_time",
                                 "Maximum Time to Recover:",
                                 min = 10,
@@ -126,6 +123,37 @@ shinyUI(
                                 max = 30,
                                 value = 10)
                 ),
+                br(),
+                dropdownButton(
+                    inputId = "costs",
+                    label = "Cost Drivers",
+                    status = "primary",
+                    circle = FALSE,
+                    width = "100%",
+                    tooltip = TRUE,
+                    sliderInput("avgWage", 
+                                "Estimated Average Hourly Wage:",
+                                min = 7.75, max = 200, value = 25, 
+                                # step = 2500,
+                                # animate = TRUE,
+                                pre = "$", sep = ","),
+                    radioButtons("testTypes", "Select Tests Used:",
+                                 choiceNames =
+                                     list("PCR", "Antigen", "LAMP"
+                                     ),
+                                 choiceValues =
+                                     list("pcr", "antigen", "lamp"),
+                                 selected = c("pcr")
+                    ),
+                    checkboxGroupInput("ppeBought", "Select PPE Purchased:",
+                                 choiceNames =
+                                     list("Face Masks", "Face Shields", "Hand Sanitizer", "Gloves"
+                                     ),
+                                 choiceValues =
+                                     list("masks", "shields", "handSan", "gloves"),
+                                 selected = c("masks", "handSan")
+                    )
+                ),
                 # tags$div(style = "height: 140px;"), # spacing
                 br(),
                 actionButton("update", "Update Bottom SIR Plot", width = "100%"),
@@ -133,10 +161,32 @@ shinyUI(
                 br(),
                 actionButton("reset_input", "Reset Model Inputs", width = "100%"),
                 br(),
-                br(),
-                verbatimTextOutput("summary"),
-                tableOutput("table")
+                #br(),
+                
+                # Should fix at some point to combine with below conditionalPanel
+                conditionalPanel(
+                    #condition = "input.tabs != 'SIR Distribution' && input.tabs != 'Summary'",
+                    condition = "input.tabs != 'Summary'",
+                    tags$div(
+                        HTML("<h3 style='color:#204d74; text-align:center; vertical-align: middle; font-size: 20px; text-decoration: underline; margin-bottom: 1.5em;'>Summary Statistics</h3>")
+                    ),
+                    verbatimTextOutput("summary") %>% withSpinner(color="#0dc5c1", proxy.height = "50px", hide.ui = FALSE, size = 0.5),
+                    tags$head(tags$style("#summary{background-color: white; font-size: 14px}")),
+                    
+                    
+                    # Check if conditionalPanels can be nested?
+                    conditionalPanel(
+                        condition = "input.tabs == 'SIR Distribution'",
+                        tags$div(
+                            HTML("<h3 style='color:#204d74; text-align:center; vertical-align: middle; font-size: 20px; text-decoration: underline; margin-bottom: 1.5em;'>Cumulative Leave Costs</h3>")
+                        )
+                    ),
+                    
+                    tableOutput("table")
+                )
             ),
+            
+            
             
             # Show a plot of the generated distribution
             mainPanel(
@@ -193,8 +243,8 @@ shinyUI(
                                      tags$iframe(src = './NetworkInfection.html', # put myMarkdown.html to /www
                                                  width = '100%', height = '800px', 
                                                  frameborder = 0, scrolling = 'auto'))
-                                     #htmlOutput("inc"))
-                                     #includeMarkdown("NetworkInfection.Rmd"))
+                            #htmlOutput("inc"))
+                            #includeMarkdown("NetworkInfection.Rmd"))
                             #tabPanel("Scale Free", plotOutput("test1Plot")),
                             #tabPanel("Small World", plotOutput("test2Plot"))
                 )
