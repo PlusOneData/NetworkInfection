@@ -39,6 +39,41 @@ shinyServer(function(input, output, session) {
   ## Initialize graph networks
   #################
   
+  # Discovery Lab Contact Network
+  #read in DL Graph
+  
+  dlContactMatrix <- readxl::read_xlsx("./Data/Discovery Lab Contact Network.xlsx")
+  
+  groupCols <- names(dlContactMatrix)[-1]
+  
+  dlContactMatrix <- dlContactMatrix %>% 
+    mutate_at(vars(groupCols), as.integer)
+  
+  dlContactMatrix[is.na(dlContactMatrix)]<- 6
+  
+  ## edge list 
+  
+  ## origin not equal to destination 
+  
+  edgeList <- dlContactMatrix %>% 
+    pivot_longer(cols = -Name) %>% 
+    filter(value > 2) %>% 
+    rename("Origin" = "Name") %>% 
+    rename("Dest" = "name") %>% 
+    select(-value)
+  
+  #get graph from edgelist 
+  dlContactGraph <- igraph::graph_from_edgelist(el = as.matrix(edgeList),directed = F)
+  
+  dlContactGraph <- simplify(graph = dlContactGraph,remove.loops = T)
+  
+  dlGraphSize <- vcount(dlContactGraph)
+  
+  ## dl contact network
+  set.seed(4321) 
+  dl <- reactive({dlContactGraph %>% 
+    covid_model()$init_model()})
+  
   # Erdos-Renyi network: constant probability to connect nodes
   sample_gnm_rep <- repeatable(sample_gnm, seed = 4321)
   
@@ -69,6 +104,7 @@ shinyServer(function(input, output, session) {
   test0 <- reactive({createTimeline(rn(), 60, covid_model())})
   test1 <- reactive({createTimeline(sfree(), 60, covid_model())})
   test2 <- reactive({createTimeline(sw(), 60, covid_model())})
+  test3 <- reactive({createTimeline(dl(), 60, covid_model())})
   
   
   #################
@@ -155,6 +191,10 @@ shinyServer(function(input, output, session) {
     smallFN <- make_fn(test2)
   })
   
+  output$dlForce <- renderForceNetwork({
+    dlFN <- make_fn(test3)
+  })
+  
   addLeave <- function(test){
     stats <- getStats(test)
     df <- data.frame("time" = 1, "type" = "on leave", "value" = 0, stringsAsFactors = FALSE)
@@ -184,14 +224,16 @@ shinyServer(function(input, output, session) {
     stats0 <- addLeave(test0())
     stats1 <- addLeave(test1())
     stats2 <- addLeave(test2())
+    stats3 <- addLeave(test3())
     
     
     stats0$model <- 'Random'
     stats1$model <- 'Scale Free'
     stats2$model <- 'Small World'
+    stats3$model <- 'Discovery Lab'
     
     # Plot stats
-    ggplot(rbind(stats1, stats0, stats2)) +
+    ggplot(rbind(stats1, stats0, stats2, stats3)) +
       geom_line(aes(time, value, color = type), size = 1.5) +
       facet_wrap(~model) +
       theme_bw() +
@@ -206,15 +248,17 @@ shinyServer(function(input, output, session) {
     stats0 <- addLeave(test0())
     stats1 <- addLeave(test1())
     stats2 <- addLeave(test2())
+    stats3 <- addLeave(test3())
     
     stats0$model <- 'Random'
     stats1$model <- 'Scale Free'
     stats2$model <- 'Small World'
+    stats3$model <- 'Discovery Lab'
     
     cbPalette <- c("#CC6666","#FFE338", "#66CC99", "#9999CC")
     
     # Plot stats
-    sirPlot <- ggplot(rbind(stats1, stats0, stats2)) +
+    sirPlot <- ggplot(rbind(stats1, stats0, stats2,stats3)) +
       geom_line(aes(time, value, color = type), size = 1.50) +
       facet_wrap(~model) +
       theme_bw() +
@@ -251,6 +295,11 @@ shinyServer(function(input, output, session) {
     
   })
   
+  output$test3Plot <- renderPlot({
+    set.seed(4321); plot(test3()[[input$day]], vertex.label = '', vertex.size = 3, main=paste0("Discovery Lab Contact Network", dlGraphSize))
+    
+  })
+  
   observeEvent(input$reset_input, {
     shinyjs::reset("side-panel")
   })
@@ -266,6 +315,10 @@ shinyServer(function(input, output, session) {
   
   swfnDeg <- reactive({
     round(mean(igraph::degree(test2()[[input$day]])),2)
+  })
+  
+  dlfnDeg <- reactive({
+    round(mean(igraph::degree(test3()[[input$day]])),2)
   })
   
   
@@ -302,6 +355,10 @@ shinyServer(function(input, output, session) {
   
   swfnLeaveCnt <- reactive({
     avgLeave(test2())
+  })
+  
+  dlfnLeaveCnt <- reactive({
+    avgLeave(test3())
   })
   
   testCost <- reactive({
@@ -351,7 +408,10 @@ shinyServer(function(input, output, session) {
     } else if (input$tabs == "Small World Force Network") {
       totalLeave <- sum(vertex.attributes(test2()[[input$day]])[["leaveCounter"]])
       paste("Mean Degree:", swfnDeg(), "Connections", "\nMean Time Out Of Office If On Leave:", swfnLeaveCnt(), dayDays(swfnLeaveCnt()), "\nCumulative Time Out On Leave:",  totalLeave, dayDays(totalLeave))
-    } else if (input$tabs == "SIR Distribution") {
+    } else if (input$tabs == "Discovery Lab Contact Network") {
+      totalLeave <- sum(vertex.attributes(test3()[[input$day]])[["leaveCounter"]])
+      paste("Mean Degree:", dlfnDeg(), "Connections", "\nMean Time Out Of Office If On Leave:", dlfnLeaveCnt(), dayDays(dlfnLeaveCnt()), "\nCumulative Time Out On Leave:",  totalLeave, dayDays(totalLeave))
+    }else if (input$tabs == "SIR Distribution") {
       bestAvgLeave <- mean(c(
         sum(vertex.attributes(test0()[[input$day]])[["leaveCounter"]]), 
         sum(vertex.attributes(test1()[[input$day]])[["leaveCounter"]]), 
@@ -372,7 +432,9 @@ shinyServer(function(input, output, session) {
     if (input$tabs == "SIR Distribution") {
       df <- data.frame("Random" = dollar(input$avgWage * 8 * sum(vertex.attributes(test0()[[input$day]])[["leaveCounter"]])),
                        "ScaleFree" = dollar(input$avgWage * 8 * sum(vertex.attributes(test1()[[input$day]])[["leaveCounter"]])),
-                       "SmallWorld" = dollar(input$avgWage * 8 * sum(vertex.attributes(test2()[[input$day]])[["leaveCounter"]])))
+                       "SmallWorld" = dollar(input$avgWage * 8 * sum(vertex.attributes(test2()[[input$day]])[["leaveCounter"]])),
+                       "DiscoveryLab" = dollar(input$avgWage * 8 * sum(vertex.attributes(test3()[[input$day]])[["leaveCounter"]]))
+                       )
       
       df
       
@@ -386,6 +448,10 @@ shinyServer(function(input, output, session) {
       
     } else if (input$tabs == "Small World Force Network") {
       stats <- addLeave(test2())
+      stats[stats$time == input$day,]
+      
+    } else if (input$tabs == "Discovery Lab Contact Network") {
+      stats <- addLeave(test3())
       stats[stats$time == input$day,]
       
     } else {

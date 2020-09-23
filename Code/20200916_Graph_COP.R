@@ -51,13 +51,6 @@ dlContactGraph <- igraph::graph_from_edgelist(el = as.matrix(edgeList),directed 
 
 dlContactGraph <- simplify(graph = dlContactGraph,remove.loops = T)
 
-plot(dlContactGraph)
-
-## 
-data <- toVisNetworkData(dlContactGraph)
-
-
-
 ## dl contact network
 set.seed(4321); dl <- dlContactGraph %>% 
   covid_model$init_model()
