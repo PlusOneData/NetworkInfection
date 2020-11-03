@@ -239,6 +239,20 @@ shinyUI(
                                          ')
                                      ),
                                      forceNetworkOutput("smallForce") %>% withSpinner(color="#0dc5c1")),
+                            tabPanel("Discovery Lab Contact Network", 
+                                     tags$div(class = "center",
+                                              HTML('
+                                          <br><strong><center>Discovery Lab Force Network<center></strong><br>
+                                          <ul class="legend">
+                                             <li><span class="susceptible"></span> Susceptible</li>
+                                             <li><span class="infected"></span> Infected</li>
+                                             <li><span class="recovered"></span> Recovered</li>
+                                             <li><span class="leave"></span> On Leave</li>
+                                         </ul>
+                                         <br>
+                                         ')
+                                     ),
+                                     forceNetworkOutput("dlForce") %>% withSpinner(color="#0dc5c1")),
                             tabPanel("Summary",
                                      tags$iframe(src = './NetworkInfection.html', # put myMarkdown.html to /www
                                                  width = '100%', height = '800px', 

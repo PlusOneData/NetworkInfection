@@ -16,6 +16,8 @@ library(shinyWidgets)
 #library(knitr)
 library(scales)
 library(dplyr)
+library(readxl)
+library(tidyr)
 set.seed(4321)
 
 # Import custom modules
