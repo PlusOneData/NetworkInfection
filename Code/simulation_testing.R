@@ -12,10 +12,12 @@ library(visNetwork)
 library(networkD3)
 library(ggplot2)
 
-source("./Code/densityInfectionModule.R")
+#source("./Code/densityInfectionModule.R")
 source("./Code/testingModule.R")
 source("./Code/leaveModule.R")
 source("./Code/simulationModule.R")
+source("./Code/PPE_Module.R")
+source("./Code/ppeDensityInfectionModule.R")
 
 ## Eventually want to parallelize
 
@@ -61,16 +63,17 @@ ed <- n * 4
 prob.infect <- .04
 gmma <- 14
 
-covid_di <- density_infect(init_num = 3, transRate = prob.infect)
+covid_ppe <- default_ppe(faceCovering = 0.9, eyeProtection = 0.9, distancing = .85, compliance = .95)
+covid_di <- ppe_density_infect(init_num = 3, transRate = prob.infect)
 covid_dr <- default_recover(max_recovery_time = 20)
 covid_dt <- default_testing(testDelay = 1, testFrequency = 2, falseNegRate = 0.03, falsePosRate = 0.001, propTested = 1)
 covid_lv <- default_leave(leaveDuration = 10, max_recovery_time = 20)
-covid_model_density <- infection_model(components = list(covid_di, covid_dr,covid_dt, covid_lv))
+covid_model_density <- infection_model(components = list(covid_ppe,covid_di, covid_dr,covid_dt, covid_lv))
 
 ### simulation
 
 
-testSim <- runSims(graphObj = dlContactGraph,modelObj = covid_model_density, runs = 100,timeSteps = 50)
+testSim <- runSims(graphObj = dlContactGraph,modelObj = covid_model_density, runs = 100,timeSteps = 30)
 
 
 
