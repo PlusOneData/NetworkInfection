@@ -31,9 +31,10 @@ getStats <- function(gCollection){
     lapply(function(x){
       infected <- (V(x)$infected==1) %>% sum
       recovered <- (V(x)$infected==2) %>% sum
-      susceptible <- vcount(x) - infected - recovered
+      leave <- (V(x)$infected==3) %>%  sum
+      susceptible <- vcount(x) - infected - recovered - leave
 
-      data.frame(infected, recovered, susceptible)
+      data.frame(infected, recovered, susceptible, leave)
     }) %>%
     do.call('rbind', .) %>%
     dplyr::mutate(time = 1:nrow(.)) %>%

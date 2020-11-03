@@ -1,67 +1,23 @@
 ###### build model simulator
 
-library(igraph)
-library(infection.graph)
-library(animation)
-library(readxl)
-library(dplyr)
-library(tidyr)
-library(visNetwork)
-library(networkD3)
-library(ggplot2)
-
-
-## Eventually want to parallelize
-
-#### ingest Graph Data
-
-#read in DL Graph
-
-dlContactMatrix <- readxl::read_xlsx("./Data/Discovery Lab Contact Network.xlsx")
-
-groupCols <- names(dlContactMatrix)[-1]
-
-dlContactMatrix <- dlContactMatrix %>% 
-  mutate_at(vars(groupCols), as.integer)
-
-dlContactMatrix[is.na(dlContactMatrix)]<- 6
-
-## edge list 
-
-## origin not equal to destination 
-
-edgeList <- dlContactMatrix %>% 
-  pivot_longer(cols = -Name) %>% 
-  filter(value > 0) %>% 
-  rename("Origin" = "Name") %>% 
-  rename("Dest" = "name") %>% 
-  select(-value)
-
-#get graph from edgelist 
-dlContactGraph <- igraph::graph_from_edgelist(el = as.matrix(edgeList),directed = F)
-
-dlContactGraph <- simplify(graph = dlContactGraph,remove.loops = T)
-
-## dl contac
-
-
-### take in model with modules
-
-n <- 1000
-ed <- n * 4
-prob.infect <- .1
-gmma <- 14
-
-covid_di <- default_infect(init_num = 3, rate = prob.infect)
-covid_dr <- default_recover(max_recovery_time = 20)
-covid_model <- infection_model(components = list(covid_di, covid_dr))
-
-
-### loop through simulation
+#' Generate multiple simulation runs
+#'
+#'
+#' @param graphObj a graph object from iGraph
+#' @param modelObj a model object from network.infection modules
+#' @param runs Numeric, the number of times the simulation should be executed
+#' @param timeSteps Numeric, how many time steps should each simulation last
+#'
+#' @return dataframe 
+#' @export
+#'
+#' @examples
 runSims <- function(graphObj, modelObj, runs, timeSteps){
   
+  #data store
   runList <- list()
   
+  ### loop through simulation
   for(i in 1:runs){
   
   # initialize simulation run
@@ -85,23 +41,4 @@ runSims <- function(graphObj, modelObj, runs, timeSteps){
 }
 
 
-testSim <- runSims(graphObj = dlContactGraph,modelObj = covid_model, runs = 100,timeSteps = 50)
-
-sumSim <- testSim %>% 
-  group_by(type,time) %>% 
-  summarize(meanValue = median(value)) %>% 
-  ungroup() %>% 
-  mutate(typeFac = factor(x = type,levels = c("susceptible","infected","recovered") ))
-
-testSim %>% 
-  mutate(group = paste0(type,simRun)) %>% 
-  mutate(typeFac = factor(x = type,levels = c("susceptible","infected","recovered") )) %>% 
-  # filter(type == "infected") %>% 
-  ggplot() +
-  geom_line(aes(x = time, y = value, group = group ), color = "grey", size = 1.5, alpha = 0.2) +
-  geom_line(data = sumSim, aes(x = time, y = meanValue, color = typeFac), size = 1.5) +
-    theme_bw() +
-  labs(title = "SIR Distribution") +
-  scale_color_brewer(type = 'qual') +
-  facet_wrap(~typeFac)
 
