@@ -1,5 +1,7 @@
 ### simulation test ground
 
+#devtools::install("./infection.graph")
+
 library(igraph)
 library(infection.graph)
 library(animation)
@@ -11,6 +13,9 @@ library(networkD3)
 library(ggplot2)
 
 source("./Code/densityInfectionModule.R")
+source("./Code/testingModule.R")
+source("./Code/leaveModule.R")
+source("./Code/simulationModule.R")
 
 ## Eventually want to parallelize
 
@@ -47,34 +52,37 @@ dlContactGraph <- simplify(graph = dlContactGraph,remove.loops = T)
 
 
 ### take in model with modules
+# secondary attack rate in non-household contacts ~ 3.9%
+# secondary attack rate in household contacts ~ 11.3%
+# https://jamanetwork.com/journals/jamainternalmedicine/fullarticle/2772238
 
 n <- 1000
 ed <- n * 4
-prob.infect <- .1
+prob.infect <- .04
 gmma <- 14
 
 covid_di <- density_infect(init_num = 3, transRate = prob.infect)
 covid_dr <- default_recover(max_recovery_time = 20)
-covid_model_density <- infection_model(components = list(covid_di, covid_dr))
-
-covid_di <- default_infect(init_num = 3, rate = prob.infect)
-covid_dr <- default_recover(max_recovery_time = 20)
-covid_model_freq <- infection_model(components = list(covid_di, covid_dr))
+covid_dt <- default_testing(testDelay = 1, testFrequency = 2, falseNegRate = 0.03, falsePosRate = 0.001, propTested = 1)
+covid_lv <- default_leave(leaveDuration = 10, max_recovery_time = 20)
+covid_model_density <- infection_model(components = list(covid_di, covid_dr,covid_dt, covid_lv))
 
 ### simulation
 
 
 testSim <- runSims(graphObj = dlContactGraph,modelObj = covid_model_density, runs = 100,timeSteps = 50)
 
+
+
 sumSim <- testSim %>% 
   group_by(type,time) %>% 
   summarize(meanValue = median(value)) %>% 
   ungroup() %>% 
-  mutate(typeFac = factor(x = type,levels = c("susceptible","infected","recovered") ))
+  mutate(typeFac = factor(x = type,levels = c("susceptible","infected","recovered","leave") ))
 
 testSim %>% 
   mutate(group = paste0(type,simRun)) %>% 
-  mutate(typeFac = factor(x = type,levels = c("susceptible","infected","recovered") )) %>% 
+  mutate(typeFac = factor(x = type,levels = c("susceptible","infected","recovered","leave") )) %>% 
   # filter(type == "infected") %>% 
   ggplot() +
   geom_line(aes(x = time, y = value, group = group ), color = "grey", size = 1.5, alpha = 0.2) +
