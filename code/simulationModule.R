@@ -10,6 +10,7 @@ library(visNetwork)
 library(networkD3)
 library(ggplot2)
 
+source("./Code/densityInfectionModule.R")
 
 ## Eventually want to parallelize
 
@@ -52,9 +53,14 @@ ed <- n * 4
 prob.infect <- .1
 gmma <- 14
 
+covid_di <- density_infect(init_num = 3, transRate = prob.infect)
+covid_dr <- default_recover(max_recovery_time = 20)
+covid_model_density <- infection_model(components = list(covid_di, covid_dr))
+
 covid_di <- default_infect(init_num = 3, rate = prob.infect)
 covid_dr <- default_recover(max_recovery_time = 20)
-covid_model <- infection_model(components = list(covid_di, covid_dr))
+covid_model_freq <- infection_model(components = list(covid_di, covid_dr))
+
 
 
 ### loop through simulation
@@ -85,7 +91,7 @@ runSims <- function(graphObj, modelObj, runs, timeSteps){
 }
 
 
-testSim <- runSims(graphObj = dlContactGraph,modelObj = covid_model, runs = 100,timeSteps = 50)
+testSim <- runSims(graphObj = dlContactGraph,modelObj = covid_model_density, runs = 100,timeSteps = 50)
 
 sumSim <- testSim %>% 
   group_by(type,time) %>% 
