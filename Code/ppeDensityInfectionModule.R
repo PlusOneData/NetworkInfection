@@ -27,7 +27,8 @@ ppe_density_infect <- setRefClass(
       # Probabilistically get adjacent nodes to infect
       #print("In donext")
       
-      infectedStatus <- g %>%
+      ## 
+      infStatus <- g %>%
         #get susceptible nodes' neighbors
         igraph::ego(nodes = igraph::V(.)[infected==0], mindist = 1) %>%
         # get probability of infection from neighbors
@@ -39,7 +40,6 @@ ppe_density_infect <- setRefClass(
           #prob infection with ppe
           probInf <- sum(transRate*xInf$infProbReduction)
           
-          #infected status
           infStatus <- rbinom(1,1,min(probInf,1))
           
           lglInf <- as.logical(infStatus)
@@ -47,8 +47,21 @@ ppe_density_infect <- setRefClass(
           return(lglInf)
         })
       
+      ## need to think about how to 
       
-      igraph::V(g)[infected == 0][infectedStatus]$infected <- 1
+      # print(head(probInfEgo))
+      
+      # add focal node PPE
+      # probInf <- igraph::V(g)[infected == 0]$infProbReduction*probInfEgo
+      
+      #print(head(probInfEgo))
+      
+      #infected status 
+      # infStatus <- rbinom(length(probInf),1,min(probInf,1))
+      
+      # lglInf <- as.logical(infStatus)
+    
+      igraph::V(g)[infected == 0][infStatus]$infected <- 1
       igraph::V(g)[infected == 1]$color <- "red"
       
       return(g)
