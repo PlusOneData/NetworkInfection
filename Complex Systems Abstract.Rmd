@@ -1,6 +1,114 @@
 ---
 title: "Integrating COVID Models at Different Scales for Infection Risk Estimation"
-output: html_document
+Author: Collin Schwantes, Benno Lee, Ben Ortiz
+output:
+  pdf_document: default
+  html_document: default
 ---
 
-COVID-19 infections result from interactions that happen at multiple spatial and temporal scales. Accurately integrating the interactions between processes that occurr across spatial and temporal scales is essential for simulating systems of disease transmission and understanding infection risk. We have developed a simulation engine that is capable of integrating a spatially explicit COVID-19 case estimation technique at the county scale and institution level interactions at a hyper local scale. The case estimation technique takes into account location specific factors around infection control and population level movement to estimate true case burdens in a given location. The institution level model uses a multigraph to integrate social and spatial contact networks under various hazard reduction strategies. Validation Our models allow decision makers to develop worksite appropriate preparedness policies that are transparent            
+COVID-19 infections result from interactions that happen at multiple spatial and temporal scales. When working at population level spatial and temporal scales, it is feasible to model disease transmission systems using systems of ordinary differential equations. As spatial and temporal scales become smaller, the structure of social and physical interactions become more influential and stochastic events become more important. Appropriately integrating the interactions between processes that occur across spatial and temporal scales is essential for simulating systems of disease transmission and understanding infection risk. 
+
+We have developed a simulation engine that is capable of integrating a spatially explicit COVID-19 case estimation technique at the county scale with institution level disease transmission at a "building" scale. The case estimation technique takes into account location specific factors around infection control and population level movement to estimate disease burden in a given location. The institution level model uses a multigraph to integrate social and spatial contact networks under various hazard reduction strategies at two different time scales. This allows us to model individual level interactions in the local context of the COVID-19 pandemic. 
+
+Using our model, we were able to recover outbreak behavior in multiple systems**Validation** Need examples of known infection networks - summer camps, cruise ship, uss theo rosevelt nba, nfl?, dinner parties?, schools?, hospitals? **Validation** . 
+  - need to be able to implement interventions at a specific time point
+
+We have demonstrated that our model provides realistic estimates of the COVID-19 outbreak size and spread. By integrating models at multiple scales, our simulation engine empowers decision makers to develop location specific preparedness policies based on realistic estimates of how COVID will spread through their institutions. Because our framework is highly extensible, we plan to add vaccination modules as that information becomes available.              
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+### simulation test ground
+
+#devtools::install("./infection.graph")
+
+library(igraph)
+library(infection.graph)
+library(animation)
+library(readxl)
+library(dplyr)
+library(tidyr)
+library(visNetwork)
+library(networkD3)
+library(ggplot2)
+
+source("./Code/densityInfectionModule.R")
+source("./Code/testingModule.R")
+source("./Code/leaveModule.R")
+source("./Code/simulationModule.R")
+
+## Eventually want to parallelize
+
+#### ingest Graph Data
+
+#read in DL Graph
+
+dlContactMatrix <- readxl::read_xlsx("./Data/Discovery Lab Contact Network.xlsx")
+
+groupCols <- names(dlContactMatrix)[-1]
+
+dlContactMatrix <- dlContactMatrix %>% 
+  mutate_at(vars(groupCols), as.integer)
+
+dlContactMatrix[is.na(dlContactMatrix)]<- 6
+
+## edge list 
+
+## origin not equal to destination 
+
+edgeList <- dlContactMatrix %>% 
+  pivot_longer(cols = -Name) %>% 
+  filter(value > 0) %>% 
+  rename("Origin" = "Name") %>% 
+  rename("Dest" = "name") %>% 
+  select(-value)
+
+#get graph from edgelist 
+dlContactGraph <- igraph::graph_from_edgelist(el = as.matrix(edgeList),directed = F)
+
+dlContactGraph <- simplify(graph = dlContactGraph,remove.loops = T)
+
+## dl contac
+
+
+### take in model with modules
+# secondary attack rate in non-household contacts ~ 3.9%
+# secondary attack rate in household contacts ~ 11.3%
+# https://jamanetwork.com/journals/jamainternalmedicine/fullarticle/2772238
+
+n <- 1000
+ed <- n * 4
+prob.infect <- .07
+gmma <- 14
+
+covid_di <- density_infect(init_num = 3, transRate = prob.infect)
+covid_dr <- default_recover(max_recovery_time = 20)
+covid_dt <- default_testing(testDelay = 1, testFrequency = 2, falseNegRate = 0.03, falsePosRate = 0.001, propTested = 1)
+covid_lv <- default_leave(leaveDuration = 10, max_recovery_time = 20)
+covid_model_density <- infection_model(components = list(covid_di, covid_dr,covid_dt, covid_lv))
+
+### simulation
+
+
+testSim <- runSims(graphObj = dlContactGraph,modelObj = covid_model_density, runs = 100,timeSteps = 50)
+
+testSim$type %>% unique
+
+sumSim <- testSim %>% 
+  group_by(type,time) %>% 
+  summarize(meanValue = median(value)) %>% 
+  ungroup() %>% 
+  mutate(typeFac = factor(x = type,levels = c("susceptible","infected","recovered","leave") ))
+
+testSim %>% 
+  mutate(group = paste0(type,simRun)) %>% 
+  mutate(typeFac = factor(x = type,levels = c("susceptible","infected","recovered","leave") )) %>% 
+  # filter(type == "infected") %>% 
+  ggplot() +
+  geom_line(aes(x = time, y = value, group = group ), color = "grey", size = 1.5, alpha = 0.2) +
+  geom_line(data = sumSim, aes(x = time, y = meanValue, color = typeFac), size = 1.5) +
+  theme_bw() +
+  labs(title = "SIR Distribution") +
+  scale_color_brewer(type = 'qual') +
+  facet_wrap(~typeFac)
+```
+
+
