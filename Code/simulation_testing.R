@@ -58,7 +58,7 @@ dlContactGraph <- simplify(graph = dlContactGraph,remove.loops = T)
 
 n <- 1000
 ed <- n * 4
-prob.infect <- .04
+prob.infect <- .07
 gmma <- 14
 
 covid_di <- density_infect(init_num = 3, transRate = prob.infect)
@@ -72,7 +72,7 @@ covid_model_density <- infection_model(components = list(covid_di, covid_dr,covi
 
 testSim <- runSims(graphObj = dlContactGraph,modelObj = covid_model_density, runs = 100,timeSteps = 50)
 
-
+testSim$type %>% unique
 
 sumSim <- testSim %>% 
   group_by(type,time) %>% 

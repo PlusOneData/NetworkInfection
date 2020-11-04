@@ -1,0 +1,6 @@
+---
+title: "Integrating COVID Models at Different Scales for Infection Risk Estimation"
+output: html_document
+---
+
+COVID-19 infections result from interactions that happen at multiple spatial and temporal scales. Accurately integrating the interactions between processes that occurr across spatial and temporal scales is essential for simulating systems of disease transmission and understanding infection risk. We have developed a simulation engine that is capable of integrating a spatially explicit COVID-19 case estimation technique at the county scale and institution level interactions at a hyper local scale. The case estimation technique takes into account location specific factors around infection control and population level movement to estimate true case burdens in a given location. The institution level model uses a multigraph to integrate social and spatial contact networks under various hazard reduction strategies. Validation Our models allow decision makers to develop worksite appropriate preparedness policies that are transparent            
