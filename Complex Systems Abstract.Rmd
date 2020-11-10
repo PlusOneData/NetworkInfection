@@ -2,18 +2,44 @@
 title: "Integrating COVID Models at Different Scales for Infection Risk Estimation"
 Author: Collin Schwantes, Benno Lee, Ben Ortiz
 output:
-  pdf_document: default
   html_document: default
+  pdf_document: default
 ---
 
-COVID-19 infections result from interactions that happen at multiple spatial and temporal scales. When working at population level spatial and temporal scales, it is feasible to model disease transmission systems using systems of ordinary differential equations. As spatial and temporal scales become smaller, the structure of social and physical interactions become more influential and stochastic events become more important. Appropriately integrating the interactions between processes that occur across spatial and temporal scales is essential for simulating systems of disease transmission and understanding infection risk. 
+COVID-19 infections result from interactions at multiple spatial and temporal scales. When working at population-level spatial and temporal scales, it is feasible to model disease transmission systems using systems of ordinary differential equations. As spatial and temporal scales become smaller, the structure of social and physical interactions become more influential and stochastic events become more important. Appropriately integrating the interactions between processes that occur across spatial and temporal scales is essential for simulating systems of disease transmission and understanding infection risk. 
 
-We have developed a simulation engine that is capable of integrating a spatially explicit COVID-19 case estimation technique at the county scale with institution level disease transmission at a "building" scale. The case estimation technique takes into account location specific factors around infection control and population level movement to estimate disease burden in a given location. The institution level model uses a multigraph to integrate social and spatial contact networks under various hazard reduction strategies at two different time scales. This allows us to model individual level interactions in the local context of the COVID-19 pandemic. 
+We have developed a simulation engine that is capable of integrating a spatially explicit COVID-19 case estimation technique at the county scale with institution level disease transmission at a "building" scale. The case estimation technique takes into account location specific factors around infection control and population level movement to estimate disease burden in a given location. **meta population model** The institution level model uses a multigraph to integrate social and spatial contact networks under various hazard reduction strategies at two different time scales. This allows us to model individual level interactions in the local context of the COVID-19 pandemic **expand on this idea, formalize**. **we know that people have lives outside of work, and we need to be able to model disease transmission outside of work, as well as what as happening in the office setting. the meta popuation model allows us to capture that population level uncertainity and incorporate it into the.**  
 
-Using our model, we were able to recover outbreak behavior in multiple systems**Validation** Need examples of known infection networks - summer camps, cruise ship, uss theo rosevelt nba, nfl?, dinner parties?, schools?, hospitals? **Validation** . 
+Using our model, we were able to recover outbreak behavior in multiple systems**Validation** Need examples of known infection networks - summer camps, cruise ship, uss theo rosevelt, nba, nfl?, schools?, hospitals? **Validation** . 
   - need to be able to implement interventions at a specific time point
 
-We have demonstrated that our model provides realistic estimates of the COVID-19 outbreak size and spread. By integrating models at multiple scales, our simulation engine empowers decision makers to develop location specific preparedness policies based on realistic estimates of how COVID will spread through their institutions. Because our framework is highly extensible, we plan to add vaccination modules as that information becomes available.              
+We have demonstrated that our model provides realistic estimates of the COVID-19 outbreak size and spread. By integrating models at multiple scales, our simulation engine empowers decision makers to develop location specific preparedness policies based on realistic estimates of how COVID will spread through their institutions. Because our framework is highly extensible, we plan to add vaccination modules as that information becomes available.             
+
+-- creating a closed system
+-- meta pop model can generalize but doesnt have the specificity of the network model
+-- combining the two to get closed system model
+-- meta pop model allows us to approximate an open system
+
+validation -- model is capable of describing outbreaks at small scales
+  - contstrained literature search for outbreaks with certain parameters.
+      - population description
+        - contact matrix, age structure, hometown, total number of individuals at the camp
+      - closed or mostly closed system
+      - well described NPI's 
+      - If we can show that our tool is able to capture behavior in multiple settings/context, it may indicate that our model is representative of general covid transmission systems and not simply recreating inputs. 
+      
+- provide what if scenarios and optimize strategy for return to work.
+
+extensions -- what if scenarios
+
+prove and demonstrate that solutions can be found via this tool that could not be found in other strategy exploration methods
+
+we can model external forces, bring those into what was a closed system. Bringing you closer to a realistic tool for decision makers.
+
+
+
+
+
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
 ### simulation test ground
