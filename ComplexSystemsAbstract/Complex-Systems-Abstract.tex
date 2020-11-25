@@ -1,0 +1,112 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+]{article}
+\usepackage{lmodern}
+\usepackage{amssymb,amsmath}
+\usepackage{ifxetex,ifluatex}
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math}
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\hypersetup{
+  pdftitle={Integrating COVID Models at Different Scales for Infection Risk Estimation},
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+\urlstyle{same} % disable monospaced font for URLs
+\usepackage[margin=1in]{geometry}
+\usepackage{graphicx,grffile}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+% Set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+
+\title{Integrating COVID Models at Different Scales for Infection Risk
+Estimation}
+\author{}
+\date{\vspace{-2.5em}}
+
+\begin{document}
+\maketitle
+
+COVID-19 infections result from interactions that happen at multiple
+spatial and temporal scales. When working at population level spatial
+and temporal scales, it is feasible to model disease transmission
+systems using systems of ordinary differential equations. As spatial and
+temporal scales become smaller, the structure of social and physical
+interactions become more influential and stochastic events become more
+important. Appropriately integrating the interactions between processes
+that occur across spatial and temporal scales is essential for
+simulating systems of disease transmission and understanding infection
+risk.
+
+We have developed a simulation engine that is capable of integrating a
+spatially explicit COVID-19 case estimation technique at the county
+scale with institution level disease transmission at a ``building''
+scale. The case estimation technique takes into account location
+specific factors around infection control and population level movement
+to estimate disease burden in a given location. The institution level
+model uses a multigraph to integrate social and spatial contact networks
+under various hazard reduction strategies at two different time scales.
+This allows us to model individual level interactions in the local
+context of the COVID-19 pandemic.
+
+Using our model, we were able to recover outbreak behavior in multiple
+systems\textbf{Validation} Need examples of known infection networks -
+summer camps, cruise ship, uss theo rosevelt nba, nfl?, dinner parties?,
+schools?, hospitals? \textbf{Validation} . - need to be able to
+implement interventions at a specific time point
+
+We have demonstrated that our model provides realistic estimates of the
+COVID-19 outbreak size and spread. By integrating models at multiple
+scales, our simulation engine empowers decision makers to develop
+location specific preparedness policies based on realistic estimates of
+how COVID will spread through their institutions. Because our framework
+is highly extensible, we plan to add vaccination modules as that
+information becomes available.
+
+\begin{verbatim}
+## [1] "infected"    "recovered"   "susceptible" "leave"
+\end{verbatim}
+
+\includegraphics{Complex-Systems-Abstract_files/figure-latex/unnamed-chunk-1-1.pdf}
+
+\end{document}
