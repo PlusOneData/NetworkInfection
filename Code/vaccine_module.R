@@ -33,9 +33,9 @@ default_vax <- setRefClass(
   "vax",
   fields = list(
     vaxEff="numeric",
-    propVax="numeric"
+    propVax="numeric",
     # vaxEffCI="numeric",
-    # vaxRate="numeric"
+    vaxRate="numeric"
   ),
   methods = list(
     init = function(g) {
@@ -54,6 +54,13 @@ default_vax <- setRefClass(
     donext = function(g) {
       "vaccinate additional people"
       #filter for unvaccinated people
+      unVax <- igraph::V(g)[vaxProtect == 0]
+      
+      if(vaxRate < 1){
+        vaxRate <- rbinom(1,1,prob = vaxRate)
+      } 
+      
+      igraph::V(g)[unVax]$vaxProtect <- c(rep(1-vaxEff,vaxRate),rep(1,vcount(g)-vaxRate)) %>% sample()  
       #vaccinate some number of individuals - give them vaxProtect attribute
       
       if(sum(igraph::V(g)$infProbReduction != igraph::V(g)$vaxProtect) != 0){

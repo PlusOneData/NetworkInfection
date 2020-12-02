@@ -69,14 +69,13 @@ gmma <- 14
 
 covid_di <- ppe_infect(init_num = 3, rate = prob.infect)
 covid_dr <- default_recover(max_recovery_time = 20)
-covid_dt <- default_testing(testDelay = 1, testFrequency = 2, falseNegRate = 0.03, falsePosRate = 0.001, propTested = 1)
+covid_dt <- default_testing(testDelay = 2, testFrequency = 2, falseNegRate = 0.03, falsePosRate = 0.001, propTested = 1)
 covid_lv <- default_leave(leaveDuration = 10, max_recovery_time = 20)
 covid_ex <- external_infect(rate = ext.infect)
-covid_vx <- default_vax(vaxEff = 0.95, propVax = 0.2)
+covid_vx <- default_vax(vaxEff = 0.95, propVax = 0.2, vaxRate = 10)
 covid_model_vax <- infection_model(components = list(covid_di, covid_dr,covid_dt,covid_vx, covid_lv, covid_ex))
 
 ### simulation
-
 
 testSim <- runSims(graphObj = dlContactGraph,modelObj = covid_model_vax, runs = 100,timeSteps = 50)
 
