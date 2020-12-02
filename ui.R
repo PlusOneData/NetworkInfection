@@ -154,7 +154,7 @@ shinyUI(
                     sliderTextInput("vaxRate",
                                 "People vaccinated per day:",
                                 choices = c(0,0.01,0.1,1,10,100,1000),
-                                selected = 1)
+                                selected = 1, grid = T)
                 ),
                 br(),
                 dropdownButton(
@@ -225,12 +225,7 @@ shinyUI(
             mainPanel(
                 tags$style(HTML(".tooltip {opacity: 1}")),
                 tabsetPanel(id = "tabs", type = "tabs",
-                            tabPanel("Simulation Outputs",
-                                     br(),
-                                     fluidRow(plotOutput("simPlot", height = "300px")),
-                                     br(),
-                                     fluidRow(plotOutput("simPlot2", height = "300px"))
-                                     ),
+
                             # tabPanel("SIR Distribution", 
                             #          br(),
                             #          fluidRow(plotOutput("curvePlot", height="300px") %>% withSpinner(color="#0dc5c1")),
@@ -292,6 +287,12 @@ shinyUI(
                                          ')
                                      ),
                                      forceNetworkOutput("dlForce") %>% withSpinner(color="#0dc5c1")),
+                            tabPanel("Simulation Outputs",
+                                     br(),
+                                     fluidRow(plotOutput("simPlot", height = "300px")),
+                                     br(),
+                                     fluidRow(plotOutput("simPlot2", height = "300px"))
+                            ),
                             tabPanel("Summary",
                                      tags$iframe(src = './NetworkInfection.html', # put myMarkdown.html to /www
                                                  width = '100%', height = '800px', 
