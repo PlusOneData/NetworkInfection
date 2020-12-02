@@ -1,6 +1,6 @@
 ### simulation test ground
 
-#devtools::install("./infection.graph")
+# devtools::install("./infection.graph")
 
 library(igraph)
 library(infection.graph)
@@ -16,6 +16,10 @@ source("./Code/densityInfectionModule.R")
 source("./Code/testingModule.R")
 source("./Code/leaveModule.R")
 source("./Code/simulationModule.R")
+source("./Code/vaccine_module.R")
+source("./Code/ppeInfect_Module.R")
+# source("./infection_external.R")
+
 
 ## Eventually want to parallelize
 
@@ -59,18 +63,21 @@ dlContactGraph <- simplify(graph = dlContactGraph,remove.loops = T)
 n <- 1000
 ed <- n * 4
 prob.infect <- .07
+ext.infect <- .00000001
 gmma <- 14
 
-covid_di <- density_infect(init_num = 3, transRate = prob.infect)
+
+covid_di <- ppe_infect(init_num = 3, rate = prob.infect)
 covid_dr <- default_recover(max_recovery_time = 20)
-covid_dt <- default_testing(testDelay = 1, testFrequency = 2, falseNegRate = 0.03, falsePosRate = 0.001, propTested = 1)
+covid_dt <- default_testing(testDelay = 2, testFrequency = 2, falseNegRate = 0.03, falsePosRate = 0.001, propTested = 1)
 covid_lv <- default_leave(leaveDuration = 10, max_recovery_time = 20)
-covid_model_density <- infection_model(components = list(covid_di, covid_dr,covid_dt, covid_lv))
+covid_ex <- external_infect(rate = ext.infect)
+covid_vx <- default_vax(vaxEff = 0.95, propVax = 0.2, vaxRate = 10)
+covid_model_vax <- infection_model(components = list(covid_di, covid_dr,covid_dt,covid_vx, covid_lv, covid_ex))
 
 ### simulation
 
-
-testSim <- runSims(graphObj = dlContactGraph, modelObj = covid_model_density, runs = 100,timeSteps = 50)
+testSim <- runSims(graphObj = dlContactGraph,modelObj = covid_model_vax, runs = 100,timeSteps = 50)
 
 testSim$type %>% unique
 
@@ -89,5 +96,5 @@ testSim %>%
   geom_line(data = sumSim, aes(x = time, y = meanValue, color = typeFac), size = 1.5) +
   theme_bw() +
   labs(title = "SIR Distribution") +
-  scale_color_brewer(type = 'qual') +
-  facet_wrap(~typeFac)
+  scale_color_brewer(palette = "Dark2") +
+  facet_wrap(~typeFac, nrow = 1)
