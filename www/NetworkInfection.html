@@ -366,17 +366,11 @@ summary {
 <h1 class="title toc-ignore">Network Infection Walk Through</h1>
 <h4 class="author">Discovery Lab COVID-19 Task Force</h4>
 <h4 class="author">Applied Intelligence, Accenture Federal Services</h4>
-<h4 class="date">August 2020</h4>
+<h4 class="date">December 2020</h4>
 
 </div>
 
 
-<div id="model-is-ignoring-the-seed-when-any-modeling-paramters-are-changed.-ex-click-facemasks-required-on-and-off-and-back-on-will-yield-different-results-see-issue-in-github" class="section level1">
-<h1>Model is ignoring the seed when any modeling paramters are changed. Ex: click faceMasks required on and off and back on will yield different results (see issue in GitHub)</h1>
-</div>
-<div id="vertex.attributestestinputday-ileave-true-causes-na-in-random-nodes-in-the-scale-free-model-should-be-truefalse" class="section level1">
-<h1>vertex.attributes(test[[input$day]], i)[[“leave”]] == TRUE Causes NA in random nodes in the scale free model? Should be TRUE/FALSE</h1>
-</div>
 <div id="overview" class="section level1">
 <h1>Overview</h1>
 <p>The Discovery Lab COVID Response Team has constructed a susceptible-infectious-recovered (SIR) network model that predicts the spread of COVID-19 within individual offices, schools, or similar small-scale environments. The model is fully reactive and can be customized to adapt to the size of the population, various testing procedures, PPE and social distancing compliance, and leave procedures. Herein, we provide an introduction and overview to the SIR model and its associated network outputs. Questions and comments should be directed to Collin Schwantes: <a href="mailto:collin.j.schwantes@accenturefederal.com" class="email">collin.j.schwantes@accenturefederal.com</a></p>
@@ -389,7 +383,7 @@ summary {
 <h2>Workforce Impact</h2>
 <p>The SIR and force network graphs are designed to give decision-makers the information needed to appropriately assess the risks of re-opening at various capacities and with various testing and distancing measures in place. By understanding how the virus spreads in a small-scale environment, actions can be taken to reduce overall contact and isolate the spread.</p>
 <p>The dashboard also enabled side-by-side comparison of the spread of the virus with certain measures in place, and the spread without. The “SIR Distribution” tab has a top level that will automatically respond to any changes in the controls, and a bottom level that will only update when the “Update Bottom SIR Plot” button is clicked. This stacked graph approach allows the previous state of modeling decisions to be compared with an updated state for a deeper visual understanding.</p>
-<p>Additionally, summary statistics have been included underneath the sidebar displaying information about the current state of each node. One metric of particular interest is the mean time on leave, which represents the average amount of time all individuals on leave have been unable to work.</p>
+<p>Additionally, summary statistics have been included underneath the sidebar displaying information about the current state of each node. One metric of particular interest is the <strong>to-do</strong> mean time on leave, which represents the average amount of time all individuals on leave have been unable to work.</p>
 </div>
 <div id="defaults" class="section level2">
 <h2>Defaults</h2>
@@ -429,39 +423,6 @@ summary {
 <li><p>Maximum Time on Leave: Maximum number of days that a virus-infected node can be on leave.</p></li>
 </ol>
 </div>
-<div id="cost-drivers" class="section level2">
-<h2>Cost Drivers</h2>
-<ol style="list-style-type: decimal">
-<li><p>Estimated Average Hourly Wage: Range of hourly wages used to calculate the cost of paid leave for individuals who tested positive. Estimate of 8 hours of wages paid per day on leave.</p></li>
-<li><p>Select Tests Used: Choice of three tests that are being paid for by the organization.</p>
-<ul>
-<li><p>PCR: Commonly used test that costs approximately $100.</p></li>
-<li><p>Antigen: Newly available test that is far cheaper than PCR at approximately $5.</p></li>
-<li><p>LAMP: Another newly available test that costs approximately $20.</p></li>
-</ul></li>
-</ol>
-</div>
-<div id="summary-statistics-cumulative-leave-costs" class="section level2">
-<h2>Summary Statistics &amp; Cumulative Leave Costs</h2>
-<ol style="list-style-type: decimal">
-<li><p>Total Cumulative Tests Needed: Calculated by multiplying the number of people, proportion of population tested, and the days since infection divided by the number of days between testing to determine the total number of tests needed up to the current point in time.</p></li>
-<li><p>Total Cumulative Testing Costs: Calculated by multiplying the number of people, proportion of population tested, the cost per selected testing method, and the days since infection divided by the number of days between testing to determine the total costs of tests needed up to the current point in time.</p></li>
-<li><p>Total Cumulative PPE Costs: Calculated by multiplying the number of people, the daily cost per selected PPE, and the number of days since infection to determine the total cost of PPE provided by the organiztion up to the current point in time.</p></li>
-<li><p>Cumulative Leave Costs: Calculated for each networking model by multiplying the number of people, the estimated average hourly wage, 8 hours per day, and the total number of days that employees have been on leave to determine the total cost of paid leave provided by the organization up to the current point in time.</p></li>
-<li><p>Mean Degree: The average number of connections or interactions an individual has with another individual for each network model.</p></li>
-<li><p>Mean Time Out Of Office If On Leave: The average number of days that an individual on leave has been out of the work environment.</p></li>
-<li><p>Cumulative Time Out On Leave: The total number of days on leave that all employees have taken up to the current point in time.</p></li>
-</ol>
-</div>
-</div>
-<div id="future-ideas" class="section level1">
-<h1>Future Ideas</h1>
-<ol style="list-style-type: decimal">
-<li><p>Leave Cost Calculator (Per Hour Node Attribute Left-Skewed)</p></li>
-<li><p>Additional Cost Features (Proportion of Test Types, More PPE Options)</p></li>
-<li><p>Incorporating Occupation Node Attributes (Degree)</p></li>
-<li><p>Productivity Impact (Lost Work Cost) –&gt; Stretch Goal</p></li>
-</ol>
 </div>
 
 

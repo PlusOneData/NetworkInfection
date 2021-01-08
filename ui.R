@@ -27,12 +27,12 @@ shinyUI(
                                 "Initial Number Infected:",
                                 min = 1,
                                 max = 100,
-                                value = 1),
+                                value = 3),
                     sliderInput("day",
                                 "Days Since Infection:",
                                 min = 1,
                                 max = 60,
-                                value = 30),
+                                value = 10),
                     sliderInput("n",
                                 "Number of People:",
                                 min = 10,
@@ -45,8 +45,8 @@ shinyUI(
                                 value = 10),
                     sliderTextInput("ext.infect",
                                 "Local Cases per 100k:",
-                                choices = c(0,1,5,10,50,100,500,1000),
-                                selected = 10, grid = T)
+                                choices = c(0,1,5,10,50,100,500,1000,5000),
+                                selected = 100, grid = T)
                     
                     # prettyToggle(
                     #     inputId = "na",
@@ -150,7 +150,7 @@ shinyUI(
                                 "Initial Percent Vaccinated:",
                                 min = 0,
                                 max = 1,
-                                value = .5),
+                                value = 0),
                     sliderTextInput("vaxRate",
                                 "People vaccinated per day:",
                                 choices = c(0,0.01,0.1,1,10,100,1000),
