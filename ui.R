@@ -23,21 +23,31 @@ shinyUI(
                     size = "default",
                     circle = FALSE,
                     width = "100%",
-                    sliderInput("day",
-                                "Days Since Infection:",
-                                min = 1,
-                                max = 60,
-                                value = 30),
-                    sliderInput("n",
-                                "Number of People:",
-                                min = 10,
-                                max = 500,
-                                value = 50),
                     sliderInput("init_num",
                                 "Initial Number Infected:",
                                 min = 1,
                                 max = 100,
-                                value = 1)
+                                value = 3),
+                    sliderInput("day",
+                                "Days Since Infection:",
+                                min = 1,
+                                max = 60,
+                                value = 10),
+                    sliderInput("n",
+                                "Number of People:",
+                                min = 10,
+                                max = 500,
+                                value = 40),
+                    sliderInput("runs",
+                                "Number of Simulation Runs:",
+                                min = 1,
+                                max = 100,
+                                value = 10),
+                    sliderTextInput("ext.infect",
+                                "Local Cases per 100k:",
+                                choices = c(0,1,5,10,50,100,500,1000,5000),
+                                selected = 100, grid = T)
+                    
                     # prettyToggle(
                     #     inputId = "na",
                     #     label_on = "NAs keeped",
@@ -49,7 +59,7 @@ shinyUI(
                 br(),
                 dropdownButton(
                     inputId = "testing",
-                    label = "Testing Controls",
+                    label = "Testing Policy",
                     #icon = icon("sliders"),
                     status = "primary",
                     size = "default",
@@ -78,7 +88,7 @@ shinyUI(
                 br(),
                 dropdownButton(
                     inputId = "comply",
-                    label = "PPE Compliance",
+                    label = "PPE Policy",
                     #icon = icon("sliders"),
                     status = "primary",
                     circle = FALSE,
@@ -107,21 +117,44 @@ shinyUI(
                 br(),
                 dropdownButton(
                     inputId = "recovery",
-                    label = "Recovery Controls",
+                    label = "Leave Policy",
                     status = "primary",
                     circle = FALSE,
                     width = "100%",
                     tooltip = TRUE,
-                    sliderInput("max_recovery_time",
-                                "Maximum Time to Recover:",
-                                min = 10,
-                                max = 30,
-                                value = 20),
+                    # sliderInput("max_recovery_time",
+                    #             "Maximum Time to Recover:",
+                    #             min = 10,
+                    #             max = 30,
+                    #             value = 20),
                     sliderInput("leaveDuration",
                                 "Maximum Time on Leave:",
                                 min = 5,
                                 max = 30,
                                 value = 10)
+                ),
+                br(),
+                dropdownButton(
+                    inputId = "recovery",
+                    label = "Vaccination",
+                    status = "primary",
+                    circle = FALSE,
+                    width = "100%",
+                    tooltip = TRUE,
+                    sliderInput("vaxEff",
+                                "Vaccine Efficacy:",
+                                min = .5,
+                                max = 1,
+                                value = 0.95),
+                    sliderInput("propVax",
+                                "Initial Percent Vaccinated:",
+                                min = 0,
+                                max = 1,
+                                value = 0),
+                    sliderTextInput("vaxRate",
+                                "People vaccinated per day:",
+                                choices = c(0,0.01,0.1,1,10,100,1000),
+                                selected = 1, grid = T)
                 ),
                 br(),
                 dropdownButton(
@@ -156,7 +189,7 @@ shinyUI(
                 ),
                 # tags$div(style = "height: 140px;"), # spacing
                 br(),
-                actionButton("update", "Update Bottom SIR Plot", width = "100%"),
+                actionButton("update", "Update Bottom Plot", width = "100%"),
                 br(),
                 br(),
                 actionButton("reset_input", "Reset Model Inputs", width = "100%"),
@@ -192,53 +225,54 @@ shinyUI(
             mainPanel(
                 tags$style(HTML(".tooltip {opacity: 1}")),
                 tabsetPanel(id = "tabs", type = "tabs",
-                            tabPanel("SIR Distribution", 
-                                     br(),
-                                     fluidRow(plotOutput("curvePlot", height="300px") %>% withSpinner(color="#0dc5c1")),
-                                     br(),
-                                     fluidRow(plotOutput("curvePlot2", height="300px") %>% withSpinner(color="#0dc5c1"))),
-                            tabPanel("Random Force Network",
-                                     tags$div(class = "center",
-                                              HTML('
-                                          <br><strong><center>Random Force Network<center></strong><br>
-                                          <ul class="legend">
-                                             <li><span class="susceptible"></span> Susceptible</li>
-                                             <li><span class="infected"></span> Infected</li>
-                                             <li><span class="recovered"></span> Recovered</li>
-                                             <li><span class="leave"></span> On Leave</li>
-                                         </ul>
-                                         <br>
-                                         ')
-                                     ),
-                                     forceNetworkOutput("randomForce")  %>% withSpinner(color="#0dc5c1")),
-                            tabPanel("Scale Free Force Network", 
-                                     tags$div(class = "center",
-                                              HTML('
-                                          <br><strong><center>Scale Free Force Network<center></strong><br>
-                                          <ul class="legend">
-                                             <li><span class="susceptible"></span> Susceptible</li>
-                                             <li><span class="infected"></span> Infected</li>
-                                             <li><span class="recovered"></span> Recovered</li>
-                                             <li><span class="leave"></span> On Leave</li>
-                                         </ul>
-                                         <br>
-                                         ')
-                                     ),
-                                     forceNetworkOutput("scaleForce") %>% withSpinner(color="#0dc5c1")),
-                            tabPanel("Small World Force Network", 
-                                     tags$div(class = "center",
-                                              HTML('
-                                          <br><strong><center>Small World Force Network<center></strong><br>
-                                          <ul class="legend">
-                                             <li><span class="susceptible"></span> Susceptible</li>
-                                             <li><span class="infected"></span> Infected</li>
-                                             <li><span class="recovered"></span> Recovered</li>
-                                             <li><span class="leave"></span> On Leave</li>
-                                         </ul>
-                                         <br>
-                                         ')
-                                     ),
-                                     forceNetworkOutput("smallForce") %>% withSpinner(color="#0dc5c1")),
+
+                            # tabPanel("SIR Distribution", 
+                            #          br(),
+                            #          fluidRow(plotOutput("curvePlot", height="300px") %>% withSpinner(color="#0dc5c1")),
+                            #          br(),
+                            #          fluidRow(plotOutput("curvePlot2", height="300px") %>% withSpinner(color="#0dc5c1"))),
+                            # tabPanel("Random Force Network",
+                            #          tags$div(class = "center",
+                            #                   HTML('
+                            #               <br><strong><center>Random Force Network<center></strong><br>
+                            #               <ul class="legend">
+                            #                  <li><span class="susceptible"></span> Susceptible</li>
+                            #                  <li><span class="infected"></span> Infected</li>
+                            #                  <li><span class="recovered"></span> Recovered</li>
+                            #                  <li><span class="leave"></span> On Leave</li>
+                            #              </ul>
+                            #              <br>
+                            #              ')
+                            #          ),
+                            #          forceNetworkOutput("randomForce")  %>% withSpinner(color="#0dc5c1")),
+                            # tabPanel("Scale Free Force Network", 
+                            #          tags$div(class = "center",
+                            #                   HTML('
+                            #               <br><strong><center>Scale Free Force Network<center></strong><br>
+                            #               <ul class="legend">
+                            #                  <li><span class="susceptible"></span> Susceptible</li>
+                            #                  <li><span class="infected"></span> Infected</li>
+                            #                  <li><span class="recovered"></span> Recovered</li>
+                            #                  <li><span class="leave"></span> On Leave</li>
+                            #              </ul>
+                            #              <br>
+                            #              ')
+                            #          ),
+                            #          forceNetworkOutput("scaleForce") %>% withSpinner(color="#0dc5c1")),
+                            # tabPanel("Small World Force Network", 
+                            #          tags$div(class = "center",
+                            #                   HTML('
+                            #               <br><strong><center>Small World Force Network<center></strong><br>
+                            #               <ul class="legend">
+                            #                  <li><span class="susceptible"></span> Susceptible</li>
+                            #                  <li><span class="infected"></span> Infected</li>
+                            #                  <li><span class="recovered"></span> Recovered</li>
+                            #                  <li><span class="leave"></span> On Leave</li>
+                            #              </ul>
+                            #              <br>
+                            #              ')
+                            #          ),
+                            #          forceNetworkOutput("smallForce") %>% withSpinner(color="#0dc5c1")),
                             tabPanel("Discovery Lab Contact Network", 
                                      tags$div(class = "center",
                                               HTML('
@@ -253,6 +287,12 @@ shinyUI(
                                          ')
                                      ),
                                      forceNetworkOutput("dlForce") %>% withSpinner(color="#0dc5c1")),
+                            tabPanel("Simulation Outputs",
+                                     br(),
+                                     fluidRow(plotOutput("simPlot", height = "300px")),
+                                     br(),
+                                     fluidRow(plotOutput("simPlot2", height = "300px"))
+                            ),
                             tabPanel("Summary",
                                      tags$iframe(src = './NetworkInfection.html', # put myMarkdown.html to /www
                                                  width = '100%', height = '800px', 

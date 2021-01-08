@@ -3,11 +3,10 @@ title: "Network Infection Walk Through"
 author:
 - Discovery Lab COVID-19 Task Force
 - Applied Intelligence, Accenture Federal Services
-date: "August 2020"
+date: "December 2020"
 output: html_document
 ---
 
-# Why is the scale free model not spreading the virus under default conditions?
 
 # Overview
 

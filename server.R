@@ -28,10 +28,12 @@ shinyServer(function(input, output, session) {
     
     covid_ppe <- default_ppe(faceCovering = faceCovering, eyeProtection = eyeProtection, distancing = distancing, compliance = input$compliance)
     covid_di <- ppe_infect(init_num = input$init_num, rate = prob.infect)
-    covid_dr <- default_recover(max_recovery_time = input$max_recovery_time)
+    covid_dr <- default_recover(max_recovery_time = 20)
     covid_dt <- default_testing(testDelay = input$testDelay, testFrequency = input$testFrequency, falseNegRate = 0.03, falsePosRate = 0.001, propTested = input$propTested)
-    covid_lv <- default_leave(leaveDuration = input$leaveDuration, max_recovery_time = input$max_recovery_time)
-    covid_model <- infection_model(components = list(covid_ppe, covid_di, covid_dr,covid_dt, covid_lv ))
+    covid_lv <- default_leave(leaveDuration = input$leaveDuration, max_recovery_time = 20)
+    covid_vx <- default_vax(vaxEff = input$vaxEff, propVax = input$propVax, vaxRate = input$vaxRate)
+    covid_ex <- external_infect(rate = (input$ext.infect/100000))
+    covid_model <- infection_model(components = list(covid_ppe,covid_vx, covid_di, covid_dr,covid_dt, covid_lv,covid_ex ))
     covid_model
   })
   
@@ -197,7 +199,7 @@ shinyServer(function(input, output, session) {
   
   addLeave <- function(test){
     stats <- getStats(test)
-    df <- data.frame("time" = 1, "type" = "on leave", "value" = 0, stringsAsFactors = FALSE)
+    df <- data.frame("time" = 1, "type" = "leave", "value" = 0, stringsAsFactors = FALSE)
     
     for (i in 2:60) {
       
@@ -209,7 +211,7 @@ shinyServer(function(input, output, session) {
         }
       }
       
-      df = rbind(df,list(i,"on leave",total))
+      df = rbind(df,list(i,"leave",total))
     }
     
     stats = rbind(stats, df)
@@ -238,7 +240,7 @@ shinyServer(function(input, output, session) {
       facet_wrap(~model) +
       theme_bw() +
       #labs(title = "SIR Distribution") +
-      scale_color_brewer(type = 'qual')
+      scale_color_brewer(palette = "Dark2")
   })
   
   
@@ -278,6 +280,71 @@ shinyServer(function(input, output, session) {
     
   })
   
+  #### simulation plots
+  
+  testSim <- reactive({
+    testSim <- runSims(graphObj = dlContactGraph,modelObj = covid_model(), runs = input$runs,timeSteps = 50)
+  })
+  
+  
+  output$simPlot <- renderPlot({
+    
+    sumSim <- testSim() %>% 
+      group_by(type,time) %>% 
+      summarize(meanValue = median(value)) %>% 
+      ungroup() %>% 
+      mutate(typeFac = factor(x = type,levels = c("susceptible","infected","recovered","leave") ))
+    
+    testSim() %>% 
+      mutate(group = paste0(type,simRun)) %>% 
+      mutate(typeFac = factor(x = type,levels = c("susceptible","infected","recovered","leave") )) %>% 
+      # filter(type == "infected") %>% 
+      ggplot() +
+      geom_line(aes(x = time, y = value, group = group ), color = "grey", size = 1.5, alpha = 0.2) +
+      geom_line(data = sumSim, aes(x = time, y = meanValue, color = typeFac), size = 1.5) +
+      theme_bw() +
+      labs(title = "Discovery Lab SIR Distribution") +
+      scale_color_brewer(palette = "Dark2") +
+      facet_wrap(~typeFac, nrow = 2) +
+      labs(color = "Status")
+  })
+  
+  
+  simPlot2 <- eventReactive(input$update,{
+    
+    testSim <- runSims(graphObj = dlContactGraph,modelObj = covid_model(), runs = input$runs,timeSteps = 50)
+    
+    sumSim <- testSim %>% 
+      group_by(type,time) %>% 
+      summarize(meanValue = median(value)) %>% 
+      ungroup() %>% 
+      mutate(typeFac = factor(x = type,levels = c("susceptible","infected","recovered","leave") ))
+    
+    
+    # Plot stats
+    simPlot2 <- testSim %>% 
+      mutate(group = paste0(type,simRun)) %>% 
+      mutate(typeFac = factor(x = type,levels = c("susceptible","infected","recovered","leave") )) %>% 
+      # filter(type == "infected") %>% 
+      ggplot() +
+      geom_line(aes(x = time, y = value, group = group ), color = "grey", size = 1.5, alpha = 0.2) +
+      geom_line(data = sumSim, aes(x = time, y = meanValue, color = typeFac), size = 1.5) +
+      theme_bw() +
+      labs(title = "Discovery Lab SIR Distribution 2") +
+      scale_color_brewer(palette = "Dark2") +
+      facet_wrap(~typeFac, nrow = 2) +
+      labs(color = "Status")
+    simPlot2
+  }, ignoreNULL = FALSE)
+  
+  output$simPlot2 <- renderPlot({
+    
+    simPlot2()
+    
+  })
+  
+  
+  ####  
   output$test0Plot <- renderPlot({
     set.seed(4321); plot(test0()[[input$day]], vertex.label = '', vertex.size = 3, main=paste0("Random Network of Size ", n()))
     #legend("bottomleft", 
