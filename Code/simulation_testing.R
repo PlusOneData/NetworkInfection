@@ -72,7 +72,7 @@ covid_model_density <- infection_model(components = list(covid_ppe,covid_di, cov
 
 ### simulation
 
-testSim <- runSims(graphObj = dlContactGraph, modelObj = covid_model_density, runs = 100,timeSteps = 50)
+testSim <- runSims(graphObj = dlContactGraph, modelObj = covid_model_density, runs = 10,timeSteps = 30)
 
 
 testSim$type %>% unique
