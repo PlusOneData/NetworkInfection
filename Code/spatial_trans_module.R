@@ -55,12 +55,12 @@ spat_tran <- setRefClass(
             roomCon <- (sum(nodes$relInf*conRate))/df$volume
             
             #update virus concentration in room and remove 
-            df$virusConc <- (df$virusConc + roomCon)*deconRate 
+            df$virusConc <- (df$virusConc + roomCon)*deconRate # additional terms vent vs natural? 
             
             if(df$virusConc >= infConc){ 
               
               ## get probInf given infProbReduction
-              probInf <- igraph::V(g)[infected == 0]$infProbReduction * envTransRate
+              probInf <- igraph::V(g)[infected == 0]$infProbReduction * envTransRate #secondary attack rate from aerosols
               
               ## get inf status
               infStatus <- rbinom(1,1,min(probInf,1))
