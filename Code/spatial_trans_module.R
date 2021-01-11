@@ -39,6 +39,11 @@ spat_tran <- setRefClass(
           df <- rooms %>% 
             filter(name == room)
           
+          # think about making a room class to handle unique room actions to 
+          # compute who gets infected. Would initialize a group of rooms. At 
+          # each time step individuals would be assigned and room object would
+          # tell us who got infected. 
+          
           for(i in 1:32){
             # need to find where each node is at time step 1
             igraph::V(g)$currentLoc <- igraph::V(g)$schedule %>% 
@@ -63,7 +68,8 @@ spat_tran <- setRefClass(
               igraph::V(g)[infected == 0][infStatus]$infected <- 1
               igraph::V(g)[infected == 1]$color <- "red"
               
-              
+              # room x time matrix
+              # need to be compute schedules on mass
             }
           }
         }
