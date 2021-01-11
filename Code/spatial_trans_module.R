@@ -9,10 +9,10 @@
 #' @field conRate Numeric, rate of contamination by infectious individuals
 #' @field deconRate Numeric, rate of decontamination (may move to room attribute)
 #' @field envTransRate Numeric, transmission rate for environmental contamination (0 to 1)
-#' @export spatial_transmission
-spatial_transmission <- setRefClass(
+#' @export spat_tran
+spat_tran <- setRefClass(
   "spatInf", #change this to create a new class
-  fields = list( rooms="dataframe",
+  fields = list( rooms="data.frame",
                  infConc = "numeric",
                  conRate="numeric",
                  deconRate= "numeric",

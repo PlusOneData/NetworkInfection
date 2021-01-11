@@ -11,6 +11,7 @@ library(tidyr)
 library(visNetwork)
 library(networkD3)
 library(ggplot2)
+library(stringr)
 
 #source("./Code/densityInfectionModule.R")
 source("./Code/testingModule.R")
@@ -20,6 +21,7 @@ source("./Code/PPE_Module.R")
 source("./Code/ppeDensityInfectionModule.R")
 source("./Code/relativeInfectiousness_module.R")
 source("./Code/vaccine_module.R")
+source("./Code/spatial_trans_module.R")
 
 ## Eventually want to parallelize
 
@@ -69,6 +71,8 @@ relInfFunc <- function(x){
   dgamma(x,shape = 5)
 }
 
+rooms <- data.frame(name = letters[1:4], volume = c(20,30,100,50))
+
 covid_ppe <- default_ppe(faceCovering = 0.9, eyeProtection = 0.9, distancing = .85, compliance = .95)
 covid_di <- ppe_density_infect(init_num = 3, transRate = prob.infect)
 covid_dr <- default_recover(max_recovery_time = 20)
@@ -76,7 +80,9 @@ covid_dt <- default_testing(testDelay = 3, testFrequency = 7, falseNegRate = 0.0
 covid_lv <- default_leave(leaveDuration = 10, max_recovery_time = 20)
 covid_ri <- rel_infect(max_recovery_time = 20, relInfFunc = relInfFunc)
 covid_vx <- default_vax(vaxEff = 0.95, propVax = 0.2, vaxRate = 10)
-covid_model_density <- infection_model(components = list(covid_ppe,covid_di, covid_dr,covid_ri,covid_dt,covid_vx, covid_lv))
+covid_sp <- spat_tran(rooms=rooms, infConc = 2, conRate=20, deconRate= 1/20, envTransRate = 0.04)
+
+covid_model_density <- infection_model(components = list(covid_ppe,covid_di, covid_sp,covid_dr,covid_ri,covid_dt,covid_vx, covid_lv))
  
 ### simulation
 
