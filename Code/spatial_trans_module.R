@@ -7,13 +7,18 @@
 #' Emission rate  infection risk based on work by Buonanno et al. 
 #' \url{https://www.sciencedirect.com/science/article/pii/S0160412020312800}
 #' 
+#' Important terms:
+#' 
+#' Quanta = a quantum is defined as the dose of airborne 
+#' droplet nuclei required to cause infection in 63% of
+#' susceptible persons.
 #' 
 #' Emission Rate
 #' 
 #' \deqn{ER_{q,j} = c_v*c_i*IR*\sum_{i=1}^4(N_{i,j}*V_i)}
 #' 
-#' \eqn{ER_{q,j}} = quanta emission rate
-#' \eqn{c_v} = viral load in sputum
+#' \eqn{ER_{q,j}} = quanta emission rate = \eqn{quanta h^{-1}}
+#' \eqn{c_v} = viral load in sputum = RNA copies per mL
 #' \eqn{c_i} = conversion factor between quanta and infectious dose viral rna copies
 #' \eqn{IR} = inhalation rate
 #' \eqn{\sum_{i=1}^4(N_{i,j}*V_i)} = sum of different expiration types
@@ -60,6 +65,7 @@ spat_tran <- setRefClass(
     init = function(g) {
       "give each node a schedule"
       # creating random schedules in 15 min blocks
+      # need to add capacity attribute to rooms
       igraph::V(g)$schedule <- sample(rooms$name,32*igraph::vcount(g),replace = T) %>% 
                                 split(., ceiling(seq_along(.)/32)) %>% 
                                 purrr::map(.x=., function(x){
@@ -149,6 +155,47 @@ spat_tran <- setRefClass(
             
             
           }
+        }
+      }
+      
+      return(g)
+    },
+    spatialTrans = function(g){
+      ## want to get location at time point 1 
+      for(i in 1:32){
+        # need to find where each node is at time step 1
+        igraph::V(g)$currentLoc <- igraph::V(g)$schedule %>% 
+          stringr::str_sub(.,start = i,end = i)
+        
+        # loop through each room
+        for(room in rooms$name){
+        nodes <- igraph::V(g)[currentLoc == room]
+        
+        df <- rooms %>% 
+          filter(name == room)
+        #how much sars-cov-2 is emitted into the room
+        roomCon <- (sum(nodes$relInf*conRate))/df$volume
+        
+        #update virus concentration in room and remove 
+        df$virusConc <- (df$virusConc + roomCon)*deconRate 
+        
+        if(df$virusConc >= infConc){ 
+          
+          ## get probInf given infProbReduction
+          probInf <- igraph::V(g)[infected == 0]$infProbReduction * envTransRate
+          
+          ## get inf status
+          infStatus <- rbinom(1,1,min(probInf,1))
+          
+          igraph::V(g)[infected == 0][infStatus]$infected <- 1
+          igraph::V(g)[infected == 1]$color <- "red"
+          
+          
+        }
+        
+        #replace values in room before exiting loop
+        rooms[rooms$name == room,] <- df
+        
         }
       }
       
