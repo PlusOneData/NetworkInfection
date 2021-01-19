@@ -6,6 +6,7 @@
 #'
 #' Emission rate  infection risk based on work by Buonanno et al. 
 #' \url{https://www.sciencedirect.com/science/article/pii/S0160412020312800}
+#' \url{https://www.sciencedirect.com/science/article/pii/S0160412020320675?via%3Dihub}
 #' 
 #' Important terms:
 #' 
@@ -47,16 +48,15 @@
 #'
 #'
 #' @field rooms Dataframe of rooms with name and volume attributes
-#' @field infConc Numeric, concentration where room becomes infectious
-#' @field conRate Numeric, rate of contamination by infectious individuals
-#' @field deconRate Numeric, rate of decontamination (may move to room attribute)
-#' @field envTransRate Numeric, transmission rate for environmental contamination (0 to 1)
+#' @field inRate Numeric, inhalation rate for individuals (\eqn{m^3/hour})
+#' @field emRate Numeric, rate of contamination by infectious individuals (\eqn{quanta/hour/person})
+#' @field deconRate Numeric, rate of decontamination - volume of air removed (\eqn{m^3/hour}) (may move to room attribute)
 #' @export spat_tran
 spat_tran <- setRefClass(
   "spatInf", #change this to create a new class
   fields = list( rooms="data.frame",
                  infConc = "numeric",
-                 conRate="numeric",
+                 emRate="numeric",
                  deconRate= "numeric",
                  envTransRate = "numeric"
                  #schedule
@@ -95,7 +95,7 @@ spat_tran <- setRefClass(
             nodes <- igraph::V(g)[currentLoc == room]
             
             #how much sars-cov-2 is emitted into the room
-            roomCon <- (sum(nodes$relInf*conRate))/df$volume
+            roomCon <- (sum(nodes$relInf*emRate))/df$volume
             
             #update virus concentration in room and remove 
             df$virusConc <- (df$virusConc + roomCon)*deconRate # additional terms vent vs natural? 
