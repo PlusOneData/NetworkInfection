@@ -47,18 +47,15 @@
 #'\eqn{T} = total time of exposure
 #'
 #'
-#' @field rooms Dataframe of rooms with name and volume attributes
+#' @field rooms Dataframe of rooms with name, volume (m3), and airExchange (air exchanges per hour) attributes
 #' @field inRate Numeric, inhalation rate for individuals (\eqn{m^3/hour})
 #' @field emRate Numeric, rate of contamination by infectious individuals (\eqn{quanta/hour/person})
-#' @field deconRate Numeric, rate of decontamination - volume of air removed (\eqn{m^3/hour}) (may move to room attribute)
 #' @export spat_tran
 spat_tran <- setRefClass(
   "spatInf", #change this to create a new class
   fields = list( rooms="data.frame",
-                 infConc = "numeric",
-                 emRate="numeric",
-                 deconRate= "numeric",
-                 envTransRate = "numeric"
+                 inRate="numeric",
+                 emRate="numeric"
                  #schedule
   ),
   methods = list(
@@ -103,35 +100,50 @@ spat_tran <- setRefClass(
         for(room in rooms$name){
         nodes <- igraph::V(g)[currentLoc == room]
         
-        df <- rooms %>% 
-          filter(name == room)
-        #how much sars-cov-2 is emitted into the room
-        roomCon <- (sum(nodes$relInf*conRate))/df$volume
+        "make sure there is someone in the room"
         
-        #update virus concentration in room and remove 
-        df$virusConc <- (df$virusConc + roomCon)*deconRate 
-        
-        if(df$virusConc >= infConc){ 
+          if(length(nodes$relInf)!=0){
           
-          ## get probInf given infProbReduction
-          probInf <- igraph::V(g)[infected == 0]$infProbReduction * envTransRate
+            df <- rooms %>% 
+              filter(name == room)
+            #how much sars-cov-2 is emitted into the room
+            roomCon <- (sum(nodes$relInf*emRate))/df$volume
+            
+            #update virus concentration in room and remove
+            # need to add decay and settling term here
+            df$virusConc <- (df$virusConc + roomCon)/((df$airExchange/4)*df$volume) 
+            
+            infRisk <- infectionRisk(inRate/4,df$virusConc)
           
-          ## get inf status
-          infStatus <- rbinom(1,1,min(probInf,1))
-          
-          igraph::V(g)[infected == 0][infStatus]$infected <- 1
-          igraph::V(g)[infected == 1]$color <- "red"
-          
-          
-        }
-        
-        #replace values in room before exiting loop
-        rooms[rooms$name == room,] <- df
-        
+            ## get probInf given infProbReduction
+            
+            probInf <- nodes[infected == 0]$infProbReduction * infRisk
+            
+            if(length(probInf) > 0){
+            
+            ## get inf status
+            infStatus <- rbinom(1,1,min(probInf,1))
+            
+            
+            nodes[infected == 0][infStatus]$infected <- 1
+            nodes[infected == 1]$color <- "red"
+            
+            igraph::V(g)[currentLoc == room] <- nodes
+            }
+            
+            #replace values in room before exiting loop
+            rooms[rooms$name == room,] <- df
+          }
         }
       }
       
       return(g)
+    },
+    infectionRisk = function(inRate,roomConc){
+      
+      "infection risk is expressed as a percent"
+      infRisk <- (1-exp(-inRate*roomConc))
+      return(infRisk)
     }
   )
 )

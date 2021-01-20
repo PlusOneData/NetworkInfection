@@ -71,16 +71,16 @@ relInfFunc <- function(x){
   dgamma(x,shape = 5)
 }
 
-rooms <- data.frame(name = letters[1:4], volume = c(20,30,100,50))
+rooms <- data.frame(name = letters[1:4], volume = c(120,200,25000,5000),airExchange = 4)
 
 covid_ppe <- default_ppe(faceCovering = 0.9, eyeProtection = 0.9, distancing = .85, compliance = .95)
 covid_di <- ppe_density_infect(init_num = 3, transRate = prob.infect)
 covid_dr <- default_recover(max_recovery_time = 20)
-covid_dt <- default_testing(testDelay = 1, testFrequency = 2, falseNegRate = 0.00, falsePosRate = 0.00, propTested = 0.25)
+covid_dt <- default_testing(testDelay = 3, testFrequency = 3, falseNegRate = 0.03, falsePosRate = 0.001, propTested = 0.5)
 covid_lv <- default_leave(leaveDuration = 10, max_recovery_time = 20)
 covid_ri <- rel_infect(max_recovery_time = 20, relInfFunc = relInfFunc)
 covid_vx <- default_vax(vaxEff = 0.95, propVax = 0.2, vaxRate = 10)
-covid_sp <- spat_tran(rooms=rooms, infConc = 2, conRate=20, deconRate= 1/20, envTransRate = 0.04)
+covid_sp <- spat_tran(rooms=rooms, inRate = (16/24),emRate = 11.4 )
 
 covid_model_density <- infection_model(components = list(covid_ppe,
                                                          covid_di, 
