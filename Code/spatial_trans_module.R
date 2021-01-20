@@ -50,56 +50,67 @@
 #' @field rooms Dataframe of rooms with name, volume (m3), and airExchange (air exchanges per hour) attributes
 #' @field inRate Numeric, inhalation rate for individuals (\eqn{m^3/hour})
 #' @field emRate Numeric, rate of contamination by infectious individuals (\eqn{quanta/hour/person})
+#' @field maxRoomDensity Numeric, maximum number of people/m^3 in a room
 #' @export spat_tran
 spat_tran <- setRefClass(
   "spatInf", #change this to create a new class
   fields = list( rooms="data.frame",
                  inRate="numeric",
-                 emRate="numeric"
+                 emRate="numeric",
+                 maxRoomDensity = "numeric"
                  #schedule
   ),
   methods = list(
     init = function(g) {
+      
+      "get nodes not on leave"
+      gP <- igraph::V(g)[infected!=3]
+      
       "give each node a schedule"
       # creating random schedules in 15 min blocks
       # need to add capacity attribute to rooms
-      igraph::V(g)$schedule <- sample(rooms$name,32*igraph::vcount(g),replace = T) %>% 
-                                split(., ceiling(seq_along(.)/32)) %>% 
-                                purrr::map(.x=., function(x){
-                                  paste(x,collapse = "")
-                                }) %>% 
-                                purrr::flatten_chr()
       
+      gP <- nodeSchedule(gP,rooms,maxRoomDensity,32)
+    
       "simulate spatial infections and movements"
       
       rooms$infStatus <- 0
       rooms$virusConc <- 0 
       
-      g <- spatialTrans(g,rooms)
+      gP <- spatialTrans(gP,rooms)
+      
+      igraph::V(g)[infected!=3] <- gP
       
       return(g)
     },
     donext = function(g) {
 
+      "get nodes not on leave"
+      gP <- igraph::V(g)[infected!=3]
+      
       "simulate spatial infections and movements"
       rooms$infStatus <- 0
       rooms$virusConc <- 0 
       
-      g <- spatialTrans(g,rooms)
+      gP <- spatialTrans(gP,rooms)
+      
+      igraph::V(g)[infected!=3] <- gP
       
       return(g)
     },
-    spatialTrans = function(g,rooms){
+    spatialTrans = function(gP,rooms){
+      
       ## want to get location at time point 1 
       for(i in 1:32){
         # need to find where each node is at time step 1
-        igraph::V(g)$currentLoc <- igraph::V(g)$schedule %>% 
+        gP$currentLoc <- gP$schedule %>% 
           stringr::str_sub(.,start = i,end = i)
-        
+  
         # loop through each room
         for(room in rooms$name){
-        nodes <- igraph::V(g)[currentLoc == room]
-        
+
+        nodes <- gP[gP$currentLoc == room]
+              
         "make sure there is someone in the room"
         
           if(length(nodes$relInf)!=0){
@@ -128,7 +139,7 @@ spat_tran <- setRefClass(
             nodes[infected == 0][infStatus]$infected <- 1
             nodes[infected == 1]$color <- "red"
             
-            igraph::V(g)[currentLoc == room] <- nodes
+            gP[currentLoc == room] <- nodes
             }
             
             #replace values in room before exiting loop
@@ -137,13 +148,29 @@ spat_tran <- setRefClass(
         }
       }
       
-      return(g)
+      return(gP)
     },
     infectionRisk = function(inRate,roomConc){
       
       "infection risk is expressed as a percent"
       infRisk <- (1-exp(-inRate*roomConc))
       return(infRisk)
+    },
+    nodeSchedule = function(gP,rooms,maxRoomDensity,timeSteps){
+      
+      schedList <- list()
+      for(i in 1:timeSteps){
+        roomVec <- rep(rooms$name, floor(rooms$volume*maxRoomDensity),rooms$capacity)
+        
+        if(length(roomVec)<length(gP)){
+          stop("more nodes than capacity allows")
+        }
+        
+        schedList[[i]] <- sample(roomVec, size = length(gP),replace = F)
+      }
+      gP$schedule <- schedList %>% purrr::map_dfc(.,paste) %>% do.call(paste0,.)
+      
+      return(gP)
     }
   )
 )
