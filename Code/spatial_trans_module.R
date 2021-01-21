@@ -63,114 +63,158 @@ spat_tran <- setRefClass(
   methods = list(
     init = function(g) {
       
+      V(g)$schedule <- ""
       "get nodes not on leave"
       gP <- igraph::V(g)[infected!=3]
+      
+      g1 <- igraph::induced_subgraph(g,gP)
       
       "give each node a schedule"
       # creating random schedules in 15 min blocks
       # need to add capacity attribute to rooms
       
-      gP <- nodeSchedule(gP,rooms,maxRoomDensity,32)
-    
+      g2 <- nodeSchedule(g1,rooms,maxRoomDensity,32)
+      
       "simulate spatial infections and movements"
       
       rooms$infStatus <- 0
       rooms$virusConc <- 0 
       
-      gP <- spatialTrans(gP,rooms)
+      g3 <- spatialTrans(g2,rooms)
       
-      igraph::V(g)[infected!=3] <- gP
+      igraph::V(g)[infected!=3]$color <- igraph::V(g3)$color
+      igraph::V(g)[infected!=3]$infLoc <- igraph::V(g3)$infLoc
+      igraph::V(g)[infected!=3]$infected <- igraph::V(g3)$infected
       
       return(g)
     },
     donext = function(g) {
-
+      
+      V(g)$schedule <- ""
       "get nodes not on leave"
       gP <- igraph::V(g)[infected!=3]
       
+      g1 <- igraph::induced_subgraph(g,gP)
+      
+      "give each node a schedule"
+      # creating random schedules in 15 min blocks
+      # need to add capacity attribute to rooms
+      
+      # browser()
+      g2 <- nodeSchedule(g1,rooms,maxRoomDensity,32)
+      
       "simulate spatial infections and movements"
+      
       rooms$infStatus <- 0
       rooms$virusConc <- 0 
       
-      gP <- spatialTrans(gP,rooms)
+      g3 <- spatialTrans(g2,rooms)
       
-      igraph::V(g)[infected!=3] <- gP
+      igraph::V(g)[infected!=3]$color <- igraph::V(g3)$color
+      igraph::V(g)[infected!=3]$infLoc <- igraph::V(g3)$infLoc
+      igraph::V(g)[infected!=3]$infected <- igraph::V(g3)$infected
       
       return(g)
     },
-    spatialTrans = function(gP,rooms){
+    spatialTrans = function(g,rooms){
       
       ## want to get location at time point 1 
       for(i in 1:32){
         # need to find where each node is at time step 1
-        gP$currentLoc <- gP$schedule %>% 
+        igraph::V(g)$currentLoc <- igraph::V(g)$schedule %>% 
           stringr::str_sub(.,start = i,end = i)
-  
+
         # loop through each room
         for(room in rooms$name){
-
-        nodes <- gP[gP$currentLoc == room]
-              
-        "make sure there is someone in the room"
         
-          if(length(nodes$relInf)!=0){
+        gP <- V(g)[currentLoc == room]
+        
+        if(length(gP)!=0){
           
+            g1 <- igraph::induced_subgraph(g,gP)
+            
+            "make sure there is someone in the room"
+                
             df <- rooms %>% 
               filter(name == room)
             #how much sars-cov-2 is emitted into the room
-            roomCon <- (sum(nodes$relInf*emRate))/df$volume
-            
+            roomCon <- (sum(igraph::V(g1)$relInf*emRate))/((df$airExchange/4)*df$volume)
+            timeStepEm <- (sum(igraph::V(g1)$relInf*emRate))/((df$airExchange/4))
             #update virus concentration in room and remove
             # need to add decay and settling term here
-            df$virusConc <- (df$virusConc + roomCon)/((df$airExchange/4)*df$volume) 
+            df$virusConc <- roomCon + (df$virusConc +  timeStepEm)*((exp(-(df$airExchange/4)))/df$volume) 
             
             infRisk <- infectionRisk(inRate/4,df$virusConc)
           
             ## get probInf given infProbReduction
             
-            probInf <- nodes[infected == 0]$infProbReduction * infRisk
+            probInf <- igraph::V(g1)[infected == 0]$infProbReduction * infRisk
             
             if(length(probInf) > 0){
-            
+              
             ## get inf status
             infStatus <- rbinom(1,1,min(probInf,1))
             
+            igraph::V(g1)[infected == 0][infStatus]$infLoc <- room
+            igraph::V(g1)[infected == 0][infStatus]$infected <- 1
+            igraph::V(g1)[infected == 1]$color <- "red"
             
-            nodes[infected == 0][infStatus]$infected <- 1
-            nodes[infected == 1]$color <- "red"
+            #browser()
             
-            gP[currentLoc == room] <- nodes
+            igraph::V(g)[currentLoc == room]$color <- igraph::V(g1)$color
+            igraph::V(g)[currentLoc == room]$infLoc <- igraph::V(g1)$infLoc
+            igraph::V(g)[currentLoc == room]$infected <- igraph::V(g1)$infected
             }
             
             #replace values in room before exiting loop
             rooms[rooms$name == room,] <- df
+        } else {
+          
+          df <- rooms %>% 
+            filter(name == room)
+          
+          df$virusConc <- (df$virusConc)/((df$airExchange/4)*df$volume) 
+          
+          rooms[rooms$name == room,] <- df
+          
           }
         }
       }
       
-      return(gP)
+      return(g)
     },
     infectionRisk = function(inRate,roomConc){
       
       "infection risk is expressed as a percent"
       infRisk <- (1-exp(-inRate*roomConc))
+      
+      print(infRisk)
+      
       return(infRisk)
     },
-    nodeSchedule = function(gP,rooms,maxRoomDensity,timeSteps){
+    nodeSchedule = function(g,rooms,maxRoomDensity,timeSteps){
       
       schedList <- list()
+      
+      # seats available in all rooms
+      roomVec <- rep(rooms$name, floor(rooms$volume*maxRoomDensity),rooms$capacity)
+      
       for(i in 1:timeSteps){
-        roomVec <- rep(rooms$name, floor(rooms$volume*maxRoomDensity),rooms$capacity)
         
-        if(length(roomVec)<length(gP)){
+        if(length(roomVec)<igraph::vcount(g)){
           stop("more nodes than capacity allows")
         }
         
-        schedList[[i]] <- sample(roomVec, size = length(gP),replace = F)
+        schedList[[i]] <- sample(roomVec, size = igraph::vcount(g),replace = F)
+        
       }
-      gP$schedule <- schedList %>% purrr::map_dfc(.,paste) %>% do.call(paste0,.)
+      #browser()
+      igraph::V(g)$schedule <- schedList %>%
+        purrr::set_names(as.character(1:timeSteps)) %>% 
+        purrr::map_dfc(.,paste) %>%
+        do.call(paste0,.)
       
-      return(gP)
+      return(g)
     }
   )
 )

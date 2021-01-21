@@ -71,7 +71,7 @@ relInfFunc <- function(x){
   dgamma(x,shape = 5)
 }
 
-rooms <- data.frame(name = letters[1:4], volume = c(120,200,25000,5000),airExchange = 4)
+rooms <- data.frame(name = letters[1:4], volume = c(75,300,2000,100),airExchange = 4,stringsAsFactors = F)
 
 covid_ppe <- default_ppe(faceCovering = 0.9, eyeProtection = 0.9, distancing = .85, compliance = .95)
 covid_di <- ppe_density_infect(init_num = 3, transRate = prob.infect)
@@ -80,7 +80,7 @@ covid_dt <- default_testing(testDelay = 3, testFrequency = 3, falseNegRate = 0.0
 covid_lv <- default_leave(leaveDuration = 10, max_recovery_time = 20)
 covid_ri <- rel_infect(max_recovery_time = 20, relInfFunc = relInfFunc)
 covid_vx <- default_vax(vaxEff = 0.95, propVax = 0.2, vaxRate = 10)
-covid_sp <- spat_tran(rooms=rooms, inRate = (16/24),emRate = 11.4, maxRoomDensity = 1/12 )
+covid_sp <- spat_tran(rooms=rooms, inRate = (16/24),emRate = 11.4, maxRoomDensity = 1/3)
 
 covid_model_density <- infection_model(components = list(covid_ppe,
                                                          covid_di, 
@@ -93,11 +93,20 @@ covid_model_density <- infection_model(components = list(covid_ppe,
  
 ### simulation
 
-testSim <- runSims(graphObj = dlContactGraph, modelObj = covid_model_density, runs = 10,timeSteps = 60)
+simResults <- runSims(graphObj = dlContactGraph, modelObj = covid_model_density, runs = 10,timeSteps = 30)
 
 
-testSim$type %>% unique
+simResults$timeLines[[1]] %>% 
+  igraph::as_data_frame(.,what = 'vertices') %>% 
+  pull(infLoc)
 
+
+testSim <- simResults$sirStats  
+
+testSim %>% 
+  filter(type == "recovered") %>% 
+  filter(value == max(value))
+   
 sumSim <- testSim %>% 
   group_by(type,time) %>% 
   summarize(meanValue = median(value)) %>% 

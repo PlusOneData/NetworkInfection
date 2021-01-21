@@ -21,10 +21,11 @@ ppe_density_infect <- setRefClass(
   methods = list(
     init = function(g) {
       "Initialize the graph with init_num infected nodes and set infected to red and susceptible to blue"
+      
       igraph::V(g)$infected <- c(rep(1, init_num), rep(0, igraph::vcount(g)-init_num)) %>%
         sample() # reorders the arrangement of infected nodes
       igraph::V(g)$color <- ifelse(igraph::V(g)$infected==1, 'red', 'blue')
-      
+      igraph::V(g)$infLoc <- ifelse(igraph::V(g)$infected == 1, "initial","susceptible")
       
       return(g)
     },
@@ -75,7 +76,7 @@ ppe_density_infect <- setRefClass(
       # infStatus <- rbinom(length(probInf),1,min(probInf,1))
       
       # lglInf <- as.logical(infStatus)
-    
+      igraph::V(g)[infected == 0][infStatus]$infLoc <- "directContact"
       igraph::V(g)[infected == 0][infStatus]$infected <- 1
       igraph::V(g)[infected == 1]$color <- "red"
       

@@ -28,6 +28,7 @@ external_infect <- setRefClass(
         }
 
       # Infect random nodes
+      igraph::V(g)[infect_ex]$infLoc <- "external"
       igraph::V(g)[infect_ex]$infected <- 1
       igraph::V(g)[infect_ex]$color <- "red"
 
