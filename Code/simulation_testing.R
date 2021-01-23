@@ -81,6 +81,7 @@ covid_lv <- default_leave(leaveDuration = 10, max_recovery_time = 20)
 covid_ri <- rel_infect(max_recovery_time = 20, relInfFunc = relInfFunc)
 covid_vx <- default_vax(vaxEff = 0.95, propVax = 0.2, vaxRate = 10)
 covid_sp <- spat_tran(rooms=rooms, inRate = (16/24),emRate = 11.4, maxRoomDensity = 1/3)
+covid_ex <- external_infect(rate = 0.00018)
 
 covid_model_density <- infection_model(components = list(covid_ppe,
                                                          covid_di, 
@@ -89,7 +90,8 @@ covid_model_density <- infection_model(components = list(covid_ppe,
                                                          covid_ri,
                                                          covid_dt,
                                                          covid_vx, 
-                                                         covid_lv))
+                                                         covid_lv,
+                                                         covid_ex))
  
 ### simulation
 

@@ -1,0 +1,73 @@
+---
+title: Integrating COVID-19 Models at Different Scales for Infection Risk Estimation   and
+  Control Optimization
+author: Collin Schwantes, Benno Lee PhD, Marjorie Willner PhD, Ben Ortiz, Viveca Pabon-Harr
+  PhD
+output: 
+  revealjs::revealjs_presentation:
+    theme: white
+    highlight: pygments
+    center: true
+    slideNumber: true
+---
+
+## Intro
+
+![model diagram](./img/modelDiagram.png)
+
+## SARS-COV-2 Transmission
+
+- Inhalation of infectious particles 
+- Introduction of fomites to mucus membranes
+- Presence of infectious particles and fomites 
+
+
+## Hazard Controls
+
+![hierarchy of controls](https://aghealth.ucdavis.edu/sites/g/files/dgvnsk261/files/inline-images/Hierarchy%20of%20Controls.jpg)
+
+*Image produced by University of California Davis*
+
+## Problem Statement
+
+Assessing risk of SARS-COV-2 infection in indoor spaces is complicated because interactions at multiple spatial and temporal scales influence fine scale disease transmission.
+
+## Simulation Framework
+
+An extensible simulation engine accepts modules that modify transmission dynamics. 
+
+[add diagram of code]
+
+
+## Model layers
+
+![model diagram](./img/modelDiagram.png)
+
+- External Transmission
+- Spatial Transmission
+- Direct Contact Transmission
+
+## Estimating external infections
+
+[get explanation from trevor]
+
+- Probability of infection estimated from a micro mcmc model - work was presented early today by Trevor Kent and Heather Pastolic.
+
+- Uses case counts back estimated from deaths and mobility data derived from cell phone data to determine the probability of infection in a given location. 
+
+- We use that probability of infection to generate external infections while simulants are outside of their office space.   
+
+## Estimating spatial infections
+
+
+## Estimating direct contact infections
+
+## Hazard Control modules
+
+## Data Collection
+
+## Results
+
+## Conclusions
+
+## Graphical User Interface
