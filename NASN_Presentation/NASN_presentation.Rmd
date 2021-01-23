@@ -15,6 +15,14 @@ output:
 
 ![model diagram](./img/modelDiagram.png)
 
+## Response to date 
+
+[graphic of current case prevalence]
+
+- Failed to prevent spread 
+- People making decisions based on timelines not facts on the ground
+- Lack of coordination between local, state, and federal goverment has lead to patchwork responses 
+
 ## SARS-COV-2 Transmission
 
 - Inhalation of infectious particles 
@@ -27,6 +35,11 @@ output:
 ![hierarchy of controls](https://aghealth.ucdavis.edu/sites/g/files/dgvnsk261/files/inline-images/Hierarchy%20of%20Controls.jpg)
 
 *Image produced by University of California Davis*
+
+## Vaccination
+
+- Protects from severe disease
+- May not prevent transmission
 
 ## Problem Statement
 
