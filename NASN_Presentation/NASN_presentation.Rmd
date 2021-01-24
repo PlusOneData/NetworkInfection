@@ -9,26 +9,33 @@ output:
     highlight: pygments
     center: true
     slideNumber: true
+    self_contained: false
+    reveal_plugins: [ "zoom", "notes"]
 ---
 
-## Intro
+## Introduction
 
 ![model diagram](./img/modelDiagram.png)
 
-## Response to date 
+<aside class="notes">
+In the United States, local decision makers, from school board members to office managers, are being asked to make life and death decisions about when and how to re-open their buildings. Pressure to reopen schools and offices will grow as more and more of the population is vaccinated and these leaders need to be able to make informed decisions.
+</aside>
+## The system is complex
 
-[graphic of current case prevalence]
 
-- Failed to prevent spread 
-- People making decisions based on timelines not facts on the ground
-- Lack of coordination between local, state, and federal goverment has lead to patchwork responses 
+>- Processes are non-linear
+>- Policies outside your institution impact outcomes in your institution
+>- Systems within your institution interact in unexpected ways
+
+<aside class="notes">
+These individuals are being asked to reason about a system 
+</aside>
 
 ## SARS-COV-2 Transmission
 
+- Presence of infectious individuals or materials
 - Inhalation of infectious particles 
 - Introduction of fomites to mucus membranes
-- Presence of infectious particles and fomites 
-
 
 ## Hazard Controls
 
