@@ -268,12 +268,36 @@ $P_{dc}$ = probability of infection given direct contact
 
 ## Hazard Control modules
 
-- **Testing** - does not directly impact transmission but may inform other policies (e.g. leave)
 - **Leave Policy** - removes individuals who tested positive for a number of time steps
-- **Personal Protective Equipment** - reduces the probability of acquiring infection
 - **Room Density Limits** - reduces number of people in a room 
+- **Personal Protective Equipment** - reduces the probability of acquiring infection
+- **Testing** - does not directly impact transmission but may inform other policies (e.g. leave)
 
 ## Data Collection
+
+<style>
+.container{
+    display: flex;
+}
+.col{
+    flex: 1;
+}
+</style>
+
+
+<div class="container">
+
+<div class="col">
+
+![discLabNetwork](img/network.png)
+</div>
+<div class="col">
+- Survey of contact with lab mates (n=46)
+- Took mean of reported contact 
+- Estimated room volumes from blueprints
+</div>
+</div>
+## Initial Conditions
 
 ## Results
 
