@@ -68,7 +68,7 @@ prob.infect <- .113
 gmma <- 14
 
 relInfFunc <- function(x){
-  dgamma(x,shape = 5)
+  dgamma(x,shape = 6)
 }
 
 rooms <- data.frame(name = letters[1:4], volume = c(75,300,2000,100),airExchange = 4,stringsAsFactors = F)
@@ -95,7 +95,7 @@ covid_model_density <- infection_model(components = list(covid_ppe,
  
 ### simulation
 
-simResults <- runSims(graphObj = dlContactGraph, modelObj = covid_model_density, runs = 10,timeSteps = 30)
+simResults <- runSims(graphObj = dlContactGraph, modelObj = covid_model_density, runs = 1,timeSteps = 3)
 
 
 simResults$timeLines[[1]] %>% 

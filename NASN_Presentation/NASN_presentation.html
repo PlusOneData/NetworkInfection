@@ -443,6 +443,10 @@ style.innerHTML = style_script;
 document.getElementsByTagName('head')[0].appendChild(style);
 </script>
 
+    <script src="NASN_presentation_files/htmlwidgets-1.5.1/htmlwidgets.js"></script>
+    <script src="NASN_presentation_files/viz-1.8.2/viz.js"></script>
+    <link href="NASN_presentation_files/DiagrammeR-styles-0.2/styles.css" rel="stylesheet" />
+    <script src="NASN_presentation_files/grViz-binding-1.0.6.1/grViz.js"></script>
 </head>
 <body>
   <div class="reveal">
@@ -498,34 +502,81 @@ These individuals are being asked to reason about a system
 <section id="simulation-framework" class="slide level2">
 <h2>Simulation Framework</h2>
 <p>An extensible simulation engine accepts modules that modify transmission dynamics.</p>
-<p>[add diagram of code]</p>
+<div id="htmlwidget-6003e255599bc2f34064" style="width:768px;height:300px;" class="grViz html-widget"></div>
+<script type="application/json" data-for="htmlwidget-6003e255599bc2f34064">{"x":{"diagram":"\n  digraph graph2 {\n  \n  graph [layout = dot, rankdir = LR]\n  \n  # node definitions with substituted label text\n  node [shape = Square,\n        style = filled,\n        fixedsize = true,\n        width = 1.3]\n        \n  a [label = \"Graph Object\", \n     fillcolor = LightBlue]\n  b [label = Model,\n     fillcolor = SpringGreen]\n  c [label = \"Module 1\",\n     fillcolor = PaleGoldenrod]\n  d [label = \"Module N\",\n     fillcolor = Plum]\n  e [label = \"Simulation\nEngine\"]\n  \n  f [label = \"Parameters\", \n     fillcolor = Linen]\n  \n  a->e b->e {c d}->b f->c\n  \n  }\n  ","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
 </section>
 <section id="model-layers" class="slide level2">
 <h2>Model layers</h2>
 <p><img data-src="img/modelDiagram.png" alt="model diagram" /></p>
 <ul>
 <li>External Transmission</li>
-<li>Spatial Transmission</li>
+<li>Environmental Transmission</li>
 <li>Direct Contact Transmission</li>
+<li>Transmission Modifiers</li>
 </ul>
+</section>
+<section id="extended-sir-model" class="slide level2">
+<h2>Extended SIR Model</h2>
+<div id="htmlwidget-6dd6d1f2c33816fc43c6" style="width:768px;height:300px;" class="grViz html-widget"></div>
+<script type="application/json" data-for="htmlwidget-6dd6d1f2c33816fc43c6">{"x":{"diagram":"\n  digraph graph2 {\n  \n  graph [layout = dot, rankdir = LR]\n  \n  # node definitions with substituted label text\n  node [shape = circle,\n        style = filled,\n        fixedsize = true,\n        width = 0.95]\n        \n  a [label = Susceptible, \n     fillcolor = PaleGreen]\n  b [label = Infected,\n     fillcolor = Thistle]\n  c [label = Removed,\n     fillcolor = Gold]\n  d [label = Leave,\n     shape = egg,\n     fillcolor = Orange]\n  \n  node [shape = s,\n        style = filled,\n        fixedsize = true,\n        width = 1.5]   \n  \n  e [label = \"Direct\nContact\",\n     fillcolor = LightBlue]\n  f [label = \"Environmental\nExposure\",\n     fillcolor = LightCyan]\n  g [label = \"External\",\n     fillcolor = HoneyDew]\n\n  b->c b->d d->c\n  {e f g} -> b\n  \n  edge [arrowhead = none ]\n  a-> {e g f}\n    \n  \n  \n  }\n  ","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+</section>
+<section id="infectiousness-profile" class="slide level2">
+<h2>Infectiousness Profile</h2>
+<p><img src="NASN_presentation_files/figure-revealjs/unnamed-chunk-3-1.png" width="768" /></p>
+<aside class="notes">
+Based work by Larremore et al regarding viral load. <a href="https://www.medrxiv.org/content/10.1101/2020.06.22.20136309v3.full.pdf+html" class="uri">https://www.medrxiv.org/content/10.1101/2020.06.22.20136309v3.full.pdf+html</a>
+</aside>
 </section>
 <section id="estimating-external-infections" class="slide level2">
 <h2>Estimating external infections</h2>
-<p>[get explanation from trevor]</p>
+<p>[get explanation/figure from trevor]</p>
 <ul>
 <li><p>Probability of infection estimated from a micro mcmc model - work was presented early today by Trevor Kent and Heather Pastolic.</p></li>
 <li><p>Uses case counts back estimated from deaths and mobility data derived from cell phone data to determine the probability of infection in a given location.</p></li>
 <li><p>We use that probability of infection to generate external infections while simulants are outside of their office space.</p></li>
 </ul>
 </section>
-<section id="estimating-spatial-infections" class="slide level2">
-<h2>Estimating spatial infections</h2>
+<section id="estimating-environmental-infections" class="slide level2">
+<h2>Estimating Environmental infections</h2>
+<ul>
+<li><p><em>Emission Rate</em> <span class="math display">\[ {ER_{q,j} = c_v*c_i*IR*\sum_{i=1}^4(N_{i,j}*V_i)} \]</span></p></li>
+<li><p><em>Viral Concentration in Room</em> <span class="math display">\[ {n(t) = \frac{ER_q*I}{IVRR*V}+(n_o+\frac{ER_q*I}{IVRR})*\frac{e^{IVRR*t}}{V}} \]</span></p></li>
+<li><p><em>Risk of Infection</em> <span class="math display">\[ {R_{env} = 1-e^{-IR\int_0^Tn(t)dt}} \]</span></p>
+<p><small> <a href="https://doi.org/10.1016/j.envint.2020.106112">G. Buonanno et al. 2020</a> </small></p></li>
+</ul>
+<aside class="notes">
+Weills Reily Model CIRES group at University of Colorado Boulder
+</aside>
 </section>
 <section id="estimating-direct-contact-infections" class="slide level2">
 <h2>Estimating direct contact infections</h2>
+<style>
+.container{
+    display: flex;
+}
+.col{
+    flex: 1;
+}
+</style>
+<div class="container">
+<div class="col">
+<div id="htmlwidget-78fc2e7d5588963cf8a5" style="width:400px;height:400px;" class="grViz html-widget"></div>
+<script type="application/json" data-for="htmlwidget-78fc2e7d5588963cf8a5">{"x":{"diagram":"\n  digraph graph2 {\n  \n  graph [layout = neato]\n  \n  # node definitions with substituted label text\n  node [shape = circle,\n        style = filled,\n        fixedsize = true,\n        width = 0.95]\n        \n  a [label = Susceptible, \n     fillcolor = PaleGreen]\n  b [label = Infected,\n     fillcolor = Thistle]\n  c [label = Infected,\n     fillcolor = Thistle]\n  d [label = Infected,\n     fillcolor = Thistle]   \n  e [label = Removed,\n     fillcolor = Gold]\n  f [label = Leave,\n     shape = egg,\n     fillcolor = Orange]\n\n  edge [arrowhead = none ]\n  b->a c->a d->a e->a f->a\n    \n  }\n  ","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+</div>
+<div class="col" style="text-align=left;">
+<p><span class="math display">\[ R_{j}=\sum\limits_{i=1}^nI_{i}\delta_iP_{dc}  \]</span> <span class="math inline">\(I_{i}\)</span> = relative infectiousness of adjacent infected nodes<br />
+<span class="math inline">\(\delta_i\)</span> = transmission modifiers <span class="math inline">\(P_{dc}\)</span> = probability of infection given direct contact</p>
+</div>
+</div>
 </section>
 <section id="hazard-control-modules" class="slide level2">
 <h2>Hazard Control modules</h2>
+<ul>
+<li><strong>Testing</strong> - does not directly impact transmission but informs leave</li>
+<li><strong>Leave Policy</strong> - removes individuals who tested positive for a number of time steps</li>
+<li><strong>Personal Protective Equipment</strong> - reduces the probability of acquiring infection</li>
+<li><strong>Room Density Limits</strong> - reduces number of people in a room</li>
+</ul>
 </section>
 <section id="data-collection" class="slide level2">
 <h2>Data Collection</h2>

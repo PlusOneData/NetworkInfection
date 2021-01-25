@@ -56,7 +56,37 @@ Assessing risk of SARS-COV-2 infection in indoor spaces is complicated because i
 
 An extensible simulation engine accepts modules that modify transmission dynamics. 
 
-[add diagram of code]
+```{r echo=FALSE}
+DiagrammeR::grViz("
+  digraph graph2 {
+  
+  graph [layout = dot, rankdir = LR]
+  
+  # node definitions with substituted label text
+  node [shape = Square,
+        style = filled,
+        fixedsize = true,
+        width = 1.3]
+        
+  a [label = 'Graph Object', 
+     fillcolor = LightBlue]
+  b [label = Model,
+     fillcolor = SpringGreen]
+  c [label = 'Module 1',
+     fillcolor = PaleGoldenrod]
+  d [label = 'Module N',
+     fillcolor = Plum]
+  e [label = 'Simulation\nEngine']
+  
+  f [label = 'Parameters', 
+     fillcolor = Linen]
+  
+  a->e b->e {c d}->b f->c
+  
+  }
+  ", 
+  height = 300)
+```
 
 
 ## Model layers
@@ -64,12 +94,90 @@ An extensible simulation engine accepts modules that modify transmission dynamic
 ![model diagram](./img/modelDiagram.png)
 
 - External Transmission
-- Spatial Transmission
+- Environmental Transmission
 - Direct Contact Transmission
+- Transmission Modifiers
+
+## Extended SIR Model
+
+```{r echo=FALSE}
+DiagrammeR::grViz("
+  digraph graph2 {
+  
+  graph [layout = dot, rankdir = LR]
+  
+  # node definitions with substituted label text
+  node [shape = circle,
+        style = filled,
+        fixedsize = true,
+        width = 0.95]
+        
+  a [label = Susceptible, 
+     fillcolor = PaleGreen]
+  b [label = Infected,
+     fillcolor = Thistle]
+  c [label = Removed,
+     fillcolor = Gold]
+  d [label = Leave,
+     shape = egg,
+     fillcolor = Orange]
+  
+  node [shape = s,
+        style = filled,
+        fixedsize = true,
+        width = 1.5]   
+  
+  e [label = 'Direct\nContact',
+     fillcolor = LightBlue]
+  f [label = 'Environmental\nExposure',
+     fillcolor = LightCyan]
+  g [label = 'External',
+     fillcolor = HoneyDew]
+
+  b->c b->d d->c
+  {e f g} -> b
+  
+  edge [arrowhead = none ]
+  a-> {e g f}
+    
+  
+  
+  }
+  ", 
+  height = 300)
+```
+
+
+## Infectiousness Profile
+
+```{r echo=FALSE}
+library(ggplot2)
+
+infFuncToy <- function(x){
+  a <- dgamma(x,shape = 6)
+  b <- a/max(a)
+}
+
+p <- ggplot(data = data.frame(x = 0), mapping = aes(x = x))
+
+p + 
+  stat_function(fun = infFuncToy,size = 2, color = "black")+ 
+  xlim(0,20) +
+  theme_bw( base_size = 18) +
+  xlab("Days Post Infection") +
+  ylab("Relative Infectiousness")
+  
+
+```
+
+<aside class="notes">
+Based work by Larremore et al regarding viral load.
+https://www.medrxiv.org/content/10.1101/2020.06.22.20136309v3.full.pdf+html
+</aside>
 
 ## Estimating external infections
 
-[get explanation from trevor]
+[get explanation/figure from trevor]
 
 - Probability of infection estimated from a micro mcmc model - work was presented early today by Trevor Kent and Heather Pastolic.
 
@@ -77,12 +185,93 @@ An extensible simulation engine accepts modules that modify transmission dynamic
 
 - We use that probability of infection to generate external infections while simulants are outside of their office space.   
 
-## Estimating spatial infections
 
+## Estimating Environmental infections
+
+- *Emission Rate*
+$$ {ER_{q,j} = c_v*c_i*IR*\sum_{i=1}^4(N_{i,j}*V_i)} $$
+
+- *Viral Concentration in Room*
+$$ {n(t) = \frac{ER_q*I}{IVRR*V}+(n_o+\frac{ER_q*I}{IVRR})*\frac{e^{IVRR*t}}{V}} $$
+
+- *Risk of Infection*
+$$ {R_{env} = 1-e^{-IR\int_0^Tn(t)dt}} $$
+
+  <small> 
+    [G. Buonanno et al. 2020](https://doi.org/10.1016/j.envint.2020.106112)
+  </small>
+
+<aside class="notes">
+  Weills Reily Model 
+  CIRES group at University of Colorado Boulder
+</aside>  
 
 ## Estimating direct contact infections
 
+<style>
+.container{
+    display: flex;
+}
+.col{
+    flex: 1;
+}
+</style>
+
+
+<div class="container">
+
+<div class="col">
+
+```{r echo=FALSE}
+DiagrammeR::grViz("
+  digraph graph2 {
+  
+  graph [layout = neato]
+  
+  # node definitions with substituted label text
+  node [shape = circle,
+        style = filled,
+        fixedsize = true,
+        width = 0.95]
+        
+  a [label = Susceptible, 
+     fillcolor = PaleGreen]
+  b [label = Infected,
+     fillcolor = Thistle]
+  c [label = Infected,
+     fillcolor = Thistle]
+  d [label = Infected,
+     fillcolor = Thistle]   
+  e [label = Removed,
+     fillcolor = Gold]
+  f [label = Leave,
+     shape = egg,
+     fillcolor = Orange]
+
+  edge [arrowhead = none ]
+  b->a c->a d->a e->a f->a
+    
+  }
+  ", height = 400, width = 400)
+```
+</div>
+<div class="col" style="text-align=left;">
+
+$$ R_{j}=\sum\limits_{i=1}^nI_{i}\delta_iP_{dc}  $$
+$I_{i}$ = relative infectiousness of adjacent infected nodes  
+$\delta_i$ = transmission modifiers 
+$P_{dc}$ = probability of infection given direct contact  
+
+
+</div>
+</div>
+
 ## Hazard Control modules
+
+- **Testing** - does not directly impact transmission but may inform other policies (e.g. leave)
+- **Leave Policy** - removes individuals who tested positive for a number of time steps
+- **Personal Protective Equipment** - reduces the probability of acquiring infection
+- **Room Density Limits** - reduces number of people in a room 
 
 ## Data Collection
 
