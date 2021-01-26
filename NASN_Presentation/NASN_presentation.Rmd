@@ -11,6 +11,8 @@ output:
     slideNumber: true
     self_contained: false
     reveal_plugins: [ "zoom", "notes"]
+    includes:
+      before_body: doc_prefix.html
 ---
 
 ## Introduction
@@ -31,30 +33,23 @@ In the United States, local decision makers, from school board members to office
 These individuals are being asked to reason about a system 
 </aside>
 
-## SARS-COV-2 Transmission
-
-- Presence of infectious individuals or materials
-- Inhalation of infectious particles 
-- Introduction of fomites to mucus membranes
-
-## Hazard Controls
-
-![hierarchy of controls](https://aghealth.ucdavis.edu/sites/g/files/dgvnsk261/files/inline-images/Hierarchy%20of%20Controls.jpg)
-
-*Image produced by University of California Davis*
-
-## Vaccination
-
-- Protects from severe disease
-- May not prevent transmission
 
 ## Problem Statement
 
 Assessing risk of SARS-COV-2 infection in indoor spaces is complicated because interactions at multiple spatial and temporal scales influence fine scale disease transmission.
 
+
+## Graphical User Interface
+
+![Graphical User Interface](./img/guiExample.png)
+
+<aside class="notes">
+To make it easier for decision makers to reason about the system, we developed a graphical user interface that allows them to run different scenarios and see the impacts of their choices. 
+</aside>
+
 ## Simulation Framework
 
-An extensible simulation engine accepts modules that modify transmission dynamics. 
+We developed extensible simulation engine accepts modules that modify transmission dynamics. 
 
 ```{r echo=FALSE}
 DiagrammeR::grViz("
@@ -89,15 +84,6 @@ DiagrammeR::grViz("
 ```
 
 
-## Model layers
-
-![model diagram](./img/modelDiagram.png)
-
-- External Transmission
-- Environmental Transmission
-- Direct Contact Transmission
-- Transmission Modifiers
-
 ## Extended SIR Model
 
 ```{r echo=FALSE}
@@ -119,7 +105,7 @@ DiagrammeR::grViz("
   c [label = Removed,
      fillcolor = Gold]
   d [label = Leave,
-     shape = egg,
+     shape = s,
      fillcolor = Orange]
   
   node [shape = s,
@@ -171,9 +157,20 @@ p +
 ```
 
 <aside class="notes">
+
+Because we know individuals are not immediately infectious and the amount of virus shed wanes after 5 days post infection, we have generated a relative infectiousness profile. This allows to better reflect the reality of covid transmission. Something that may realize when looking at this plot, is that when you test and remove newly infectious individuals, you are sparing the larger population from being exposed to a highly infectious individual. 
+
 Based work by Larremore et al regarding viral load.
 https://www.medrxiv.org/content/10.1101/2020.06.22.20136309v3.full.pdf+html
 </aside>
+
+## How does transmission happen in our Model?
+
+
+1) External Transmission
+2) Environmental Transmission
+3) Direct Contact Transmission
+
 
 ## Estimating external infections
 
@@ -188,18 +185,34 @@ https://www.medrxiv.org/content/10.1101/2020.06.22.20136309v3.full.pdf+html
 
 ## Estimating Environmental infections
 
+
+<style>
+.container{
+    display: flex;
+}
+.col{
+    flex: 1;
+}
+</style>
+
+
+<div class="container">
+
+<div class="col">
+  ![env exposure](./img/envExp.png)
+</div>
+<div class="colstyle="text-align=left;">
+### *Risk of Infection* 
 - *Emission Rate*
-$$ {ER_{q,j} = c_v*c_i*IR*\sum_{i=1}^4(N_{i,j}*V_i)} $$
-
 - *Viral Concentration in Room*
-$$ {n(t) = \frac{ER_q*I}{IVRR*V}+(n_o+\frac{ER_q*I}{IVRR})*\frac{e^{IVRR*t}}{V}} $$
-
-- *Risk of Infection*
-$$ {R_{env} = 1-e^{-IR\int_0^Tn(t)dt}} $$
+- *Inhalataion Rate*
+- Time divided into 15 minute segments
 
   <small> 
     [G. Buonanno et al. 2020](https://doi.org/10.1016/j.envint.2020.106112)
   </small>
+</div>
+</div>
 
 <aside class="notes">
   Weills Reily Model 
@@ -266,12 +279,30 @@ $P_{dc}$ = probability of infection given direct contact
 </div>
 </div>
 
+
+## How is transmission prevented? 
+
+## Hazard Control Modules
+
+![hierarchy of controls](https://aghealth.ucdavis.edu/sites/g/files/dgvnsk261/files/inline-images/Hierarchy%20of%20Controls.jpg)
+
+*Image produced by University of California Davis*
+
+
 ## Hazard Control modules
 
 - **Leave Policy** - removes individuals who tested positive for a number of time steps
 - **Room Density Limits** - reduces number of people in a room 
 - **Personal Protective Equipment** - reduces the probability of acquiring infection
 - **Testing** - does not directly impact transmission but may inform other policies (e.g. leave)
+
+
+## Vaccination
+
+- Protects from severe disease
+- May not prevent transmission
+
+
 
 ## Data Collection
 
@@ -292,15 +323,68 @@ $P_{dc}$ = probability of infection given direct contact
 ![discLabNetwork](img/network.png)
 </div>
 <div class="col">
-- Survey of contact with lab mates (n=46)
-- Took mean of reported contact 
-- Estimated room volumes from blueprints
+- Surveyed lab mates asking them to indentify contacts (n=46)
+- Took mean of reported contact strength  
+- Estimated room volumes
+- Other values derived from literature
 </div>
 </div>
-## Initial Conditions
+## Model Initial Conditions
+
+- Three random infections
+- Testing occurs every three days, 50% of population is tested and receives results within two days.
+- 95% of people using full PPE suite (surgical mask, eye protection, distancing)
+- Density limit of $\frac{1\,person}{12\,m^3}$
+- 100 simulation runs, 60 time steps each
+- Other parameters determined by exhaustive lit review (see table in appendix)
 
 ## Results
 
+- Modifying testing frequency and leave policy have greatest impact on transmission, even when testing a fraction of the population
+- Increasing air exchange rates and decreasing room density also has a large impact on transmission
+- Under base conditions, direct contact and environmental transmission are the primary drivers modes of transmission
+
 ## Conclusions
 
-## Graphical User Interface
+## Appendix
+
+## SARS-COV-2 Transmission
+
+- Presence of infectious individuals or materials
+- Inhalation of infectious particles 
+- Introduction of fomites to mucus membranes
+
+<aside class="notes>
+
+</aside>
+
+## Model layers
+
+![model diagram](./img/modelDiagram.png)
+
+- External Transmission
+- Environmental Transmission
+- Direct Contact Transmission
+- Transmission Modifiers
+
+
+##  Environmental Infections Equations
+
+- *Emission Rate*
+$$ {ER_{q,j} = c_v*c_i*IR*\sum_{i=1}^4(N_{i,j}*V_i)} $$
+
+- *Viral Concentration in Room*
+$$ {n(t) = \frac{ER_q*I}{IVRR*V}+(n_o+\frac{ER_q*I}{IVRR})*\frac{e^{IVRR*t}}{V}} $$
+
+- *Risk of Infection*
+$$ {R_{env} = 1-e^{-IR\int_0^Tn(t)dt}} $$
+
+  <small> 
+    [G. Buonanno et al. 2020](https://doi.org/10.1016/j.envint.2020.106112)
+  </small>
+
+<aside class="notes">
+  Weills Reily Model 
+  CIRES group at University of Colorado Boulder
+</aside>  
+

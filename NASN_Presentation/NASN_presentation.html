@@ -449,6 +449,54 @@ document.getElementsByTagName('head')[0].appendChild(style);
     <script src="NASN_presentation_files/grViz-binding-1.0.6.1/grViz.js"></script>
 </head>
 <body>
+<html>
+
+<head>
+<title>Header</title>
+</head>
+
+<body>
+
+
+
+<style>
+.container1{
+    display: flex;
+    width: 960px;
+    height:50px;
+    left: 50%;
+    top: 10%;
+    bottom: auto;
+    right: auto;
+    transform: translate(25%, 0%) scale(0.936);
+    
+}
+.col1{
+    flex: 1;
+    width: 100%;
+    
+}
+.col2{
+    flex: 1;
+    align-items: flex-end;
+    text-align: right;
+    width: 100%;
+}
+</style>
+
+<div class="container1">
+  <div class="col1">
+    <p>&copy; Accenture Federal Services 2021</p>    
+  </div>
+
+<div class="col2">
+  <img src="img/ACC_Logo_Black_PurpleGT.png" alt="afs logo" height="100%" >
+</div>
+</div>
+
+
+</body>
+</html>
   <div class="reveal">
     <div class="slides">
 
@@ -475,57 +523,43 @@ In the United States, local decision makers, from school board members to office
 These individuals are being asked to reason about a system
 </aside>
 </section>
-<section id="sars-cov-2-transmission" class="slide level2">
-<h2>SARS-COV-2 Transmission</h2>
-<ul>
-<li>Presence of infectious individuals or materials</li>
-<li>Inhalation of infectious particles</li>
-<li>Introduction of fomites to mucus membranes</li>
-</ul>
-</section>
-<section id="hazard-controls" class="slide level2">
-<h2>Hazard Controls</h2>
-<p><img data-src="https://aghealth.ucdavis.edu/sites/g/files/dgvnsk261/files/inline-images/Hierarchy%20of%20Controls.jpg" alt="hierarchy of controls" /></p>
-<p><em>Image produced by University of California Davis</em></p>
-</section>
-<section id="vaccination" class="slide level2">
-<h2>Vaccination</h2>
-<ul>
-<li>Protects from severe disease</li>
-<li>May not prevent transmission</li>
-</ul>
-</section>
 <section id="problem-statement" class="slide level2">
 <h2>Problem Statement</h2>
 <p>Assessing risk of SARS-COV-2 infection in indoor spaces is complicated because interactions at multiple spatial and temporal scales influence fine scale disease transmission.</p>
 </section>
+<section id="graphical-user-interface" class="slide level2">
+<h2>Graphical User Interface</h2>
+<p><img data-src="img/guiExample.png" alt="Graphical User Interface" /></p>
+<aside class="notes">
+To make it easier for decision makers to reason about the system, we developed a graphical user interface that allows them to run different scenarios and see the impacts of their choices.
+</aside>
+</section>
 <section id="simulation-framework" class="slide level2">
 <h2>Simulation Framework</h2>
-<p>An extensible simulation engine accepts modules that modify transmission dynamics.</p>
-<div id="htmlwidget-4ce5d74322037311c9ea" style="width:768px;height:300px;" class="grViz html-widget"></div>
-<script type="application/json" data-for="htmlwidget-4ce5d74322037311c9ea">{"x":{"diagram":"\n  digraph graph2 {\n  \n  graph [layout = dot, rankdir = LR]\n  \n  # node definitions with substituted label text\n  node [shape = Square,\n        style = filled,\n        fixedsize = true,\n        width = 1.3]\n        \n  a [label = \"Graph Object\", \n     fillcolor = LightBlue]\n  b [label = Model,\n     fillcolor = SpringGreen]\n  c [label = \"Module 1\",\n     fillcolor = PaleGoldenrod]\n  d [label = \"Module N\",\n     fillcolor = Plum]\n  e [label = \"Simulation\nEngine\"]\n  \n  f [label = \"Parameters\", \n     fillcolor = Linen]\n  \n  a->e b->e {c d}->b f->c\n  \n  }\n  ","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
-</section>
-<section id="model-layers" class="slide level2">
-<h2>Model layers</h2>
-<p><img data-src="img/modelDiagram.png" alt="model diagram" /></p>
-<ul>
-<li>External Transmission</li>
-<li>Environmental Transmission</li>
-<li>Direct Contact Transmission</li>
-<li>Transmission Modifiers</li>
-</ul>
+<p>We developed extensible simulation engine accepts modules that modify transmission dynamics.</p>
+<div id="htmlwidget-7cfa5eb87b189f4bd3de" style="width:768px;height:300px;" class="grViz html-widget"></div>
+<script type="application/json" data-for="htmlwidget-7cfa5eb87b189f4bd3de">{"x":{"diagram":"\n  digraph graph2 {\n  \n  graph [layout = dot, rankdir = LR]\n  \n  # node definitions with substituted label text\n  node [shape = Square,\n        style = filled,\n        fixedsize = true,\n        width = 1.3]\n        \n  a [label = \"Graph Object\", \n     fillcolor = LightBlue]\n  b [label = Model,\n     fillcolor = SpringGreen]\n  c [label = \"Module 1\",\n     fillcolor = PaleGoldenrod]\n  d [label = \"Module N\",\n     fillcolor = Plum]\n  e [label = \"Simulation\nEngine\"]\n  \n  f [label = \"Parameters\", \n     fillcolor = Linen]\n  \n  a->e b->e {c d}->b f->c\n  \n  }\n  ","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
 </section>
 <section id="extended-sir-model" class="slide level2">
 <h2>Extended SIR Model</h2>
-<div id="htmlwidget-d0d599cd355367d6f3cc" style="width:768px;height:300px;" class="grViz html-widget"></div>
-<script type="application/json" data-for="htmlwidget-d0d599cd355367d6f3cc">{"x":{"diagram":"\n  digraph graph2 {\n  \n  graph [layout = dot, rankdir = LR]\n  \n  # node definitions with substituted label text\n  node [shape = circle,\n        style = filled,\n        fixedsize = true,\n        width = 0.95]\n        \n  a [label = Susceptible, \n     fillcolor = PaleGreen]\n  b [label = Infected,\n     fillcolor = Thistle]\n  c [label = Removed,\n     fillcolor = Gold]\n  d [label = Leave,\n     shape = egg,\n     fillcolor = Orange]\n  \n  node [shape = s,\n        style = filled,\n        fixedsize = true,\n        width = 1.5]   \n  \n  e [label = \"Direct\nContact\",\n     fillcolor = LightBlue]\n  f [label = \"Environmental\nExposure\",\n     fillcolor = LightCyan]\n  g [label = \"External\",\n     fillcolor = HoneyDew]\n\n  b->c b->d d->c\n  {e f g} -> b\n  \n  edge [arrowhead = none ]\n  a-> {e g f}\n    \n  \n  \n  }\n  ","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-f7bb214b6bc51b5c7b91" style="width:768px;height:300px;" class="grViz html-widget"></div>
+<script type="application/json" data-for="htmlwidget-f7bb214b6bc51b5c7b91">{"x":{"diagram":"\n  digraph graph2 {\n  \n  graph [layout = dot, rankdir = LR]\n  \n  # node definitions with substituted label text\n  node [shape = circle,\n        style = filled,\n        fixedsize = true,\n        width = 0.95]\n        \n  a [label = Susceptible, \n     fillcolor = PaleGreen]\n  b [label = Infected,\n     fillcolor = Thistle]\n  c [label = Removed,\n     fillcolor = Gold]\n  d [label = Leave,\n     shape = s,\n     fillcolor = Orange]\n  \n  node [shape = s,\n        style = filled,\n        fixedsize = true,\n        width = 1.5]   \n  \n  e [label = \"Direct\nContact\",\n     fillcolor = LightBlue]\n  f [label = \"Environmental\nExposure\",\n     fillcolor = LightCyan]\n  g [label = \"External\",\n     fillcolor = HoneyDew]\n\n  b->c b->d d->c\n  {e f g} -> b\n  \n  edge [arrowhead = none ]\n  a-> {e g f}\n    \n  \n  \n  }\n  ","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
 </section>
 <section id="infectiousness-profile" class="slide level2">
 <h2>Infectiousness Profile</h2>
 <p><img src="NASN_presentation_files/figure-revealjs/unnamed-chunk-3-1.png" width="768" /></p>
 <aside class="notes">
+<p>Because we know individuals are not immediately infectious and the amount of virus shed wanes after 5 days post infection, we have generated a relative infectiousness profile. This allows to better reflect the reality of covid transmission. Something that may realize when looking at this plot, is that when you test and remove newly infectious individuals, you are sparing the larger population from being exposed to a highly infectious individual.</p>
 Based work by Larremore et al regarding viral load. <a href="https://www.medrxiv.org/content/10.1101/2020.06.22.20136309v3.full.pdf+html" class="uri">https://www.medrxiv.org/content/10.1101/2020.06.22.20136309v3.full.pdf+html</a>
 </aside>
+</section>
+<section id="how-does-transmission-happen-in-our-model" class="slide level2">
+<h2>How does transmission happen in our Model?</h2>
+<ol type="1">
+<li>External Transmission</li>
+<li>Environmental Transmission</li>
+<li>Direct Contact Transmission</li>
+</ol>
 </section>
 <section id="estimating-external-infections" class="slide level2">
 <h2>Estimating external infections</h2>
@@ -538,12 +572,29 @@ Based work by Larremore et al regarding viral load. <a href="https://www.medrxiv
 </section>
 <section id="estimating-environmental-infections" class="slide level2">
 <h2>Estimating Environmental infections</h2>
+<style>
+.container{
+    display: flex;
+}
+.col{
+    flex: 1;
+}
+</style>
+<div class="container">
+<div class="col">
+<p><img data-src="img/envExp.png" alt="env exposure" /></p>
+</div>
+<div class="colstyle=" data-text-align="left;&quot;">
+<h3 id="risk-of-infection"><em>Risk of Infection</em></h3>
 <ul>
-<li><p><em>Emission Rate</em> <span class="math display">\[ {ER_{q,j} = c_v*c_i*IR*\sum_{i=1}^4(N_{i,j}*V_i)} \]</span></p></li>
-<li><p><em>Viral Concentration in Room</em> <span class="math display">\[ {n(t) = \frac{ER_q*I}{IVRR*V}+(n_o+\frac{ER_q*I}{IVRR})*\frac{e^{IVRR*t}}{V}} \]</span></p></li>
-<li><p><em>Risk of Infection</em> <span class="math display">\[ {R_{env} = 1-e^{-IR\int_0^Tn(t)dt}} \]</span></p>
+<li><p><em>Emission Rate</em></p></li>
+<li><p><em>Viral Concentration in Room</em></p></li>
+<li><p><em>Inhalataion Rate</em></p></li>
+<li><p>Time divided into 15 minute segments</p>
 <p><small> <a href="https://doi.org/10.1016/j.envint.2020.106112">G. Buonanno et al. 2020</a> </small></p></li>
 </ul>
+</div>
+</div>
 <aside class="notes">
 Weills Reily Model CIRES group at University of Colorado Boulder
 </aside>
@@ -560,8 +611,8 @@ Weills Reily Model CIRES group at University of Colorado Boulder
 </style>
 <div class="container">
 <div class="col">
-<div id="htmlwidget-27617bbb0474427244f5" style="width:400px;height:400px;" class="grViz html-widget"></div>
-<script type="application/json" data-for="htmlwidget-27617bbb0474427244f5">{"x":{"diagram":"\n  digraph graph2 {\n  \n  graph [layout = neato]\n  \n  # node definitions with substituted label text\n  node [shape = circle,\n        style = filled,\n        fixedsize = true,\n        width = 0.95]\n        \n  a [label = Susceptible, \n     fillcolor = PaleGreen]\n  b [label = Infected,\n     fillcolor = Thistle]\n  c [label = Infected,\n     fillcolor = Thistle]\n  d [label = Infected,\n     fillcolor = Thistle]   \n  e [label = Removed,\n     fillcolor = Gold]\n  f [label = Leave,\n     shape = egg,\n     fillcolor = Orange]\n\n  edge [arrowhead = none ]\n  b->a c->a d->a e->a f->a\n    \n  }\n  ","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-33cb7741340481f20252" style="width:400px;height:400px;" class="grViz html-widget"></div>
+<script type="application/json" data-for="htmlwidget-33cb7741340481f20252">{"x":{"diagram":"\n  digraph graph2 {\n  \n  graph [layout = neato]\n  \n  # node definitions with substituted label text\n  node [shape = circle,\n        style = filled,\n        fixedsize = true,\n        width = 0.95]\n        \n  a [label = Susceptible, \n     fillcolor = PaleGreen]\n  b [label = Infected,\n     fillcolor = Thistle]\n  c [label = Infected,\n     fillcolor = Thistle]\n  d [label = Infected,\n     fillcolor = Thistle]   \n  e [label = Removed,\n     fillcolor = Gold]\n  f [label = Leave,\n     shape = egg,\n     fillcolor = Orange]\n\n  edge [arrowhead = none ]\n  b->a c->a d->a e->a f->a\n    \n  }\n  ","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
 </div>
 <div class="col" style="text-align=left;">
 <p><span class="math display">\[ R_{j}=\sum\limits_{i=1}^nI_{i}\delta_iP_{dc}  \]</span> <span class="math inline">\(I_{i}\)</span> = relative infectiousness of adjacent infected nodes<br />
@@ -569,13 +620,28 @@ Weills Reily Model CIRES group at University of Colorado Boulder
 </div>
 </div>
 </section>
+<section id="how-is-transmission-prevented" class="slide level2">
+<h2>How is transmission prevented?</h2>
+</section>
 <section id="hazard-control-modules" class="slide level2">
+<h2>Hazard Control Modules</h2>
+<p><img data-src="https://aghealth.ucdavis.edu/sites/g/files/dgvnsk261/files/inline-images/Hierarchy%20of%20Controls.jpg" alt="hierarchy of controls" /></p>
+<p><em>Image produced by University of California Davis</em></p>
+</section>
+<section id="hazard-control-modules-1" class="slide level2">
 <h2>Hazard Control modules</h2>
 <ul>
 <li><strong>Leave Policy</strong> - removes individuals who tested positive for a number of time steps</li>
 <li><strong>Room Density Limits</strong> - reduces number of people in a room</li>
 <li><strong>Personal Protective Equipment</strong> - reduces the probability of acquiring infection</li>
 <li><strong>Testing</strong> - does not directly impact transmission but may inform other policies (e.g. leave)</li>
+</ul>
+</section>
+<section id="vaccination" class="slide level2">
+<h2>Vaccination</h2>
+<ul>
+<li>Protects from severe disease</li>
+<li>May not prevent transmission</li>
 </ul>
 </section>
 <section id="data-collection" class="slide level2">
@@ -594,24 +660,80 @@ Weills Reily Model CIRES group at University of Colorado Boulder
 </div>
 <div class="col">
 <ul>
-<li>Survey of contact with lab mates (n=46)</li>
-<li>Took mean of reported contact</li>
-<li>Estimated room volumes from blueprints</li>
+<li>Surveyed lab mates asking them to indentify contacts (n=46)</li>
+<li>Took mean of reported contact strength<br />
+</li>
+<li>Estimated room volumes</li>
+<li>Other values derived from literature</li>
 </ul>
 </div>
 </div>
 </section>
-<section id="initial-conditions" class="slide level2">
-<h2>Initial Conditions</h2>
+<section id="model-initial-conditions" class="slide level2">
+<h2>Model Initial Conditions</h2>
+<ul>
+<li>Three random infections</li>
+<li>Testing occurs every three days, 50% of population is tested and receives results within two days.</li>
+<li>95% of people using full PPE suite (surgical mask, eye protection, distancing)</li>
+<li>Density limit of <span class="math inline">\(\frac{1\,person}{12\,m^3}\)</span></li>
+<li>100 simulation runs, 60 time steps each</li>
+<li>Other parameters determined by exhaustive lit review (see table in appendix)</li>
+</ul>
 </section>
 <section id="results" class="slide level2">
 <h2>Results</h2>
+<ul>
+<li>Modifying testing frequency and leave policy have greatest impact on transmission, even when testing a fraction of the population</li>
+<li>Increasing air exchange rates and decreasing room density also has a large impact on transmission</li>
+<li>Under base conditions, direct contact and environmental transmission are the primary drivers modes of transmission</li>
+</ul>
 </section>
 <section id="conclusions" class="slide level2">
 <h2>Conclusions</h2>
 </section>
-<section id="graphical-user-interface" class="slide level2">
-<h2>Graphical User Interface</h2>
+<section id="appendix" class="slide level2">
+<h2>Appendix</h2>
+</section>
+<section id="sars-cov-2-transmission" class="slide level2">
+<h2>SARS-COV-2 Transmission</h2>
+<ul>
+<li>Presence of infectious individuals or materials</li>
+<li>Inhalation of infectious particles</li>
+<li>Introduction of fomites to mucus membranes</li>
+</ul>
+<aside class="notes>
+
+</aside>
+
+## Model layers
+
+![model diagram](./img/modelDiagram.png)
+
+- External Transmission
+- Environmental Transmission
+- Direct Contact Transmission
+- Transmission Modifiers
+
+
+##  Environmental Infections Equations
+
+- *Emission Rate*
+$$ {ER_{q,j} = c_v*c_i*IR*\sum_{i=1}^4(N_{i,j}*V_i)} $$
+
+- *Viral Concentration in Room*
+$$ {n(t) = \frac{ER_q*I}{IVRR*V}+(n_o+\frac{ER_q*I}{IVRR})*\frac{e^{IVRR*t}}{V}} $$
+
+- *Risk of Infection*
+$$ {R_{env} = 1-e^{-IR\int_0^Tn(t)dt}} $$
+
+  <small> 
+    [G. Buonanno et al. 2020](https://doi.org/10.1016/j.envint.2020.106112)
+  </small>
+
+<aside class="notes">
+  Weills Reily Model 
+  CIRES group at University of Colorado Boulder
+</aside>
 </section>
     </div>
   </div>
