@@ -16,7 +16,7 @@ runSims <- function(graphObj, modelObj, runs, timeSteps){
   
   #data store
   runList <- list()
-  
+  timeLineList <- list()
   ### loop through simulation
   for(i in 1:runs){
   
@@ -33,11 +33,14 @@ runSims <- function(graphObj, modelObj, runs, timeSteps){
   
   #store runs
   runList[[i]] <- stats3
+  timeLineList[[i]] <- timeLine[[max(timeSteps)]]
   }
   
   simObj <- do.call(rbind,runList)
   
-  return(simObj)
+  
+  
+  return(list(sirStats = simObj, timeLines =  timeLineList))
 }
 
 

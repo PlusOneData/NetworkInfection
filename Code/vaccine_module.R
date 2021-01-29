@@ -54,19 +54,28 @@ default_vax <- setRefClass(
     donext = function(g) {
       "vaccinate additional people"
       #filter for unvaccinated people
-      unVax <- igraph::V(g)[vaxProtect == 0]
+      unVax <- igraph::V(g)[vaxProtect == 1]
       
       if(vaxRate < 1){
         vaxRate <- rbinom(1,1,prob = vaxRate)
       } 
       
+      if(vaxRate > igraph::vcount(g)){
+        #print("so much vaccine!")
+        #browser()
+        igraph::V(g)[unVax]$vaxProtect <- rep(1-vaxEff,length(unVax))
+
+      } else {
+      
       igraph::V(g)[unVax]$vaxProtect <- c(rep(1-vaxEff,vaxRate),rep(1,vcount(g)-vaxRate)) %>% sample()  
+      }
       #vaccinate some number of individuals - give them vaxProtect attribute
       
-      if(sum(igraph::V(g)$infProbReduction != igraph::V(g)$vaxProtect) != 0){
-        "Infection probability is reset in ppe module so must be re-established here"
-        igraph::V(g)$infProbReduction <- igraph::V(g)$infProbReduction*igraph::V(g)$vaxProtect
-      }
+   
+        vaxed <- igraph::V(g)[vaxProtect != 1]
+          "Infection probability is reset in ppe module so must be re-established here"
+        igraph::V(g)[vaxed]$infProbReduction <- igraph::V(g)[vaxed]$infProbReduction*igraph::V(g)[vaxed]$vaxProtect
+      
       return(g)
     }
   )

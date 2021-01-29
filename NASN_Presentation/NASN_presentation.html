@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="author" content="Collin Schwantes, Benno Lee, Marjorie Willner, Ben Ortiz, Viveca Pabon-Harr" />
+  <title>Integrating COVID-19 Models at Different Scales for Infection Risk Estimation and Control Optimization</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="NASN_presentation_files/reveal.js-3.3.0.1/css/reveal.css"/>
+
+
+
+<link rel="stylesheet" href="NASN_presentation_files/reveal.js-3.3.0.1/css/theme/simple.css" id="theme">
+
+
+  <!-- some tweaks to reveal css -->
+  <style type="text/css">
+    .reveal h1 { font-size: 2.0em; }
+    .reveal h2 { font-size: 1.5em;  }
+    .reveal h3 { font-size: 1.25em;	}
+    .reveal h4 { font-size: 1em;	}
+
+    .reveal .slides>section,
+    .reveal .slides>section>section {
+      padding: 0px 0px;
+    }
+
+
+
+    .reveal table {
+      border-width: 1px;
+      border-spacing: 2px;
+      border-style: dotted;
+      border-color: gray;
+      border-collapse: collapse;
+      font-size: 0.7em;
+    }
+
+    .reveal table th {
+      border-width: 1px;
+      padding-left: 10px;
+      padding-right: 25px;
+      font-weight: bold;
+      border-style: dotted;
+      border-color: gray;
+    }
+
+    .reveal table td {
+      border-width: 1px;
+      padding-left: 10px;
+      padding-right: 25px;
+      border-style: dotted;
+      border-color: gray;
+    }
+
+
+  </style>
+
+    <style type="text/css">code{white-space: pre;}</style>
+
+
+<!-- Printing and PDF exports -->
+<script id="paper-css" type="application/dynamic-css">
+
+/* Default Print Stylesheet Template
+   by Rob Glazebrook of CSSnewbie.com
+   Last Updated: June 4, 2008
+
+   Feel free (nay, compelled) to edit, append, and
+   manipulate this file as you see fit. */
+
+
+@media print {
+
+	/* SECTION 1: Set default width, margin, float, and
+	   background. This prevents elements from extending
+	   beyond the edge of the printed page, and prevents
+	   unnecessary background images from printing */
+	html {
+		background: #fff;
+		width: auto;
+		height: auto;
+		overflow: visible;
+	}
+	body {
+		background: #fff;
+		font-size: 20pt;
+		width: auto;
+		height: auto;
+		border: 0;
+		margin: 0 5%;
+		padding: 0;
+		overflow: visible;
+		float: none !important;
+	}
+
+	/* SECTION 2: Remove any elements not needed in print.
+	   This would include navigation, ads, sidebars, etc. */
+	.nestedarrow,
+	.controls,
+	.fork-reveal,
+	.share-reveal,
+	.state-background,
+	.reveal .progress,
+	.reveal .backgrounds {
+		display: none !important;
+	}
+
+	/* SECTION 3: Set body font face, size, and color.
+	   Consider using a serif font for readability. */
+	body, p, td, li, div {
+		font-size: 20pt!important;
+		font-family: Georgia, "Times New Roman", Times, serif !important;
+		color: #000;
+	}
+
+	/* SECTION 4: Set heading font face, sizes, and color.
+	   Differentiate your headings from your body text.
+	   Perhaps use a large sans-serif for distinction. */
+	h1,h2,h3,h4,h5,h6 {
+		color: #000!important;
+		height: auto;
+		line-height: normal;
+		font-family: Georgia, "Times New Roman", Times, serif !important;
+		text-shadow: 0 0 0 #000 !important;
+		text-align: left;
+		letter-spacing: normal;
+	}
+	/* Need to reduce the size of the fonts for printing */
+	h1 { font-size: 28pt !important;  }
+	h2 { font-size: 24pt !important; }
+	h3 { font-size: 22pt !important; }
+	h4 { font-size: 22pt !important; font-variant: small-caps; }
+	h5 { font-size: 21pt !important; }
+	h6 { font-size: 20pt !important; font-style: italic; }
+
+	/* SECTION 5: Make hyperlinks more usable.
+	   Ensure links are underlined, and consider appending
+	   the URL to the end of the link for usability. */
+	a:link,
+	a:visited {
+		color: #000 !important;
+		font-weight: bold;
+		text-decoration: underline;
+	}
+	/*
+	.reveal a:link:after,
+	.reveal a:visited:after {
+		content: " (" attr(href) ") ";
+		color: #222 !important;
+		font-size: 90%;
+	}
+	*/
+
+
+	/* SECTION 6: more reveal.js specific additions by @skypanther */
+	ul, ol, div, p {
+		visibility: visible;
+		position: static;
+		width: auto;
+		height: auto;
+		display: block;
+		overflow: visible;
+		margin: 0;
+		text-align: left !important;
+	}
+	.reveal pre,
+	.reveal table {
+		margin-left: 0;
+		margin-right: 0;
+	}
+	.reveal pre code {
+		padding: 20px;
+		border: 1px solid #ddd;
+	}
+	.reveal blockquote {
+		margin: 20px 0;
+	}
+	.reveal .slides {
+		position: static !important;
+		width: auto !important;
+		height: auto !important;
+
+		left: 0 !important;
+		top: 0 !important;
+		margin-left: 0 !important;
+		margin-top: 0 !important;
+		padding: 0 !important;
+		zoom: 1 !important;
+
+		overflow: visible !important;
+		display: block !important;
+
+		text-align: left !important;
+		-webkit-perspective: none;
+		   -moz-perspective: none;
+		    -ms-perspective: none;
+		        perspective: none;
+
+		-webkit-perspective-origin: 50% 50%;
+		   -moz-perspective-origin: 50% 50%;
+		    -ms-perspective-origin: 50% 50%;
+		        perspective-origin: 50% 50%;
+	}
+	.reveal .slides section {
+		visibility: visible !important;
+		position: static !important;
+		width: auto !important;
+		height: auto !important;
+		display: block !important;
+		overflow: visible !important;
+
+		left: 0 !important;
+		top: 0 !important;
+		margin-left: 0 !important;
+		margin-top: 0 !important;
+		padding: 60px 20px !important;
+		z-index: auto !important;
+
+		opacity: 1 !important;
+
+		page-break-after: always !important;
+
+		-webkit-transform-style: flat !important;
+		   -moz-transform-style: flat !important;
+		    -ms-transform-style: flat !important;
+		        transform-style: flat !important;
+
+		-webkit-transform: none !important;
+		   -moz-transform: none !important;
+		    -ms-transform: none !important;
+		        transform: none !important;
+
+		-webkit-transition: none !important;
+		   -moz-transition: none !important;
+		    -ms-transition: none !important;
+		        transition: none !important;
+	}
+	.reveal .slides section.stack {
+		padding: 0 !important;
+	}
+	.reveal section:last-of-type {
+		page-break-after: avoid !important;
+	}
+	.reveal section .fragment {
+		opacity: 1 !important;
+		visibility: visible !important;
+
+		-webkit-transform: none !important;
+		   -moz-transform: none !important;
+		    -ms-transform: none !important;
+		        transform: none !important;
+	}
+	.reveal section img {
+		display: block;
+		margin: 15px 0px;
+		background: rgba(255,255,255,1);
+		border: 1px solid #666;
+		box-shadow: none;
+	}
+
+	.reveal section small {
+		font-size: 0.8em;
+	}
+
+}  
+</script>
+
+
+<script id="pdf-css" type="application/dynamic-css">
+    
+/**
+ * This stylesheet is used to print reveal.js
+ * presentations to PDF.
+ *
+ * https://github.com/hakimel/reveal.js#pdf-export
+ */
+
+* {
+	-webkit-print-color-adjust: exact;
+}
+
+body {
+	margin: 0 auto !important;
+	border: 0;
+	padding: 0;
+	float: none !important;
+	overflow: visible;
+}
+
+html {
+	width: 100%;
+	height: 100%;
+	overflow: visible;
+}
+
+/* Remove any elements not needed in print. */
+.nestedarrow,
+.reveal .controls,
+.reveal .progress,
+.reveal .playback,
+.reveal.overview,
+.fork-reveal,
+.share-reveal,
+.state-background {
+	display: none !important;
+}
+
+h1, h2, h3, h4, h5, h6 {
+	text-shadow: 0 0 0 #000 !important;
+}
+
+.reveal pre code {
+	overflow: hidden !important;
+	font-family: Courier, 'Courier New', monospace !important;
+}
+
+ul, ol, div, p {
+	visibility: visible;
+	position: static;
+	width: auto;
+	height: auto;
+	display: block;
+	overflow: visible;
+	margin: auto;
+}
+.reveal {
+	width: auto !important;
+	height: auto !important;
+	overflow: hidden !important;
+}
+.reveal .slides {
+	position: static;
+	width: 100%;
+	height: auto;
+
+	left: auto;
+	top: auto;
+	margin: 0 !important;
+	padding: 0 !important;
+
+	overflow: visible;
+	display: block;
+
+	-webkit-perspective: none;
+	   -moz-perspective: none;
+	    -ms-perspective: none;
+	        perspective: none;
+
+	-webkit-perspective-origin: 50% 50%; /* there isn't a none/auto value but 50-50 is the default */
+	   -moz-perspective-origin: 50% 50%;
+	    -ms-perspective-origin: 50% 50%;
+	        perspective-origin: 50% 50%;
+}
+
+.reveal .slides section {
+	page-break-after: always !important;
+
+	visibility: visible !important;
+	position: relative !important;
+	display: block !important;
+	position: relative !important;
+
+	margin: 0 !important;
+	padding: 0 !important;
+	box-sizing: border-box !important;
+	min-height: 1px;
+
+	opacity: 1 !important;
+
+	-webkit-transform-style: flat !important;
+	   -moz-transform-style: flat !important;
+	    -ms-transform-style: flat !important;
+	        transform-style: flat !important;
+
+	-webkit-transform: none !important;
+	   -moz-transform: none !important;
+	    -ms-transform: none !important;
+	        transform: none !important;
+}
+
+.reveal section.stack {
+	margin: 0 !important;
+	padding: 0 !important;
+	page-break-after: avoid !important;
+	height: auto !important;
+	min-height: auto !important;
+}
+
+.reveal img {
+	box-shadow: none;
+}
+
+.reveal .roll {
+	overflow: visible;
+	line-height: 1em;
+}
+
+/* Slide backgrounds are placed inside of their slide when exporting to PDF */
+.reveal section .slide-background {
+	display: block !important;
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	z-index: -1;
+}
+
+/* All elements should be above the slide-background */
+.reveal section>* {
+	position: relative;
+	z-index: 1;
+}
+
+/* Display slide speaker notes when 'showNotes' is enabled */
+.reveal .speaker-notes-pdf {
+	display: block;
+	width: 100%;
+	max-height: none;
+	left: auto;
+	top: auto;
+	z-index: 100;
+}
+
+/* Display slide numbers when 'slideNumber' is enabled */
+.reveal .slide-number-pdf {
+	display: block;
+	position: absolute;
+	font-size: 14px;
+}
+
+</script>
+
+
+<script>
+var style = document.createElement( 'style' );
+style.type = 'text/css';
+var style_script_id = window.location.search.match( /print-pdf/gi ) ? 'pdf-css' : 'paper-css';
+var style_script = document.getElementById(style_script_id).text;
+style.innerHTML = style_script;
+document.getElementsByTagName('head')[0].appendChild(style);
+</script>
+
+    <script src="NASN_presentation_files/htmlwidgets-1.5.1/htmlwidgets.js"></script>
+    <script src="NASN_presentation_files/viz-1.8.2/viz.js"></script>
+    <link href="NASN_presentation_files/DiagrammeR-styles-0.2/styles.css" rel="stylesheet" />
+    <script src="NASN_presentation_files/grViz-binding-1.0.6.1/grViz.js"></script>
+</head>
+<body>
+<html>
+
+<head>
+<title>Header</title>
+</head>
+
+<body>
+
+
+
+<style>
+.container1{
+    display: flex;
+    align-items: center;
+    align-content: center;
+    flex-direction: row;
+    width: 960px;
+    height:50px;
+    left: 25%;
+    top: 10%;
+    bottom: auto;
+    right: auto;
+    transform: translate(25%, 0%) scale(0.936);
+    
+}
+.col1{
+    flex: 1;
+    
+    
+}
+.col2{
+    flex: 1;
+    align-items: flex-end;
+    text-align: right;
+
+}
+</style>
+
+<div class="container1">
+  <div class="col1">
+    <p>
+      <img src="img/ACC_Logo_Black_PurpleGT.png" alt="afs logo" height="50px" >
+    </p>
+    
+  </div>
+
+  <div class="col2">
+    <p>&copy; Accenture Federal Services 2021</p>    
+  </div>
+</div>
+
+
+</body>
+</html>
+  <div class="reveal">
+    <div class="slides">
+
+<section>
+    <h1 class="title">Integrating COVID-19 Models at Different Scales for Infection Risk Estimation and Control Optimization</h1>
+    <h2 class="author">Collin Schwantes, Benno Lee, Marjorie Willner, Ben Ortiz, Viveca Pabon-Harr</h2>
+</section>
+
+<section id="introduction" class="slide level2">
+<h2>Introduction</h2>
+<p><img data-src="img/modelDiagram.png" alt="model diagram" /></p>
+<aside class="notes">
+In the United States, local decision makers, from school board members to office managers, are being asked to make life and death decisions about when and how to re-open their buildings. Pressure to reopen schools and offices will grow as more and more of the population is vaccinated and these leaders need to be able to make informed decisions.
+</aside>
+</section>
+<section id="the-system-is-complex" class="slide level2">
+<h2>The system is complex</h2>
+<ul>
+<li class="fragment">Processes are non-linear</li>
+<li class="fragment">Policies outside your institution impact outcomes in your institution</li>
+<li class="fragment">Systems within your institution interact in unexpected ways</li>
+</ul>
+<aside class="notes">
+These individuals are being asked to reason about a system
+</aside>
+</section>
+<section id="problem-statement" class="slide level2">
+<h2>Problem Statement</h2>
+<p>Assessing risk of SARS-COV-2 infection in indoor spaces is complicated because interactions at multiple spatial and temporal scales influence fine scale disease transmission.</p>
+</section>
+<section id="graphical-user-interface" class="slide level2">
+<h2>Graphical User Interface</h2>
+<p><img data-src="img/guiExample.png" alt="Graphical User Interface" /></p>
+<aside class="notes">
+To make it easier for decision makers to reason about the system, we developed a graphical user interface that allows them to run different scenarios and see the impacts of their choices.
+</aside>
+</section>
+<section id="simulation-framework" class="slide level2">
+<h2>Simulation Framework</h2>
+<p>We developed extensible simulation engine accepts modules that modify transmission dynamics.</p>
+<div id="htmlwidget-b27348cd1176b6c0af60" style="width:768px;height:300px;" class="grViz html-widget"></div>
+<script type="application/json" data-for="htmlwidget-b27348cd1176b6c0af60">{"x":{"diagram":"\n  digraph graph2 {\n  \n  graph [layout = dot, rankdir = LR]\n  \n  # node definitions with substituted label text\n  node [shape = Square,\n        style = filled,\n        fixedsize = true,\n        width = 1.3]\n        \n  a [label = \"Graph Object\", \n     fillcolor = LightBlue]\n  b [label = Model,\n     fillcolor = SpringGreen]\n  c [label = \"Module 1\",\n     fillcolor = PaleGoldenrod]\n  d [label = \"Module N\",\n     fillcolor = Plum]\n  e [label = \"Simulation\nEngine\"]\n  \n  f [label = \"Parameters\", \n     fillcolor = Linen]\n  \n  a->e b->e {c d}->b f->c\n  \n  }\n  ","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+</section>
+<section id="extended-sir-model" class="slide level2">
+<h2>Extended SIR Model</h2>
+<div id="htmlwidget-4c28c38dd1ad21ea0dae" style="width:768px;height:300px;" class="grViz html-widget"></div>
+<script type="application/json" data-for="htmlwidget-4c28c38dd1ad21ea0dae">{"x":{"diagram":"\n  digraph graph2 {\n  \n  graph [layout = dot, rankdir = LR]\n  \n  # node definitions with substituted label text\n  node [shape = circle,\n        style = filled,\n        fixedsize = true,\n        width = 0.95]\n        \n  a [label = Susceptible, \n     fillcolor = PaleGreen]\n  b [label = Infected,\n     fillcolor = Thistle]\n  c [label = Removed,\n     fillcolor = Gold]\n  d [label = Leave,\n     shape = s,\n     fillcolor = Orange]\n  \n  node [shape = s,\n        style = filled,\n        fixedsize = true,\n        width = 1.5]   \n  \n  e [label = \"Direct\nContact\",\n     fillcolor = LightBlue]\n  f [label = \"Environmental\nExposure\",\n     fillcolor = LightCyan]\n  g [label = \"External\",\n     fillcolor = HoneyDew]\n\n  b->c b->d d->c\n  {e f g} -> b\n  \n  edge [arrowhead = none ]\n  a-> {e g f}\n    \n  \n  \n  }\n  ","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+</section>
+<section id="infectiousness-profile" class="slide level2">
+<h2>Infectiousness Profile</h2>
+<p><img src="NASN_presentation_files/figure-revealjs/unnamed-chunk-3-1.png" width="768" /></p>
+<aside class="notes">
+<p>Because we know individuals are not immediately infectious and the amount of virus shed wanes after 5 days post infection, we have generated a relative infectiousness profile. This allows to better reflect the reality of covid transmission. Something that may realize when looking at this plot, is that when you test and remove newly infectious individuals, you are sparing the larger population from being exposed to a highly infectious individual.</p>
+Based work by Larremore et al regarding viral load. <a href="https://www.medrxiv.org/content/10.1101/2020.06.22.20136309v3.full.pdf+html" class="uri">https://www.medrxiv.org/content/10.1101/2020.06.22.20136309v3.full.pdf+html</a>
+</aside>
+</section>
+<section id="how-does-transmission-happen-in-our-model" class="slide level2">
+<h2>How does transmission happen in our Model?</h2>
+<ol type="1">
+<li>External Transmission</li>
+<li>Environmental Transmission</li>
+<li>Direct Contact Transmission</li>
+</ol>
+</section>
+<section id="estimating-external-infections" class="slide level2">
+<h2>Estimating external infections</h2>
+<style>
+.container{
+    display: flex;
+}
+.col{
+    flex: 1;
+}
+</style>
+<div class="container">
+<div class="col">
+<p><img data-src="img/NASN21_DMV_PiChloroAnimation__withNet_04012020_10012020.gif" alt="animated mobility" /></p>
+</div>
+<div class="col" style="padding-left:5%;">
+<ul>
+<li>External infections are derived from a micro markov process model that explicitly incorporates mobility metrics and imported cases<br />
+</li>
+</ul>
+</div>
+</div>
+<aside class="notes">
+Figure shows case improtations to a focal county, mobility of individuals impacts the probability of infection - line thickness is the number of imported cases, and fill is probability of infection.
+</aside>
+</section>
+<section id="estimating-environmental-infections" class="slide level2">
+<h2>Estimating Environmental infections</h2>
+<div class="container">
+<div class="col">
+<p><img data-src="img/envExp.png" alt="env exposure" /></p>
+</div>
+<div class="col" style="padding-left:5%;">
+<h3 id="risk-of-infection"><em>Risk of Infection</em></h3>
+<ul>
+<li><p><em>Emission Rate</em></p></li>
+<li><p><em>Viral Concentration in Room</em></p></li>
+<li><p><em>Inhalataion Rate</em></p></li>
+<li><p>Time divided into 15 minute segments</p>
+<p><small> <a href="https://doi.org/10.1016/j.envint.2020.106112">G. Buonanno et al. 2020</a> </small></p></li>
+</ul>
+</div>
+</div>
+<aside class="notes">
+Weills Reily Model CIRES group at University of Colorado Boulder
+</aside>
+</section>
+<section id="estimating-direct-contact-infections" class="slide level2">
+<h2>Estimating direct contact infections</h2>
+<style>
+.container{
+    display: flex;
+}
+.col{
+    flex: 1;
+}
+</style>
+<div class="container">
+<div class="col" style="padding-left:5%;">
+<div id="htmlwidget-1ae245a1561aefd76928" style="width:400px;height:400px;" class="grViz html-widget"></div>
+<script type="application/json" data-for="htmlwidget-1ae245a1561aefd76928">{"x":{"diagram":"\n  digraph graph2 {\n  \n  graph [layout = neato]\n  \n  # node definitions with substituted label text\n  node [shape = circle,\n        style = filled,\n        fixedsize = true,\n        width = 0.95]\n        \n  a [label = Susceptible, \n     fillcolor = PaleGreen]\n  b [label = Infected,\n     fillcolor = Thistle]\n  c [label = Infected,\n     fillcolor = Thistle]\n  d [label = Infected,\n     fillcolor = Thistle]   \n  e [label = Removed,\n     fillcolor = Gold]\n  f [label = Leave,\n     shape = egg,\n     fillcolor = Orange]\n\n  edge [arrowhead = none ]\n  b->a c->a d->a e->a f->a\n    \n  }\n  ","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+</div>
+<div class="col" style="text-align=left;">
+<p><span class="math display">\[ R_{j}=\sum\limits_{i=1}^nI_{i}\delta_iP_{dc}  \]</span> <span class="math inline">\(I_{i}\)</span> = relative infectiousness of adjacent infected nodes<br />
+<span class="math inline">\(\delta_i\)</span> = transmission modifiers <span class="math inline">\(P_{dc}\)</span> = probability of infection given direct contact</p>
+</div>
+</div>
+</section>
+<section id="how-is-transmission-prevented" class="slide level2">
+<h2>How is transmission prevented?</h2>
+</section>
+<section id="hierarchy-of-controls" class="slide level2">
+<h2>Hierarchy of Controls</h2>
+<p><img data-src="https://aghealth.ucdavis.edu/sites/g/files/dgvnsk261/files/inline-images/Hierarchy%20of%20Controls.jpg" alt="hierarchy of controls" /></p>
+<p><em>Image produced by University of California Davis</em></p>
+</section>
+<section id="hazard-control-modules" class="slide level2">
+<h2>Hazard Control modules</h2>
+<ul>
+<li><strong>Leave Policy</strong> - removes individuals who tested positive for a number of time steps</li>
+<li><strong>Room Density Limits</strong> - reduces number of people in a room</li>
+<li><strong>Personal Protective Equipment</strong> - reduces the probability of acquiring infection</li>
+<li><strong>Testing</strong> - does not directly impact transmission but may inform other policies (e.g. leave)</li>
+</ul>
+</section>
+<section id="vaccination" class="slide level2">
+<h2>Vaccination</h2>
+<ul>
+<li>Protects from severe disease</li>
+<li>May not prevent transmission</li>
+</ul>
+</section>
+<section id="data-collection" class="slide level2">
+<h2>Data Collection</h2>
+<style>
+.container{
+    display: flex;
+}
+.col{
+    flex: 1;
+}
+</style>
+<div class="container">
+<div class="col">
+<p><img data-src="img/network.png" alt="discLabNetwork" /></p>
+</div>
+<div class="col" style="padding-left:5%;">
+<ul>
+<li>Surveyed lab mates asking them to indentify contacts (n=46)</li>
+<li>Took mean of reported contact strength<br />
+</li>
+<li>Estimated room volumes</li>
+<li>Other values derived from literature</li>
+</ul>
+</div>
+</div>
+</section>
+<section id="model-initial-conditions" class="slide level2">
+<h2>Model Initial Conditions</h2>
+<ul>
+<li>Three random infections</li>
+<li>Testing occurs every three days, 50% of population is tested and receives results within two days.</li>
+<li>95% of people using full PPE suite (surgical mask, eye protection, distancing)</li>
+<li>Density limit of <span class="math inline">\(\frac{1\,person}{12\,m^3}\)</span></li>
+<li>100 simulation runs, 60 time steps each</li>
+<li>Other parameters determined by exhaustive lit review (see table in appendix)</li>
+</ul>
+</section>
+<section id="results" class="slide level2">
+<h2>Results</h2>
+<div class="container">
+<div class="col">
+<p><img data-src="img/results_list.png" alt="results" /></p>
+</div>
+<div class="col" style="padding-left:5%;">
+<ul>
+<li>Testing frequency and leave policy have greatest impact on transmission</li>
+<li>Increasing room density increases transmission</li>
+<li>Direct contact and environmental transmission are the primary transmission modes</li>
+</ul>
+</div>
+</div>
+</section>
+<section id="conclusions" class="slide level2">
+<h2>Conclusions</h2>
+</section>
+<section id="appendix" class="slide level2">
+<h2>Appendix</h2>
+</section>
+<section id="sars-cov-2-transmission" class="slide level2">
+<h2>SARS-COV-2 Transmission</h2>
+<ul>
+<li>Presence of infectious individuals or materials</li>
+<li>Inhalation of infectious particles</li>
+<li>Introduction of fomites to mucus membranes</li>
+</ul>
+</section>
+<section id="model-layers" class="slide level2">
+<h2>Model layers</h2>
+<p><img data-src="img/modelDiagram.png" alt="model diagram" /></p>
+<ul>
+<li>External Transmission</li>
+<li>Environmental Transmission</li>
+<li>Direct Contact Transmission</li>
+<li>Transmission Modifiers</li>
+</ul>
+</section>
+<section id="environmental-infections-equations" class="slide level2">
+<h2>Environmental Infections Equations</h2>
+<ul>
+<li><p><em>Emission Rate</em> <span class="math display">\[ {ER_{q,j} = c_v*c_i*IR*\sum_{i=1}^4(N_{i,j}*V_i)} \]</span></p></li>
+<li><p><em>Viral Concentration in Room</em> <span class="math display">\[ {n(t) = \frac{ER_q*I}{IVRR*V}+(n_o+\frac{ER_q*I}{IVRR})*\frac{e^{IVRR*t}}{V}} \]</span></p></li>
+<li><p><em>Risk of Infection</em> <span class="math display">\[ {R_{env} = 1-e^{-IR\int_0^Tn(t)dt}} \]</span></p>
+<p><small> <a href="https://doi.org/10.1016/j.envint.2020.106112">G. Buonanno et al. 2020</a> </small></p></li>
+</ul>
+<aside class="notes">
+Weills Reily Model CIRES group at University of Colorado Boulder
+</aside>
+</section>
+    </div>
+  </div>
+
+  <script src="NASN_presentation_files/reveal.js-3.3.0.1/lib/js/head.min.js"></script>
+  <script src="NASN_presentation_files/reveal.js-3.3.0.1/js/reveal.js"></script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://github.com/hakimel/reveal.js#configuration
+      Reveal.initialize({
+        // Push each slide change to the browser history
+        history: true,
+        // Vertical centering of slides
+        center: true,
+        // Transition style
+        transition: 'default', // none/fade/slide/convex/concave/zoom
+        // Transition style for full page slide backgrounds
+        backgroundTransition: 'default', // none/fade/slide/convex/concave/zoom
+
+
+
+        // Optional reveal.js plugins
+        dependencies: [
+          { src: 'NASN_presentation_files/reveal.js-3.3.0.1/plugin/notes/notes.js', async: true },
+          { src: 'NASN_presentation_files/reveal.js-3.3.0.1/plugin/zoom-js/zoom.js', async: true },
+        ]
+      });
+    </script>
+  <!-- dynamically load mathjax for compatibility with self-contained -->
+  <script>
+    (function () {
+      var script = document.createElement("script");
+      script.type = "text/javascript";
+      script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+      document.getElementsByTagName("head")[0].appendChild(script);
+    })();
+  </script>
+
+<script>
+  (function() {
+    if (window.jQuery) {
+      Reveal.addEventListener( 'slidechanged', function(event) {  
+        window.jQuery(event.previousSlide).trigger('hidden');
+        window.jQuery(event.currentSlide).trigger('shown');
+      });
+    }
+  })();
+</script>
+
+
+  </body>
+</html>

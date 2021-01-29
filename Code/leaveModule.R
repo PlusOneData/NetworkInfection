@@ -38,6 +38,7 @@ default_leave <- setRefClass(
     donext = function(g) {
       
       "Increments counter and computes whether a nodes state should be moved to recovered"
+      "Not a duplicate of whats happening in the recovery module because conditional statements are different"
       igraph::V(g)[infected==3]$counter <- igraph::V(g)[infected==3]$counter + 1
       # Recover infected nodes
       ## Infected nodes have a probability of infected days/20 to recover
@@ -55,7 +56,7 @@ default_leave <- setRefClass(
       "add a day to the leaveCounter"
       igraph::V(g)$leaveCounter <- ifelse(igraph::V(g)$leave == TRUE, igraph::V(g)$leaveCounter + 1,igraph::V(g)$leaveCounter) 
       
-      "set infection status to Removed"
+      "set infection status to Leave"
       igraph::V(g)$infected <- ifelse(igraph::V(g)$leave == TRUE, 3,igraph::V(g)$infected)
       
       "Set leave color"
