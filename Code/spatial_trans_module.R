@@ -188,7 +188,7 @@ spat_tran <- setRefClass(
       "infection risk is expressed as a percent"
       infRisk <- (1-exp(-inRate*roomConc))
       
-      print(infRisk)
+     # print(infRisk)
       
       return(infRisk)
     },

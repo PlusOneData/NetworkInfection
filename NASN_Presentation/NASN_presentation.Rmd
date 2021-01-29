@@ -1,11 +1,10 @@
 ---
 title: Integrating COVID-19 Models at Different Scales for Infection Risk Estimation   and
   Control Optimization
-author: Collin Schwantes, Benno Lee PhD, Marjorie Willner PhD, Ben Ortiz, Viveca Pabon-Harr
-  PhD
+author: Collin Schwantes, Benno Lee, Marjorie Willner, Ben Ortiz, Viveca Pabon-Harr
 output: 
   revealjs::revealjs_presentation:
-    theme: white
+    theme: simple
     highlight: pygments
     center: true
     slideNumber: true
@@ -174,17 +173,6 @@ https://www.medrxiv.org/content/10.1101/2020.06.22.20136309v3.full.pdf+html
 
 ## Estimating external infections
 
-[get explanation/figure from trevor]
-
-- Probability of infection estimated from a micro mcmc model - work was presented early today by Trevor Kent and Heather Pastolic.
-
-- Uses case counts back estimated from deaths and mobility data derived from cell phone data to determine the probability of infection in a given location. 
-
-- We use that probability of infection to generate external infections while simulants are outside of their office space.   
-
-
-## Estimating Environmental infections
-
 
 <style>
 .container{
@@ -195,13 +183,32 @@ https://www.medrxiv.org/content/10.1101/2020.06.22.20136309v3.full.pdf+html
 }
 </style>
 
+<div class="container">
+
+<div class="col">
+![animated mobility](./img/NASN21_DMV_PiChloroAnimation__withNet_04012020_10012020.gif)
+</div>
+<div class="col" style ="padding-left:5%;">
+
+- External infections are derived from a micro markov process model that explicitly incorporates mobility metrics and imported cases   
+</div>
+</div>
+
+<aside class="notes">
+Figure shows case improtations to a focal county, mobility of individuals impacts the probability of infection - line thickness is the number of imported cases, and fill is probability of infection. 
+</aside>
+
+## Estimating Environmental infections
+
+
+
 
 <div class="container">
 
 <div class="col">
   ![env exposure](./img/envExp.png)
 </div>
-<div class="colstyle="text-align=left;">
+<div class="col" style="padding-left:5%;">
 ### *Risk of Infection* 
 - *Emission Rate*
 - *Viral Concentration in Room*
@@ -233,7 +240,7 @@ https://www.medrxiv.org/content/10.1101/2020.06.22.20136309v3.full.pdf+html
 
 <div class="container">
 
-<div class="col">
+<div class="col" style="padding-left:5%;">
 
 ```{r echo=FALSE}
 DiagrammeR::grViz("
@@ -282,7 +289,7 @@ $P_{dc}$ = probability of infection given direct contact
 
 ## How is transmission prevented? 
 
-## Hazard Control Modules
+## Hierarchy of Controls
 
 ![hierarchy of controls](https://aghealth.ucdavis.edu/sites/g/files/dgvnsk261/files/inline-images/Hierarchy%20of%20Controls.jpg)
 
@@ -322,7 +329,7 @@ $P_{dc}$ = probability of infection given direct contact
 
 ![discLabNetwork](img/network.png)
 </div>
-<div class="col">
+<div class="col" style="padding-left:5%;">
 - Surveyed lab mates asking them to indentify contacts (n=46)
 - Took mean of reported contact strength  
 - Estimated room volumes
@@ -340,10 +347,18 @@ $P_{dc}$ = probability of infection given direct contact
 
 ## Results
 
-- Modifying testing frequency and leave policy have greatest impact on transmission, even when testing a fraction of the population
-- Increasing air exchange rates and decreasing room density also has a large impact on transmission
-- Under base conditions, direct contact and environmental transmission are the primary drivers modes of transmission
 
+<div class="container">
+
+<div class="col">
+![results](./img/results_list.png)
+</div>
+<div class="col" style="padding-left:5%;">
+- Testing frequency and leave policy have greatest impact on transmission
+- Increasing room density increases transmission
+- Direct contact and environmental transmission are the primary transmission modes
+</div>
+</div>
 ## Conclusions
 
 ## Appendix
@@ -353,10 +368,6 @@ $P_{dc}$ = probability of infection given direct contact
 - Presence of infectious individuals or materials
 - Inhalation of infectious particles 
 - Introduction of fomites to mucus membranes
-
-<aside class="notes>
-
-</aside>
 
 ## Model layers
 

@@ -11,9 +11,12 @@
 <style>
 .container1{
     display: flex;
+    align-items: center;
+    align-content: center;
+    flex-direction: row;
     width: 960px;
     height:50px;
-    left: 50%;
+    left: 25%;
     top: 10%;
     bottom: auto;
     right: auto;
@@ -22,25 +25,28 @@
 }
 .col1{
     flex: 1;
-    width: 100%;
+    
     
 }
 .col2{
     flex: 1;
     align-items: flex-end;
     text-align: right;
-    width: 100%;
+
 }
 </style>
 
 <div class="container1">
   <div class="col1">
-    <p>&copy; Accenture Federal Services 2021</p>    
+    <p>
+      <img src="./img/ACC_Logo_Black_PurpleGT.png" alt="afs logo" height="50px" >
+    </p>
+    
   </div>
 
-<div class="col2">
-  <img src="./img/ACC_Logo_Black_PurpleGT.png" alt="afs logo" height="100%" >
-</div>
+  <div class="col2">
+    <p>&copy; Accenture Federal Services 2021</p>    
+  </div>
 </div>
 
 

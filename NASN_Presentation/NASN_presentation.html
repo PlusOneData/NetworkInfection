@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="generator" content="pandoc">
-  <meta name="author" content="Collin Schwantes, Benno Lee PhD, Marjorie Willner PhD, Ben Ortiz, Viveca Pabon-Harr PhD" />
+  <meta name="author" content="Collin Schwantes, Benno Lee, Marjorie Willner, Ben Ortiz, Viveca Pabon-Harr" />
   <title>Integrating COVID-19 Models at Different Scales for Infection Risk Estimation and Control Optimization</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -12,7 +12,7 @@
 
 
 
-<link rel="stylesheet" href="NASN_presentation_files/reveal.js-3.3.0.1/css/theme/white.css" id="theme">
+<link rel="stylesheet" href="NASN_presentation_files/reveal.js-3.3.0.1/css/theme/simple.css" id="theme">
 
 
   <!-- some tweaks to reveal css -->
@@ -462,9 +462,12 @@ document.getElementsByTagName('head')[0].appendChild(style);
 <style>
 .container1{
     display: flex;
+    align-items: center;
+    align-content: center;
+    flex-direction: row;
     width: 960px;
     height:50px;
-    left: 50%;
+    left: 25%;
     top: 10%;
     bottom: auto;
     right: auto;
@@ -473,25 +476,28 @@ document.getElementsByTagName('head')[0].appendChild(style);
 }
 .col1{
     flex: 1;
-    width: 100%;
+    
     
 }
 .col2{
     flex: 1;
     align-items: flex-end;
     text-align: right;
-    width: 100%;
+
 }
 </style>
 
 <div class="container1">
   <div class="col1">
-    <p>&copy; Accenture Federal Services 2021</p>    
+    <p>
+      <img src="img/ACC_Logo_Black_PurpleGT.png" alt="afs logo" height="50px" >
+    </p>
+    
   </div>
 
-<div class="col2">
-  <img src="img/ACC_Logo_Black_PurpleGT.png" alt="afs logo" height="100%" >
-</div>
+  <div class="col2">
+    <p>&copy; Accenture Federal Services 2021</p>    
+  </div>
 </div>
 
 
@@ -502,7 +508,7 @@ document.getElementsByTagName('head')[0].appendChild(style);
 
 <section>
     <h1 class="title">Integrating COVID-19 Models at Different Scales for Infection Risk Estimation and Control Optimization</h1>
-    <h2 class="author">Collin Schwantes, Benno Lee PhD, Marjorie Willner PhD, Ben Ortiz, Viveca Pabon-Harr PhD</h2>
+    <h2 class="author">Collin Schwantes, Benno Lee, Marjorie Willner, Ben Ortiz, Viveca Pabon-Harr</h2>
 </section>
 
 <section id="introduction" class="slide level2">
@@ -537,13 +543,13 @@ To make it easier for decision makers to reason about the system, we developed a
 <section id="simulation-framework" class="slide level2">
 <h2>Simulation Framework</h2>
 <p>We developed extensible simulation engine accepts modules that modify transmission dynamics.</p>
-<div id="htmlwidget-7cfa5eb87b189f4bd3de" style="width:768px;height:300px;" class="grViz html-widget"></div>
-<script type="application/json" data-for="htmlwidget-7cfa5eb87b189f4bd3de">{"x":{"diagram":"\n  digraph graph2 {\n  \n  graph [layout = dot, rankdir = LR]\n  \n  # node definitions with substituted label text\n  node [shape = Square,\n        style = filled,\n        fixedsize = true,\n        width = 1.3]\n        \n  a [label = \"Graph Object\", \n     fillcolor = LightBlue]\n  b [label = Model,\n     fillcolor = SpringGreen]\n  c [label = \"Module 1\",\n     fillcolor = PaleGoldenrod]\n  d [label = \"Module N\",\n     fillcolor = Plum]\n  e [label = \"Simulation\nEngine\"]\n  \n  f [label = \"Parameters\", \n     fillcolor = Linen]\n  \n  a->e b->e {c d}->b f->c\n  \n  }\n  ","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-b27348cd1176b6c0af60" style="width:768px;height:300px;" class="grViz html-widget"></div>
+<script type="application/json" data-for="htmlwidget-b27348cd1176b6c0af60">{"x":{"diagram":"\n  digraph graph2 {\n  \n  graph [layout = dot, rankdir = LR]\n  \n  # node definitions with substituted label text\n  node [shape = Square,\n        style = filled,\n        fixedsize = true,\n        width = 1.3]\n        \n  a [label = \"Graph Object\", \n     fillcolor = LightBlue]\n  b [label = Model,\n     fillcolor = SpringGreen]\n  c [label = \"Module 1\",\n     fillcolor = PaleGoldenrod]\n  d [label = \"Module N\",\n     fillcolor = Plum]\n  e [label = \"Simulation\nEngine\"]\n  \n  f [label = \"Parameters\", \n     fillcolor = Linen]\n  \n  a->e b->e {c d}->b f->c\n  \n  }\n  ","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
 </section>
 <section id="extended-sir-model" class="slide level2">
 <h2>Extended SIR Model</h2>
-<div id="htmlwidget-f7bb214b6bc51b5c7b91" style="width:768px;height:300px;" class="grViz html-widget"></div>
-<script type="application/json" data-for="htmlwidget-f7bb214b6bc51b5c7b91">{"x":{"diagram":"\n  digraph graph2 {\n  \n  graph [layout = dot, rankdir = LR]\n  \n  # node definitions with substituted label text\n  node [shape = circle,\n        style = filled,\n        fixedsize = true,\n        width = 0.95]\n        \n  a [label = Susceptible, \n     fillcolor = PaleGreen]\n  b [label = Infected,\n     fillcolor = Thistle]\n  c [label = Removed,\n     fillcolor = Gold]\n  d [label = Leave,\n     shape = s,\n     fillcolor = Orange]\n  \n  node [shape = s,\n        style = filled,\n        fixedsize = true,\n        width = 1.5]   \n  \n  e [label = \"Direct\nContact\",\n     fillcolor = LightBlue]\n  f [label = \"Environmental\nExposure\",\n     fillcolor = LightCyan]\n  g [label = \"External\",\n     fillcolor = HoneyDew]\n\n  b->c b->d d->c\n  {e f g} -> b\n  \n  edge [arrowhead = none ]\n  a-> {e g f}\n    \n  \n  \n  }\n  ","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-4c28c38dd1ad21ea0dae" style="width:768px;height:300px;" class="grViz html-widget"></div>
+<script type="application/json" data-for="htmlwidget-4c28c38dd1ad21ea0dae">{"x":{"diagram":"\n  digraph graph2 {\n  \n  graph [layout = dot, rankdir = LR]\n  \n  # node definitions with substituted label text\n  node [shape = circle,\n        style = filled,\n        fixedsize = true,\n        width = 0.95]\n        \n  a [label = Susceptible, \n     fillcolor = PaleGreen]\n  b [label = Infected,\n     fillcolor = Thistle]\n  c [label = Removed,\n     fillcolor = Gold]\n  d [label = Leave,\n     shape = s,\n     fillcolor = Orange]\n  \n  node [shape = s,\n        style = filled,\n        fixedsize = true,\n        width = 1.5]   \n  \n  e [label = \"Direct\nContact\",\n     fillcolor = LightBlue]\n  f [label = \"Environmental\nExposure\",\n     fillcolor = LightCyan]\n  g [label = \"External\",\n     fillcolor = HoneyDew]\n\n  b->c b->d d->c\n  {e f g} -> b\n  \n  edge [arrowhead = none ]\n  a-> {e g f}\n    \n  \n  \n  }\n  ","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
 </section>
 <section id="infectiousness-profile" class="slide level2">
 <h2>Infectiousness Profile</h2>
@@ -563,15 +569,6 @@ Based work by Larremore et al regarding viral load. <a href="https://www.medrxiv
 </section>
 <section id="estimating-external-infections" class="slide level2">
 <h2>Estimating external infections</h2>
-<p>[get explanation/figure from trevor]</p>
-<ul>
-<li><p>Probability of infection estimated from a micro mcmc model - work was presented early today by Trevor Kent and Heather Pastolic.</p></li>
-<li><p>Uses case counts back estimated from deaths and mobility data derived from cell phone data to determine the probability of infection in a given location.</p></li>
-<li><p>We use that probability of infection to generate external infections while simulants are outside of their office space.</p></li>
-</ul>
-</section>
-<section id="estimating-environmental-infections" class="slide level2">
-<h2>Estimating Environmental infections</h2>
 <style>
 .container{
     display: flex;
@@ -582,9 +579,26 @@ Based work by Larremore et al regarding viral load. <a href="https://www.medrxiv
 </style>
 <div class="container">
 <div class="col">
+<p><img data-src="img/NASN21_DMV_PiChloroAnimation__withNet_04012020_10012020.gif" alt="animated mobility" /></p>
+</div>
+<div class="col" style="padding-left:5%;">
+<ul>
+<li>External infections are derived from a micro markov process model that explicitly incorporates mobility metrics and imported cases<br />
+</li>
+</ul>
+</div>
+</div>
+<aside class="notes">
+Figure shows case improtations to a focal county, mobility of individuals impacts the probability of infection - line thickness is the number of imported cases, and fill is probability of infection.
+</aside>
+</section>
+<section id="estimating-environmental-infections" class="slide level2">
+<h2>Estimating Environmental infections</h2>
+<div class="container">
+<div class="col">
 <p><img data-src="img/envExp.png" alt="env exposure" /></p>
 </div>
-<div class="colstyle=" data-text-align="left;&quot;">
+<div class="col" style="padding-left:5%;">
 <h3 id="risk-of-infection"><em>Risk of Infection</em></h3>
 <ul>
 <li><p><em>Emission Rate</em></p></li>
@@ -610,9 +624,9 @@ Weills Reily Model CIRES group at University of Colorado Boulder
 }
 </style>
 <div class="container">
-<div class="col">
-<div id="htmlwidget-33cb7741340481f20252" style="width:400px;height:400px;" class="grViz html-widget"></div>
-<script type="application/json" data-for="htmlwidget-33cb7741340481f20252">{"x":{"diagram":"\n  digraph graph2 {\n  \n  graph [layout = neato]\n  \n  # node definitions with substituted label text\n  node [shape = circle,\n        style = filled,\n        fixedsize = true,\n        width = 0.95]\n        \n  a [label = Susceptible, \n     fillcolor = PaleGreen]\n  b [label = Infected,\n     fillcolor = Thistle]\n  c [label = Infected,\n     fillcolor = Thistle]\n  d [label = Infected,\n     fillcolor = Thistle]   \n  e [label = Removed,\n     fillcolor = Gold]\n  f [label = Leave,\n     shape = egg,\n     fillcolor = Orange]\n\n  edge [arrowhead = none ]\n  b->a c->a d->a e->a f->a\n    \n  }\n  ","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+<div class="col" style="padding-left:5%;">
+<div id="htmlwidget-1ae245a1561aefd76928" style="width:400px;height:400px;" class="grViz html-widget"></div>
+<script type="application/json" data-for="htmlwidget-1ae245a1561aefd76928">{"x":{"diagram":"\n  digraph graph2 {\n  \n  graph [layout = neato]\n  \n  # node definitions with substituted label text\n  node [shape = circle,\n        style = filled,\n        fixedsize = true,\n        width = 0.95]\n        \n  a [label = Susceptible, \n     fillcolor = PaleGreen]\n  b [label = Infected,\n     fillcolor = Thistle]\n  c [label = Infected,\n     fillcolor = Thistle]\n  d [label = Infected,\n     fillcolor = Thistle]   \n  e [label = Removed,\n     fillcolor = Gold]\n  f [label = Leave,\n     shape = egg,\n     fillcolor = Orange]\n\n  edge [arrowhead = none ]\n  b->a c->a d->a e->a f->a\n    \n  }\n  ","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
 </div>
 <div class="col" style="text-align=left;">
 <p><span class="math display">\[ R_{j}=\sum\limits_{i=1}^nI_{i}\delta_iP_{dc}  \]</span> <span class="math inline">\(I_{i}\)</span> = relative infectiousness of adjacent infected nodes<br />
@@ -623,12 +637,12 @@ Weills Reily Model CIRES group at University of Colorado Boulder
 <section id="how-is-transmission-prevented" class="slide level2">
 <h2>How is transmission prevented?</h2>
 </section>
-<section id="hazard-control-modules" class="slide level2">
-<h2>Hazard Control Modules</h2>
+<section id="hierarchy-of-controls" class="slide level2">
+<h2>Hierarchy of Controls</h2>
 <p><img data-src="https://aghealth.ucdavis.edu/sites/g/files/dgvnsk261/files/inline-images/Hierarchy%20of%20Controls.jpg" alt="hierarchy of controls" /></p>
 <p><em>Image produced by University of California Davis</em></p>
 </section>
-<section id="hazard-control-modules-1" class="slide level2">
+<section id="hazard-control-modules" class="slide level2">
 <h2>Hazard Control modules</h2>
 <ul>
 <li><strong>Leave Policy</strong> - removes individuals who tested positive for a number of time steps</li>
@@ -658,7 +672,7 @@ Weills Reily Model CIRES group at University of Colorado Boulder
 <div class="col">
 <p><img data-src="img/network.png" alt="discLabNetwork" /></p>
 </div>
-<div class="col">
+<div class="col" style="padding-left:5%;">
 <ul>
 <li>Surveyed lab mates asking them to indentify contacts (n=46)</li>
 <li>Took mean of reported contact strength<br />
@@ -682,11 +696,18 @@ Weills Reily Model CIRES group at University of Colorado Boulder
 </section>
 <section id="results" class="slide level2">
 <h2>Results</h2>
+<div class="container">
+<div class="col">
+<p><img data-src="img/results_list.png" alt="results" /></p>
+</div>
+<div class="col" style="padding-left:5%;">
 <ul>
-<li>Modifying testing frequency and leave policy have greatest impact on transmission, even when testing a fraction of the population</li>
-<li>Increasing air exchange rates and decreasing room density also has a large impact on transmission</li>
-<li>Under base conditions, direct contact and environmental transmission are the primary drivers modes of transmission</li>
+<li>Testing frequency and leave policy have greatest impact on transmission</li>
+<li>Increasing room density increases transmission</li>
+<li>Direct contact and environmental transmission are the primary transmission modes</li>
 </ul>
+</div>
+</div>
 </section>
 <section id="conclusions" class="slide level2">
 <h2>Conclusions</h2>
@@ -701,38 +722,27 @@ Weills Reily Model CIRES group at University of Colorado Boulder
 <li>Inhalation of infectious particles</li>
 <li>Introduction of fomites to mucus membranes</li>
 </ul>
-<aside class="notes>
-
-</aside>
-
-## Model layers
-
-![model diagram](./img/modelDiagram.png)
-
-- External Transmission
-- Environmental Transmission
-- Direct Contact Transmission
-- Transmission Modifiers
-
-
-##  Environmental Infections Equations
-
-- *Emission Rate*
-$$ {ER_{q,j} = c_v*c_i*IR*\sum_{i=1}^4(N_{i,j}*V_i)} $$
-
-- *Viral Concentration in Room*
-$$ {n(t) = \frac{ER_q*I}{IVRR*V}+(n_o+\frac{ER_q*I}{IVRR})*\frac{e^{IVRR*t}}{V}} $$
-
-- *Risk of Infection*
-$$ {R_{env} = 1-e^{-IR\int_0^Tn(t)dt}} $$
-
-  <small> 
-    [G. Buonanno et al. 2020](https://doi.org/10.1016/j.envint.2020.106112)
-  </small>
-
+</section>
+<section id="model-layers" class="slide level2">
+<h2>Model layers</h2>
+<p><img data-src="img/modelDiagram.png" alt="model diagram" /></p>
+<ul>
+<li>External Transmission</li>
+<li>Environmental Transmission</li>
+<li>Direct Contact Transmission</li>
+<li>Transmission Modifiers</li>
+</ul>
+</section>
+<section id="environmental-infections-equations" class="slide level2">
+<h2>Environmental Infections Equations</h2>
+<ul>
+<li><p><em>Emission Rate</em> <span class="math display">\[ {ER_{q,j} = c_v*c_i*IR*\sum_{i=1}^4(N_{i,j}*V_i)} \]</span></p></li>
+<li><p><em>Viral Concentration in Room</em> <span class="math display">\[ {n(t) = \frac{ER_q*I}{IVRR*V}+(n_o+\frac{ER_q*I}{IVRR})*\frac{e^{IVRR*t}}{V}} \]</span></p></li>
+<li><p><em>Risk of Infection</em> <span class="math display">\[ {R_{env} = 1-e^{-IR\int_0^Tn(t)dt}} \]</span></p>
+<p><small> <a href="https://doi.org/10.1016/j.envint.2020.106112">G. Buonanno et al. 2020</a> </small></p></li>
+</ul>
 <aside class="notes">
-  Weills Reily Model 
-  CIRES group at University of Colorado Boulder
+Weills Reily Model CIRES group at University of Colorado Boulder
 </aside>
 </section>
     </div>

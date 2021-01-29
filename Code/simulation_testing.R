@@ -92,10 +92,10 @@ covid_model_density <- infection_model(components = list(covid_ppe,
                                                          covid_vx, 
                                                          covid_lv,
                                                          covid_ex))
- 
+
 ### simulation
 
-simResults <- runSims(graphObj = dlContactGraph, modelObj = covid_model_density, runs = 100,timeSteps = 60)
+simResults <- runSims(graphObj = dlContactGraph, modelObj = covid_model_density, runs = 5,timeSteps = 60)
 
 
 simResults$timeLines[[1]] %>% 
@@ -108,14 +108,14 @@ testSim <- simResults$sirStats
 testSim %>% 
   filter(type == "recovered") %>% 
   filter(value == max(value))
-   
+
 sumSim <- testSim %>% 
   group_by(type,time) %>% 
   summarize(meanValue = median(value)) %>% 
   ungroup() %>% 
   mutate(typeFac = factor(x = type,levels = c("susceptible","infected","recovered","leave") ))
 
-testSim %>% 
+ testSim %>% 
   mutate(group = paste0(type,simRun)) %>% 
   mutate(typeFac = factor(x = type,levels = c("susceptible","infected","recovered","leave") )) %>% 
   # filter(type == "infected") %>% 
@@ -123,6 +123,10 @@ testSim %>%
   geom_line(aes(x = time, y = value, group = group ), color = "grey", size = 1.5, alpha = 0.2) +
   geom_line(data = sumSim, aes(x = time, y = meanValue, color = typeFac), size = 1.5) +
   theme_bw() +
-  labs(title = "SIR Distribution") +
+  labs(title = "SIR Distribution: Base Conditions") +
   scale_color_brewer(type = 'qual') +
-  facet_wrap(~typeFac)
+  facet_wrap(~typeFac,nrow = 1)
+
+
+
+
