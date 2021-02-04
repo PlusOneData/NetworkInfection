@@ -283,7 +283,9 @@ shinyServer(function(input, output, session) {
   #### simulation plots
   
   testSim <- reactive({
-    testSim <- runSims(graphObj = dlContactGraph,modelObj = covid_model(), runs = input$runs,timeSteps = 50)
+    simrResults <- runSims(graphObj = dlContactGraph,modelObj = covid_model(), runs = input$runs,timeSteps = 50)
+    
+    testSim <- simResults$sirStats 
   })
   
   
@@ -312,11 +314,13 @@ shinyServer(function(input, output, session) {
   
   simPlot2 <- eventReactive(input$update,{
     
-    testSim <- runSims(graphObj = dlContactGraph,modelObj = covid_model(), runs = input$runs,timeSteps = 50)
+    simResults <- runSims(graphObj = dlContactGraph,modelObj = covid_model(), runs = input$runs,timeSteps = 50)
+    
+    testSim <- simResults$sirStats  
     
     sumSim <- testSim %>% 
       group_by(type,time) %>% 
-      summarize(meanValue = median(value)) %>% 
+      summarize(meanValue = median(value)) %>%
       ungroup() %>% 
       mutate(typeFac = factor(x = type,levels = c("susceptible","infected","recovered","leave") ))
     
