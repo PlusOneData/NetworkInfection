@@ -64,7 +64,7 @@ Just download the software and run it if you dont want to install via command li
 - `merge`: join two branches
 
 ## get the remote on your computer
-In your git terminal/gui navgiate to the appropriate folder on local.
+In your git terminal/gui navigate to the appropriate folder on local.
 `cd my/folder/for/repo`
 
 clone the repo from remote with the proper URL into that folder. 
@@ -103,7 +103,7 @@ this lets you know what you have changed on your local branch.
 
 - `git pull` remote changes on to local, resolve any issues
 - make some changes to a file
-- `git status` look at your files on local and reltionship to remote
+- `git status` look at your files on local and relationship to remote
 - `git add some/folder/file` after making incremental but meaninful changes to file
 - `git commit -m "brief and informative message"` those files
 - `git push` changes to remote - you may be prompted to pull because of changes on remote. Do that. Deconflict the files if needed. Add and commit the deconflicted files then try your push again. 
