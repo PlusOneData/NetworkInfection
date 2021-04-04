@@ -44,7 +44,7 @@ A person p can only be assigned to one cohort:<br>
 	![image](https://user-images.githubusercontent.com/46353487/113512794-43026300-9534-11eb-8454-59d17938322a.png)
 
 
-**Conditional Constraints on Xptc and Ypc**
+**Conditional Constraints on Xptc and Ypc** 
 Upper and Lower Bounds to establish relationship between edge X<sub>ptc</sub and node Y<sub>pc</sub existence:<br>
 The upper bound constraint below forces X<sub>ptc</sub to zero, unless both Y<sub>pc</sub and Y<sub>tc</sub have values of 1. We still require a lower bound to ensure that X<sub>ptc</sub will take the value of 1 when both Y<sub>pc</sub and Y<sub>tc</sub have values of 1.<br>
 	![image](https://user-images.githubusercontent.com/46353487/113512801-4c8bcb00-9534-11eb-8325-74f911393058.png)
@@ -56,7 +56,7 @@ The lower bound constraint below forces X<sub>ptc</sub to 1 if both Y<sub>pc</su
 
 **Minimum Cohort Size Constraint**
 Each cohort must achieve the minimum cohort size.<br>
-	![image](https://user-images.githubusercontent.com/46353487/113512817-60cfc800-9534-11eb-9dd5-ca8fc8bdb7e5.png)
+	![image](https://user-images.githubusercontent.com/46353487/113512961-329eb800-9535-11eb-8e11-1bffe4b24fa5.png)
 
 
 **Maximum Cohort Size Constraint**
