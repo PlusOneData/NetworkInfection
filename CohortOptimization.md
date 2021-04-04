@@ -31,12 +31,10 @@ Using NetworkX, we can easily generate an adjacency matrix of G, A<sub>G</sub>, 
 For simplicity, in this formulation we will call the set of nodes that represent people in the network as N. The set of cohorts will be referred to as C. 
 There are two sets of decision variables for this formulation. <br>
 
-First, we will introduce Xptc, the binary variable which determines the creation of an edge between person p, teammate t, in cohort c. <br>
-
+First, we will introduce X<sub>ptc</sub, the binary variable which determines the creation of an edge between person p, teammate t, in cohort c. <br>
 	![image](https://user-images.githubusercontent.com/46353487/113512729-f9b21380-9533-11eb-9cf6-b977869cfb1d.png)
 
-Next, we introduce Ypc, the binary variable which determines the assignment of person p to cohort c. <br>
-
+Next, we introduce Y<sub>pc</sub, the binary variable which determines the assignment of person p to cohort c. <br>
 	![image](https://user-images.githubusercontent.com/46353487/113512760-13ebf180-9534-11eb-8d16-57399f948682.png)
 
 
@@ -47,12 +45,12 @@ A person p can only be assigned to one cohort:<br>
 
 
 **Conditional Constraints on Xptc and Ypc**
-Upper and Lower Bounds to establish relationship between edge Xptc and node Ypc existence:<br>
-The upper bound constraint below forces Xptc to zero, unless both Ypc and Ytc have values of 1. We still require a lower bound to ensure that Xptc will take the value of 1 when both Ypc and Ytc have values of 1.<br>
+Upper and Lower Bounds to establish relationship between edge X<sub>ptc</sub and node Y<sub>pc</sub existence:<br>
+The upper bound constraint below forces X<sub>ptc</sub to zero, unless both Y<sub>pc</sub and Y<sub>tc</sub have values of 1. We still require a lower bound to ensure that X<sub>ptc</sub will take the value of 1 when both Y<sub>pc</sub and Y<sub>tc</sub have values of 1.<br>
 	![image](https://user-images.githubusercontent.com/46353487/113512801-4c8bcb00-9534-11eb-8325-74f911393058.png)
 
 
-The lower bound constraint below forces Xptc to 1 if both Ypc and Ytc have values of 1. Paired with the upper bound constraint, we now have a well-defined relationship between Xptc and Ypc that can be interpreted as a network of nodes and edges in a defined space.<br>
+The lower bound constraint below forces X<sub>ptc</sub to 1 if both Y<sub>pc</sub and Y<sub>tc</sub have values of 1. Paired with the upper bound constraint, we now have a well-defined relationship between X<sub>ptc</sub and Y<sub>pc</sub that can be interpreted as a network of nodes and edges in a defined space.<br>
 	![image](https://user-images.githubusercontent.com/46353487/113512812-57466000-9534-11eb-827d-2681fcdf5c38.png)
 
 
@@ -67,7 +65,7 @@ Each cohort must be within the maximum cohort size.<br>
 
 
 **Binary Integer Constraints**
-This MIP model is dependent on Xptc and Ypc taking on binary integer values.<br>
+This MIP model is dependent on X<sub>ptc</sub and Y<sub>pc</sub taking on binary integer values.<br>
 	![image](https://user-images.githubusercontent.com/46353487/113512825-6f1de400-9534-11eb-98ed-a37a5075d63c.png)
 
 
@@ -75,6 +73,5 @@ This MIP model is dependent on Xptc and Ypc taking on binary integer values.<br>
 
 The objective function minimizes the cost associated with introducing
 new edges, which represent in-person interactions.<br>
-
 	![image](https://user-images.githubusercontent.com/46353487/113512827-77761f00-9534-11eb-8cf2-34c31956a5f8.png)
 
