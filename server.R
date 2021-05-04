@@ -283,7 +283,7 @@ shinyServer(function(input, output, session) {
   #### simulation plots
   
   testSim <- reactive({
-    simrResults <- runSims(graphObj = dlContactGraph,modelObj = covid_model(), runs = input$runs,timeSteps = 50)
+    simResults <- runSims(graphObj = dlContactGraph,modelObj = covid_model(), runs = input$runs,timeSteps = 50)
     
     testSim <- simResults$sirStats 
   })
