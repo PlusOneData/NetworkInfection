@@ -32,13 +32,13 @@ Modules are combined to create an infection model which is then run on a particu
 
 The network is either generated synthetically or created by surveying individuals in group. (plan to extend with ergm) 
 
-To get the central tendancies of system, we run infection model hundreds or thousands of times to create a distribution outcomes.
+To get the central tendencies of system, we run infection model hundreds or thousands of times to create a distribution outcomes.
 
 ### Summary of Approach
 
 SARS-COV-2 infections result from interactions at fine spatial and temporal scales; however, case clusters occur within a larger scale epidemiological context. Appropriately integrating the interactions between processes that occur across spatial and temporal scales is essential for simulating systems of disease transmission and understanding infection risk. Here we present a simulation engine that places a fine scale network based infection model within the broader epidemiological context of the study population. Using this system, we are able to simulate seeding events and fully explore the control strategy space.
 
-Our simulation engine can integrate a spatially explicit COVID-19 case estimation technique at the county scale with institution level disease transmission at a “building” scale. The case estimation technique takes into account location specific factors around infection control and population level movement to estimate disease burden in a given location. The institution level model uses a multigraph to integrate social and spatial contact networks under various hazard reduction strategies at two different time scales. This allows us to model individual level interactions in the local context of the COVID-19 pandemic, opening a closed system to external forces.
+Our simulation engine can integrate a spatially explicit COVID-19 case estimation technique at the county scale with institution level disease transmission at a “building” scale. The case estimation technique takes into account location specific factors around infection control and population level movement to estimate disease burden in a given location. The institution level model uses a multigraph to integrate social and spatial contact networks under various hazard reduction strategies at two different time scales (24 hour and 15 min segements). This allows us to model individual level interactions in the local context of the COVID-19 pandemic, opening a closed system to external forces.
 
 Our model provides realistic estimates of SARS-COV-2 outbreaks and the ability to discover novel control strategies. By integrating models at multiple scales, our simulation engine empowers decision makers to develop location specific preparedness policies based on realistic estimates of how SARS-COV-2 will spread through their institutions. 
 
@@ -111,39 +111,25 @@ this lets you know what you have changed on your local branch.
 **Commiting more frequently is better** 
 [cheatsheet](https://www.atlassian.com/git/tutorials/atlassian-git-cheatsheet)
 
+# Creating Branches
 
-# Creating a branch of a branch
-![branch of branch diagram](https://i.stack.imgur.com/6qEWk.jpg|width)
+## While on main branch
+ `git checkout -b feature/Name`
  
-## While on dev branch
- `git checkout -b feature/Name dev`
- 
- That extra dev at the end says create this branch off `dev`
-
- **dev** already exists so there is no reason to create a new branch
-
 ## For first push, set it up stream 
  `git push -u origin feature/Name`
 
-## Ready to merge into dev? Make a pull request 
+## Ready to merge into main? Make a pull request 
 - describe the changes you made and the expected outcome
 - connect to a work item
 - assign a reviewer
-- merge into **master**
-
+- merge into **main**
 
 ## Reviewing code
 So you got a pull request, now what?  Checkout the branch, make sure the code runs as expected. Reference the description to
 the work item and make sure they align. If the code doesn't run, or the feature doesn't match the work item/description, 
-talk with the person who submitted the pull request. Do not approve a pPR that does not run. After you approve the pull request,
+talk with the person who submitted the pull request. Do not approve a PR that does not run. After you approve the pull request,
 talk with the author of the code to determine who will merge the code into `dev` and merge with a stand merge (not fast forward).
 
-## Is dev ready for master? 
-
-When we get a working and tested version of dev, we will create a clean `stagingBranch` off 
-of `dev` that will be merged into master via a pull request. Clean means removing unnecessary files from
-from the perspective of the dashboard. The reason we have this staging branch
-is so that we can maintain exploratory files from the beginning of our analyses. Each
-staging branch will be different eg `stagingBranch1`, stagingBranch2` etc. 
-
-
+# Creating a branch of a branch
+![branch of branch diagram](https://i.stack.imgur.com/6qEWk.jpg|width)
