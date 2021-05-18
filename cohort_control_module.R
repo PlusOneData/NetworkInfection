@@ -59,7 +59,11 @@ cohort_controls <- setRefClass(
         cohorts <- unique(igraph::V(g)$cohort)
         
         "get current in office cohort"
-        inOfficeCohort <- ifelse(igraph::V(g)$remote == TRUE,igraph::V(g)$cohort,)
+        inOfficeCohort <- unique(igraph::V(g)[igraph::V(g)$remote == TRUE]$cohort)
+        
+        if(length(inOfficeCohort)> 2){
+          stop("multiple offices ")
+        }
         
         "shift one index position down cohorts or start from the beginning"
         
