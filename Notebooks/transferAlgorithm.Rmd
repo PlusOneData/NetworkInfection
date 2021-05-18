@@ -35,19 +35,3 @@ If the objective value is lower, then we set the potential cohort assignment to 
 2) If no more receiving cohort for current explorer, then we go to the next node in our current handoff cohort, making that new node the current explorer. 
 3) If we exhaust explorers without finding lower objective function for the current handoff cohort, then we move to the next handoff cohort. If none, then we have exhausted the transfer function for this round. 
 
-
-
-
-```{r cars}
-summary(cars)
-```
-
-## Including Plots
-
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
-```
-
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
