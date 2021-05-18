@@ -1,0 +1,53 @@
+---
+title: "Transfer Algorithm"
+author: Collin Schwantes, Benno Lee PhD, Danielle Heymann, Marjorie Willner PhD, Ben
+  Ortiz, Viveca Pabon-Harr PhD
+date: "5/18/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Walking through one iteration of transfer function
+
+### Transfer function
+
+1) Find current objective value with the current network configuration for the cohorts. Multiply adj matrix by cost matrix and summing values to get the objective value. 
+1) Generate and empty list of the candidate handoff and receive cohorts
+  - cohorts that are capable of giving or receiving a member based on capacity constraints
+2) Populate lists and check cohort for capacity to receive individuals if less than the max capacity constraint, and check for ability to give individuals if over min capacity constraint.
+3) check if no elements in hand off or receive candidate groups, OR if the only candidates are from the same cohort, then break out of transfer function by marking it as exhausted. 
+
+### Finding current explorer 
+
+The current explorer is the first node of the first cohort in the handoff list. Explorer goes to potential receive groups, starting with a the first cohort that is not its own cohort. 
+
+Make a test cohort assignment with potential assignment and find objective value of that assignment. 
+
+To find the object value, we use the scoring function for the potential assignment. Takes the adj matrix of the current assignment and multiplying by the cost matrix. 
+
+If the objective value is lower, then we set the potential cohort assignment to current configuration. Then we start another iteration from the top of the transfer function.  
+
+
+1) If obj value is greater or equal to current, then then we go to the next possible receiving cohort with current explorer. 
+2) If no more receiving cohort for current explorer, then we go to the next node in our current handoff cohort, making that new node the current explorer. 
+3) If we exhaust explorers without finding lower objective function for the current handoff cohort, then we move to the next handoff cohort. If none, then we have exhausted the transfer function for this round. 
+
+
+
+
+```{r cars}
+summary(cars)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
