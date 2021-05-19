@@ -1,5 +1,5 @@
 # Cohort Control Model
-# Goals: Govern how cohorting affects nodes
+# Goals: Govern how cohorting affects nodes. Will decide which group is in or out of the office.
 # ---- daily components
 # Shift length - how many days in a row will a cohort occupy the office 
 # ---- hour components
@@ -17,13 +17,14 @@
 #' A default class to control cohort actions.
 #' A graph of n nodes with a \code{$cohort} property. 
 #' 
-#' When \code{$donext} is called 1 is added to the \code{$leaveCounter} property and 
-#' infection status evaluated.
-#' If \code{$reported} is false and \code{$leaveCounter} equal to or
+#' When \code{$donext} is called 1 is added to the \code{$inOfficeCounter} property and 
+#' remote status is evaluated.
+#' If \code{$reported} is false and \code{$inOfficeCounter} equal to or
 #' greater than \code{leaveDuration} and \code{$infected} is 2, 
 #' the \code{$infect} attribute is set to 2 or "recovered". 
 #'
-#' @field shift_length Number time steps a cohort is in the office
+#' @field shift_length Number time steps (days) a cohort is in the office
+#' @field starting_cohort The cohort that will be initially in the office
 #'
 #' @export cohort_controls
 cohort_controls <- setRefClass(
@@ -58,7 +59,7 @@ cohort_controls <- setRefClass(
         "get cohorts"
         cohorts <- unique(igraph::V(g)$cohort)
         
-        "get current in office cohort"
+        "get current in office cohort "
         inOfficeCohort <- unique(igraph::V(g)[igraph::V(g)$remote == TRUE]$cohort)
         
         if(length(inOfficeCohort)> 2){
@@ -66,10 +67,21 @@ cohort_controls <- setRefClass(
         }
         
         "shift one index position down cohorts or start from the beginning"
+        if((inOfficeCohort + 1) < length(cohorts)){
+          current_inOffice_cohort <- inOfficeCohort + 1
+        } else {
+          current_inOffice_cohort <- starting_cohort
+        }
         
-        "if true, change groups & reset counters, else continue"
-        igraph::V(g)$remote <- ifelse(igraph::V(g)$cohort == starting_cohort,TRUE, igraph::V(g)$remote)
-        "increment in office counter"
+        "change groups & reset counters, else continue"
+        igraph::V(g)$remote <- ifelse(igraph::V(g)$cohort == current_inOffice_cohort,TRUE, FALSE)
+        
+        "reset office counter"
+        igraph::V(g)$inOfficeCounter <- ifelse(igraph::V(g)$cohort == current_inOffice_cohort,1,0)
+        
+        
+      } else {
+        "increment office counter for in office group"
       }
       
 
