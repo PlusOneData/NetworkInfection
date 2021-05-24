@@ -8,6 +8,7 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+library(DiagrammeR)
 ```
 
 ## Walking through one iteration of transfer function
@@ -35,3 +36,79 @@ If the objective value is lower, then we set the potential cohort assignment to 
 2) If no more receiving cohort for current explorer, then we go to the next node in our current handoff cohort, making that new node the current explorer. 
 3) If we exhaust explorers without finding lower objective function for the current handoff cohort, then we move to the next handoff cohort. If none, then we have exhausted the transfer function for this round. 
 
+### Diagram of transfer function
+
+```{r echo=FALSE }
+
+grViz("
+digraph boxes_and_circles {
+
+  # a 'graph' statement
+  graph [layout = dot, overlap = false, fontsize = 18]
+
+  # several 'node' statements
+  node [shape = box,
+        fontname = Helvetica]
+  A [label = 'calculate\nobjective\nvalue'] 
+  B [label = 'generate empty\nlists for candidate\nhandoff and receive\ncohorts'] 
+  C [label = 'populate candidate\nhandoff and receive\nlists with cohorts meeting\nconstraints'] 
+  D [label = 'Assign current explorer\nas first node of first\ncandidate handoff cohort'] 
+  E [label = 'Explorer goes to\nfirst candidate receive\ncohort that is\nnot its own']
+  F [label = 'Generate test\ncohort assigment\ndataframe'] # could be expanded to show additional operations happening to generate test dataframes
+  G [label = 'Begin compare_test_and_next\nfunction. Improve objective\nvalue or recursively\nlooks for next\nfeasible test assignment']
+  H [label = 'Compare current\nobjective value to test\nconfiguration objective value']
+  I [label = 'Set receive cohort as current receiver']
+  J [label = 'Make next member\nof current handoff\ncohort the current explorer']
+  K [label = 'First member of\nthe next candidate\nhandoff cohort becomes\nthe current explorer']
+  
+  node [shape = diamond,
+        fontname = Helvetica]
+  a [label = 'Are there cohorts\nin both\nreceive and handoff']
+  b [label = 'Are there >1 unique\ncohorts between\nreceive and handoff lists?']
+  c [label = 'Is test objective value\nmore optimal than\ncurrent objective value?']
+  d [label = 'Is there another\ncandidate receive cohort\nin the list?']
+  e [label = 'Is there another\nmember to be the next\ncurrent explorer in\nthe current handoff cohort?']
+  f [label = 'Is there a next candidate\nhandoff cohort in the list?']
+  
+  
+
+
+  node [shape = circle,
+        fixedsize = true,
+        width = 0.9] // sets as circles
+  1 [label = begin]
+  2 [label = 'leave\nfunction']
+  3 [label = 'leave\nfunction']
+  4 [label = 'leave\nfunction']
+  5 [label = 'leave\nfunction']
+
+
+  # several 'edge' statements
+  1->A
+  A->B
+  B->C
+  C->a
+  a->2 [label = no]
+  a->b [label = yes]
+  b->3 [label = no]
+  b->D
+  D->E
+  E->F
+  F->G
+  G->H
+  H->c
+  c->5 [label = yes]
+  c->d [label = no]
+  d->I [label = yes]
+  I->F
+  d->e [label = no]
+  e->J [label = yes]
+  J->E
+  e->f [label = no]
+  f->4 [label = no]
+  f->K [label = yes]
+  K->E
+}
+")
+
+```
