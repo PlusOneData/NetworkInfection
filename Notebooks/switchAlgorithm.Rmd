@@ -1,0 +1,33 @@
+---
+title: "Switching Algorithm"
+author: Collin Schwantes, Benno Lee PhD, Danielle Heymann, Marjorie Willner PhD, Ben
+  Ortiz, Viveca Pabon-Harr PhD
+date: "5/18/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Summary
+
+### Switching 
+
+1) Transfer algorithm runs
+2) Find current objective value with the current network configuration for the cohorts. Multiply adj matrix for cohort by cost matrix and summing values to get the objective value.
+2) Individuals are neatly swaped (1 to 1 trade) between cohorts. Update cohort assignments and recalculate the objective value as above
+3) check if objective value is lower
+
+### Find current explorer
+
+1) First individual, make one temporary clean swap
+2) Recalculate objective value
+3) If objective is better, keep the swap
+4) Move swapped individuals to last position in cohort
+5) Update the global objective value
+6) Move to next individual in cohort (currently first position in cohort)
+
+once moved through a full cohort, dont have to check swaps with cohort one
+
+
