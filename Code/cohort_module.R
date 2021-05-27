@@ -5,15 +5,13 @@
 # their circles
 # ---- basic components
 # return the groupings of nodes that make up the advised cohorts
+# cohorts should be within the min and max size allowed
 
-
-
-#' Vaccination Class
+#' Cohort Assignment Class
 #'
-#' A default class to implement vaccination policies.
-#' A graph of n nodes with a \code{$infProbReduction} property have based on the vaccine being applied. 
-#' When \code{$donext} \code{$infProbReduction} property is updated based on range in confidence intervals for each
-#' method. 
+#' A default class to implement cohorting policies.
+#' A graph of n nodes with a \code{$cohort} property have based on network position. 
+#' When \code{$init} is run  
 #'
 #' @field vaxEff percent reduction in probability of covid infection if vaccinated
 #' @field vaxEffCI Confidence interval for vaccine efficacy
