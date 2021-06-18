@@ -1,7 +1,6 @@
 ### simulation test ground
 
 #devtools::install("./infection.graph")
-
 library(igraph)
 library(infection.graph)
 library(animation)
@@ -22,6 +21,7 @@ source("./Code/ppeDensityInfectionModule.R")
 source("./Code/relativeInfectiousness_module.R")
 source("./Code/vaccine_module.R")
 source("./Code/spatial_trans_module.R")
+source("./Code/cohort_module.R")
 
 ## Eventually want to parallelize
 
@@ -52,9 +52,8 @@ edgeList <- dlContactMatrix %>%
 #get graph from edgelist 
 dlContactGraph <- igraph::graph_from_edgelist(el = as.matrix(edgeList),directed = F)
 
-dlContactGraph <- simplify(graph = dlContactGraph,remove.loops = T)
+dlContactGraph <- simplify(graph = dlContactGraph, remove.loops = T)
 
-## dl contac
 
 
 ### take in model with modules
@@ -82,8 +81,10 @@ covid_ri <- rel_infect(max_recovery_time = 20, relInfFunc = relInfFunc)
 covid_vx <- default_vax(vaxEff = 0.95, propVax = 0.2, vaxRate = 10)
 covid_sp <- spat_tran(rooms=rooms, inRate = (16/24),emRate = 11.4, maxRoomDensity = 1/12)
 covid_ex <- external_infect(rate = 0.00018)
+covid_co <- default_cohort(min_cohort_size = , max_cohort_size = , total_cohorts = )
 
-covid_model_density <- infection_model(components = list(covid_ppe,
+covid_model_density <- infection_model(components = list(covid_co,
+                                                         covid_ppe,
                                                          covid_di, 
                                                          covid_sp,
                                                          covid_dr,
@@ -91,9 +92,12 @@ covid_model_density <- infection_model(components = list(covid_ppe,
                                                          covid_dt,
                                                          covid_vx, 
                                                          covid_lv,
-                                                         covid_ex))
+                                                         covid_ex
+                                                         ))
 
 ### simulation
+
+#try with 1 run and timeSteps = 2
 
 simResults <- runSims(graphObj = dlContactGraph, modelObj = covid_model_density, runs = 5,timeSteps = 60)
 

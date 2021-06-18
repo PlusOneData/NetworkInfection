@@ -14,10 +14,12 @@ library(GGally)
 library(ggplot2)
 library(qgraph)
 library(purrr)
+library(sna)
+
+# take in the initial contact matrix
 
 
-# random graph to demonstrate network of 40 people with probability of .1 of sharing edge
-
+# Generate random graph to demonstrate network of 40 people with probability of .1 of sharing edge
 total_nodes = 40
 set.seed(23)
 sample_g <- erdos.renyi.game(total_nodes, .1, edgemode = "undirected" )
@@ -25,15 +27,42 @@ dev.off()
 ggnet2(sample_g, label = TRUE)
 neighbor_mat <- as_adjacency_matrix(sample_g)
 
-# create cost matrix
+########## run this section for DL contact matrix
+testadj <- as.matrix(as_adjacency_matrix(dlContactGraph))
+neighbor_mat <- testadj
+sample_g <- dlContactGraph
+total_nodes <- 46
+##########
+
+
+
+#' Create cost matrix
+#'
+#' @param x adjacency matrix for contact network
+#'
+#' @return cost matrix of input contact network with cost of 1 for nodes that did not share an edge between them
+#' 
 cost_mat_fun <- function(x) {
   return(abs(x-1))
 } 
+
+#' Return a matrix
+#'
+#' @param x matrix to be returned (if there is a need to export for comparison to other methods)
+#'
+#' @return matrix
 return_mat_fun <- function(x) {
   return(x)
 }
+
+# produce cost matrix 
 cost_mat <- apply(neighbor_mat, 2, cost_mat_fun)
-neighbor_mat_View <- apply(neighbor_mat, 2, return_mat_fun)
+# uncomment if exporting current matrix to be used as input in python MIP
+ neighbor_mat_View <- as.matrix(apply(neighbor_mat, 2, return_mat_fun), dimnames = NULL)
+# write csv for input in python with MIP optimization using Gurobi solver for diagnostic measures
+ write.table(neighbor_mat_View,"C:/Users/danielle.heymann/OneDrive - Accenture Federal Services/Documents/DL/random_scripts/DL1_mat.csv",col.names = F, row.names = FALSE)
+
+
 
 # define number of cohorts
 total_cohorts <- 3
@@ -63,17 +92,25 @@ cohort_assignments$members <- lapply(cohort_assignments$cohort, segment)
 
 # some basic functions that we will call on throughout
 
-# get members in specific cohort; input is the cohort number
+
+#' Get members in a specific cohort
+#'
+#' @param cohort_number 
+#'
+#' @return elements of specified cohort
+#' 
 get_members <- function(cohort_number){
   return(unlist(cohort_assignments$members[[cohort_number]]))
 }
 
-# plot colored initial network graph based on cohort assignments
-plot_network_graph <-function(network_mat, x_cohort_assignments){
-  # not urgent DO THIS LATER
-  ggnet2(graphname, label = TRUE)
-}
 
+#' Get unique edge pairings of a complete graph given a set of vertices
+#'
+#' @param vertices_list list of vertices of prospective complete graph
+#'
+#' @return unique edge pairings for a complete graph
+#'
+#' @examples
 get_connected_graph_edgelist <- function(vertices_list){
   # number of unique edge pairs in complete graph will be nCr(number vertices, 2)
   n_combo <- choose(length(vertices_list), 2)
@@ -83,7 +120,7 @@ get_connected_graph_edgelist <- function(vertices_list){
     for(j in vertices_list){
       if(j > i){
         pair <- c(i, j)
-        print(pair)
+        #print(pair)
         edgelist[[count]] <- pair
         count <- count + 1
       }
@@ -92,25 +129,13 @@ get_connected_graph_edgelist <- function(vertices_list){
   return(edgelist)
 }
 
-# get complete graph of a cohort; input is the cohort number
-# don't use this, it is inefficient- use get_all_cohorts_graph
-get_cohort_graph <-function(cohort_number){
-  # vertices and edges
-  vertices <- get_members(cohort_number)
-  vertices <- get_members(1)
-  edgelist <- get_connected_graph_edgelist(vertices)
-  
-  
-}
 
-# get complete graph of all cohorts; input is the current cohort assignments
-get_all_cohorts_graph <-function(x_cohort_assignments){
-  # generate adjacency matrix
-  
-}
-
-# gets adjacency matrix of all cohorts; input is the current cohort assignments
-get_all_cohorts_adj_mat <-function(x_cohort_assignments){
+#' Get adjacency matrix representing all cohorts
+#' This function also plots graphs
+#' @param x_cohort_assignments dataframe of current cohort assignments
+#'
+#' @return adjacency matrix representing all cohorts; also plots 2 graphs of current cohort assignments
+get_all_cohorts_adj_mat_with_graph <-function(x_cohort_assignments){
   # generate adjacency matrix
   adj_mat <- matrix(0, total_nodes, total_nodes)
   # for each cohort, give value of 1 in adjacency matrix to each node pair in the cohort; the result is a complete graph for each cohort
@@ -124,27 +149,73 @@ get_all_cohorts_adj_mat <-function(x_cohort_assignments){
   }
   diag(adj_mat) <- 0
   # plot graph
-  cohorts_graph <- graph_from_adjacency_matrix(adj_mat, mode="undirected")
-  Layout <- layout.circle(cohorts_graph)
   
+  cohorts_graph <- graph_from_adjacency_matrix(adj_mat, mode="undirected")
+  
+  df_results <- data.frame(
+    member = 1:total_nodes,
+    cohort = NA
+  )
+  
+  for(i in 1:total_cohorts){
+    for(j in 1:length(unlist(x_cohort_assignments$members[[i]]))){
+      df_results$cohort[unlist(x_cohort_assignments$members[[i]])[j]] <- i
+      cohorts_graph$cohort[unlist(x_cohort_assignments$members[[i]])[j]] <- i
+    }
+  }
+  
+  Layout <- layout.circle(cohorts_graph)
   plot.igraph(cohorts_graph, 
               vertex.label = V(cohorts_graph)$name, vertex.label.color = "gray20",
               vertex.size = 10,
               vertex.color = "gray90", vertex.frame.color = "gray20",
               edge.curved = T, 
               layout = Layout)
-  # nicer graph
+  
+
+  # nicer graph  
+  p <- RColorBrewer::brewer.pal(8, "Set2")[ c(3, 4, 5, 6, 1, 2) ]
+  x <- cohorts_graph$cohort
+  names(p) <- levels(x)
+  
   e <- get.edgelist(cohorts_graph)
   l <- qgraph.layout.fruchtermanreingold(e,vcount=vcount(cohorts_graph),
                                          area=8*(vcount(cohorts_graph)^2),repulse.rad=(vcount(cohorts_graph)^3.1))
   plot(cohorts_graph,layout= l, vertex.label=V(cohorts_graph)$name, vertex.label.color = "gray20",
        vertex.size = 10, vertex.label.cex = .75,
-       vertex.color = "gray90", vertex.frame.color = "gray20")
+       vertex.color = x, palette = c("1" = p[1], "2" = p[2], "3" = p[3]), color.legend = "Cohort", vertex.frame.color = "gray20")
+  return(adj_mat)
+}
+
+#' Get adjacency matrix representing all cohorts
+#' 
+#' @param x_cohort_assignments dataframe of current cohort assignments
+#'
+#' @return adjacency matrix representing all cohorts
+get_all_cohorts_adj_mat <-function(x_cohort_assignments){
+  # generate adjacency matrix
+  adj_mat <- matrix(0, total_nodes, total_nodes)
+  # for each cohort, give value of 1 in adjacency matrix to each node pair in the cohort; the result is a complete graph for each cohort
+  for(i in 1:nrow(x_cohort_assignments)){
+    members <- x_cohort_assignments$members[[i]]
+    for(j in members){
+      for(k in members){
+        adj_mat[j,k] <- 1
+      }
+    }
+  }
+  diag(adj_mat) <- 0
+ 
   return(adj_mat)
 }
 
 
-# score all cohorts; this is the current objective value; input is adjacency matrix
+#' Objective Value scoring function
+#'
+#' @param adjacency_mat adjacency matrix of the current cohort assignments
+#'
+#' @return integer objective value based on the cost function and current cohort assignment adjacency matrix
+#'
 get_objective_Val <- function(adjacency_mat){
   # multiply cost matrix by adjacency matrix and divide by 2 to avoid double counting cost of (i,j) and (j,i)
   score_mat <- matrix(0, total_nodes, total_nodes)
@@ -157,37 +228,39 @@ get_objective_Val <- function(adjacency_mat){
   return(obj_val)
 } 
 
-# generate test cohort assignments; input is current cohort assignments, current explorer, current handoff, and current receive
-generate_test_assignments <- function(y_cohort_assignments, y_explorer, y_handoff, y_receive){
+#' Transfer Function: Test Cohort Assignment Generation
+#'
+#' @param y_cohort_assignments dataframe of current cohort assignments 
+#' @param y_explorer vertex to be transferred to another cohort
+#' @param y_handoff cohort number that the vertex to be transferred is leaving from
+#' @param y_receive cohort number that the vertex to be transferred is going to
+#'
+#' @return dataframe of test cohort assignments 
+#' 
+T_generate_test_assignments <- function(y_cohort_assignments, y_explorer, y_handoff, y_receive){
   y_exp_ind <- match(y_explorer, unlist(y_cohort_assignments$members[candidate_handoff[y_handoff]]))
-  print(paste0(y_explorer, y_handoff, y_receive, y_exp_ind))
   test_cohort_assignments <- data.frame(y_cohort_assignments)
   handoff_number <- candidate_handoff[y_handoff]
   receive_number <- candidate_receive[y_receive]
   test_handoff <- unlist(test_cohort_assignments$members[handoff_number])[- y_exp_ind]
-  print(paste0("test handoff, ", test_handoff, "candidate handoff: ",candidate_handoff[y_handoff] ))
   test_cohort_assignments$members[[handoff_number]] <- as.list(test_handoff)
   
   test_receive <- unlist(test_cohort_assignments$members[receive_number])
   test_cohort_assignments$members[[receive_number]] <- as.list(c(test_receive, y_explorer))
-  #print(paste0("test receive, ", test_cohort_assignments$members[[y_explorer]]))
   return(test_cohort_assignments)
 }
 
-# compare objective values of test and current configurations and make decisions on next handoff and receive elements
-#' Title
+#' Transfer Function: helper function to compare objective values of test and current configurations and make decisions on next handoff and receive elements
 #'
-#' @param x_cohort_assignments 
-#' @param x_test_configuration 
-#' @param x_explorer 
-#' @param x_handoff 
-#' @param x_receive 
+#' @param x_cohort_assignments dataframe of current cohort assignments
+#' @param x_test_configuration dataframe of test cohort assignments
+#' @param x_explorer vertex to be transferred to another cohort
+#' @param x_handoff cohort number that the vertex to be transferred is leaving from
+#' @param x_receive cohort number that the vertex to be transferred is going to
 #'
-#' @return
-#' @export
-#'
-#' @examples
-compare_test_and_next <- function(x_cohort_assignments, x_test_configuration, x_explorer, x_handoff, x_receive){
+#' @return potentially return improvement to objective (if there is one); also potentially updates the global variable for current cohort assignments
+#` 
+T_compare_test_and_next <- function(x_cohort_assignments, x_test_configuration, x_explorer, x_handoff, x_receive){
   first_receive <- x_receive
   receive_updated <- FALSE
   # see if test configuration is better than current objective value
@@ -197,9 +270,10 @@ compare_test_and_next <- function(x_cohort_assignments, x_test_configuration, x_
     # if test objective is better, set current global variable to this configuration and break from function (set to unexhausted)
     cohort_assignments <<- x_test_configuration[,]
     #_________more code to show that we improved objective___________
-    #break
+    # break by returning improvement to objective
     improvement_to_objective <<- current_obj_val - test_obj_val
-    print(paste0("IMPROVED OBJ, explorer: ", x_explorer, "handoff: ", x_handoff, "receive: ",x_receive))
+    current_obj_val <<- test_obj_val
+    T_improved_optimality <<- TRUE
     return(improvement_to_objective)
   }
   else{
@@ -208,14 +282,11 @@ compare_test_and_next <- function(x_cohort_assignments, x_test_configuration, x_
     # the same index as our handoff group index, while also making sure that the group number exists
     
     if(length(candidate_receive) > x_receive){
-      print("here1")  
       x_receive <- x_receive + 1
-      print(x_receive)
       receive_updated <- TRUE
-      #_____ great, now go start a new iteration of compare_test_and_next with updated input
-      new_test_configuration <- generate_test_assignments(x_cohort_assignments, x_explorer, x_handoff, x_receive)
-      print(paste0("Uexplorer: ", x_explorer, "handoff: ", x_handoff, "receive: ",x_receive))
-      compare_test_and_next(x_cohort_assignments, new_test_configuration, x_explorer, x_handoff, x_receive)      
+      #_____ great, now go start a new iteration of T_compare_test_and_next with updated input
+      new_test_configuration <- T_generate_test_assignments(x_cohort_assignments, x_explorer, x_handoff, x_receive)
+      T_compare_test_and_next(x_cohort_assignments, new_test_configuration, x_explorer, x_handoff, x_receive)      
     }
     if(x_handoff == x_receive){
       # reset indicator because we are not positive that the previous update was valid
@@ -224,10 +295,9 @@ compare_test_and_next <- function(x_cohort_assignments, x_test_configuration, x_
       if(length(candidate_receive) > x_receive){
         x_receive <- x_receive + 1
         receive_updated <- TRUE
-        #_____ great, now go start a new iteration of compare_test_and_next with updated input
-        new_test_configuration <- generate_test_assignments(x_cohort_assignments, x_explorer, x_handoff, x_receive)
-        print(paste0("Pexplorer: ", x_explorer, "handoff: ", x_handoff, "receive: ",x_receive))
-        compare_test_and_next(x_cohort_assignments, new_test_configuration, x_explorer, x_handoff, x_receive)
+        #_____ great, now go start a new iteration of T_compare_test_and_next with updated input
+        new_test_configuration <- T_generate_test_assignments(x_cohort_assignments, x_explorer, x_handoff, x_receive)
+        T_compare_test_and_next(x_cohort_assignments, new_test_configuration, x_explorer, x_handoff, x_receive)
       }
     }
     
@@ -235,31 +305,24 @@ compare_test_and_next <- function(x_cohort_assignments, x_test_configuration, x_
     
     if(receive_updated == FALSE){
       x_receive <- first_receive
-      print("explorer switchup in progress")
       # we don't have anymore potential receivers for this current explorer and need to set next current explorer
-      #exp_ind <- which(unlist(x_cohort_assignments$members[x_handoff]) == x_explorer)[[1]]
       exp_ind <- match(x_explorer, unlist(x_cohort_assignments$members[candidate_handoff[x_handoff]]))
-      print(paste0("explorer index :", exp_ind))
+      # This should not happen, but just in case we can catch the error and break from the function
       if(is.na(exp_ind) == TRUE){
         print("problematic")
-        break##########################
+        break
       }
       if(length(unlist(x_cohort_assignments$members[candidate_handoff[x_handoff]])) > exp_ind){
         exp_ind <- exp_ind + 1
-        print(paste0("explorer index :", exp_ind))
         x_explorer <- unlist(x_cohort_assignments$members[candidate_handoff[x_handoff]])[exp_ind]
-        print(paste0("explorer  :", x_explorer))
-        #_____ great, now go start a new iteration of compare_test_and_next with updated input
-        new_test_configuration <- generate_test_assignments(x_cohort_assignments, x_explorer, x_handoff, x_receive)
-        print(paste0("Yexplorer: ", x_explorer, "handoff: ", x_handoff, "receive: ",x_receive))
-        compare_test_and_next(x_cohort_assignments, new_test_configuration, x_explorer, x_handoff, x_receive)
+        #_____ great, now go start a new iteration of T_compare_test_and_next with updated input
+        new_test_configuration <- T_generate_test_assignments(x_cohort_assignments, x_explorer, x_handoff, x_receive)
+        T_compare_test_and_next(x_cohort_assignments, new_test_configuration, x_explorer, x_handoff, x_receive)
       }
       
       # if there are no more explorers in the handoff cohort, remove this from handoff candidate list and go to the next handoff candidate
       else{
         candidate_handoff <<- candidate_handoff[-x_handoff]
-        print(paste0("TTTTTTTTTTTT",unlist(candidate_handoff)))
-        print(paste0("TTTTTTTTTTTTTT",unlist(x_cohort_assignments$members[candidate_handoff[1]])[1]))
     
         # first check if there is another candidate handoff cohort and unique receive cohort
         if(length(candidate_handoff) >= 1){
@@ -267,7 +330,6 @@ compare_test_and_next <- function(x_cohort_assignments, x_test_configuration, x_
           x_receive <- 1
         }
         else{
-          print(paste0("exhausted!!!"))
           T_Exhausted <<- TRUE
           return(paste0("T_Exhausted = ", T_Exhausted))
           #____BREAK from transfer function________
@@ -277,11 +339,10 @@ compare_test_and_next <- function(x_cohort_assignments, x_test_configuration, x_
           # need to verify that the there is a next available receive cohort in the receive list
           if(length(candidate_receive) > x_receive){
             x_receive <- x_receive + 1
-            #_____ great, now go start a new iteration of compare_test_and_next with updated input
+            #_____ great, now go start a new iteration of T_compare_test_and_next with updated input
             x_explorer <- unlist(x_cohort_assignments$members[candidate_handoff[1]])[1]
-            new_test_configuration <- generate_test_assignments(x_cohort_assignments, x_explorer, x_handoff, x_receive)
-            print(paste0("Zexplorer: ", x_explorer, "handoff: ", x_handoff, "receive: ",x_receive))
-            compare_test_and_next(x_cohort_assignments, new_test_configuration, x_explorer, x_handoff, x_receive)
+            new_test_configuration <- T_generate_test_assignments(x_cohort_assignments, x_explorer, x_handoff, x_receive)
+            T_compare_test_and_next(x_cohort_assignments, new_test_configuration, x_explorer, x_handoff, x_receive)
           }
           else{
             T_Exhausted <<- TRUE
@@ -291,16 +352,157 @@ compare_test_and_next <- function(x_cohort_assignments, x_test_configuration, x_
         }
         # check again
         else{
-          #_____ great, now go start a new iteration of compare_test_and_next with updated input
+          #_____ great, now go start a new iteration of T_compare_test_and_next with updated input
           x_explorer <- unlist(x_cohort_assignments$members[candidate_handoff[1]])[1]
-          new_test_configuration <- generate_test_assignments(x_cohort_assignments, x_explorer, x_handoff, x_receive)
-          print(paste0("Xexplorer: ", x_explorer, "handoff: ", x_handoff, "receive: ",x_receive))
-          compare_test_and_next(x_cohort_assignments, new_test_configuration, x_explorer, x_handoff, x_receive)
+          new_test_configuration <- T_generate_test_assignments(x_cohort_assignments, x_explorer, x_handoff, x_receive)
+          T_compare_test_and_next(x_cohort_assignments, new_test_configuration, x_explorer, x_handoff, x_receive)
         }
       }
     }
   }
 }
+
+
+#' Switch Function: Test Cohort Assignment Generation
+#'
+#' @param y_cohort_assignments dataframe of current cohort assignments
+#' @param y_swapper_a Vertex A (to be swapped with Vertex B)
+#' @param y_swapper_b Vertex B (to be swapped with Vertex A)
+#' @param y_orig_ind index (row number) in dataframe representing the initial cohort of Vertex A
+#' @param y_dest_ind index (row number) in dataframe representing the initial cohort of Vertex B
+#'
+#' @return dataframe of test cohort assignments 
+#'
+S_generate_test_assignments <- function(y_cohort_assignments, y_swapper_a, y_swapper_b, y_orig_ind, y_dest_ind){
+  
+  # find index of the swappers a and b by matching these element to their indices in the origin swap list for their cohorts
+  y_swap_a_ind <- match(y_swapper_a, unlist(dynamic_cohorts$members[candidate_swap_origin[y_orig_ind]]))
+  y_swap_b_ind <- match(y_swapper_b, unlist(dynamic_cohorts$members[candidate_swap_origin[y_dest_ind]]))
+  test_cohort_assignments <- data.frame(y_cohort_assignments)
+  
+  # actual value of the name of the cohort that has the specified index
+  orig_number <- candidate_swap_origin[y_orig_ind]
+  dest_number <- candidate_swap_origin[y_dest_ind]
+ 
+  
+  # perform swap for the test assignments
+  # first remove swapper a and swapper b from their cohorts
+  test_orig <- unlist(dynamic_cohorts$members[orig_number])[- c(y_swap_a_ind)]
+  test_dest <- unlist(dynamic_cohorts$members[dest_number])[- c(y_swap_b_ind)]
+  
+  
+  # next add swapper a and swapper b to their opposite cohorts
+  # send swapper b to the origin cohort
+  test_cohort_assignments$members[[orig_number]] <- as.list(c(test_orig, y_swapper_b))
+  
+  # send swapper a to the destination cohort
+  test_cohort_assignments$members[[dest_number]] <- as.list(c(test_dest, y_swapper_a))
+ 
+  
+  return(test_cohort_assignments)
+}
+
+#' Switch Function: helper function to compare objective values of test and current configurations and make decisions on whether to switch two elements from different cohorts
+#'
+#' @param x_cohort_assignments  dataframe of current cohort assignments
+#' @param x_test_configuration 
+#' @param x_swapper_a Vertex A (to be swapped with Vertex B)
+#' @param x_swapper_b Vertex B (to be swapped with Vertex A)
+#' @param x_orig_ind index (row number) in dataframe representing the initial cohort of Vertex A
+#' @param x_dest_ind index (row number) in dataframe representing the initial cohort of Vertex B
+#'
+#'
+#' @return potentially return improvement to objective (if there is one); also potentially updates the global variable for current cohort assignments
+#'
+S_compare_test_and_next <- function(x_cohort_assignments, x_test_configuration, x_swapper_a, x_swapper_b, x_orig_ind, x_dest_ind){
+  first_swapper <- x_swapper_a
+  x_swap_a_ind <- match(x_swapper_a, unlist(x_cohort_assignments$members[candidate_swap_origin[x_orig_ind]]))
+  x_swap_b_ind <- match(x_swapper_b, unlist(x_cohort_assignments$members[candidate_swap_origin[x_dest_ind]]))
+  swapper_b_updated <- FALSE
+  # see if test configuration is better than current objective value
+  test_obj_val <<- get_objective_Val(get_all_cohorts_adj_mat(x_test_configuration))
+  current_obj_val <<- get_objective_Val(get_all_cohorts_adj_mat(x_cohort_assignments))
+  if(test_obj_val < current_obj_val){
+    # if test objective is better, set current global variable to this configuration and break from function (already set to unexhausted)
+    cohort_assignments <<- x_test_configuration[,]
+    # update that we improved objective value
+    improvement_to_objective <<- current_obj_val - test_obj_val
+    current_obj_val <<- test_obj_val
+    S_improved_optimality <<- TRUE
+    return(improvement_to_objective)
+  }
+  else{
+    # if there is another swapper b element in current cohort (so there are either more elements in the destination cohort, 
+    # or swapper b is the last element in the destination cohort but there is another destination cohort)
+
+    if(length(unlist(dynamic_cohorts$members[[x_dest_ind]])) > x_swap_b_ind){
+      x_swap_b_ind
+      # set swapper b index to the next index, get value for swapper b
+      x_swap_b_ind <- x_swap_b_ind + 1
+      x_swapper_b <- unlist(dynamic_cohorts$members[candidate_swap_origin[x_dest_ind]])[x_swap_b_ind]
+      swapper_b_updated <- TRUE
+      # rerun S_compare_test_and_next with updated swapper_b
+      new_test_configuration <- S_generate_test_assignments(x_cohort_assignments, x_swapper_a, x_swapper_b, x_orig_ind, x_dest_ind)
+      S_compare_test_and_next(x_cohort_assignments, new_test_configuration, x_swapper_a, x_swapper_b, x_orig_ind, x_dest_ind)
+      
+    }
+    else{
+      # if there is a next destination cohort in dynamic cohorts list for swaps to take place
+      # go to next destination cohort and reset swapper b to first element of that new cohort
+      if(x_dest_ind < length(dynamic_cohorts$members)){
+        x_dest_ind <- x_dest_ind + 1
+        x_swap_b_ind <- 1
+        x_swapper_b <- unlist(dynamic_cohorts$members[candidate_swap_origin[x_dest_ind]])[x_swap_b_ind]
+        swapper_b_updated <- TRUE
+        # rerun S_compare_test_and_next with updated swapper_b
+        new_test_configuration <- S_generate_test_assignments(x_cohort_assignments, x_swapper_a, x_swapper_b, x_orig_ind, x_dest_ind)
+        S_compare_test_and_next(x_cohort_assignments, new_test_configuration, x_swapper_a, x_swapper_b, x_orig_ind, x_dest_ind)
+      }
+    }
+    
+
+    # if this is the last element in the origin cohort, remove it from the candidate_swap_origin list, set swapper a to first element of the first dynamic
+    # cohort element list and set swapper b to the first element of the next cohort in dynamic list
+    # if we make it to the point that there is only one cohort in the dynamic cohorts list, we've exhausted the switch function, set S_Exhausted to true
+    if(swapper_b_updated == FALSE){
+      # check to see if we are on the last possible origin cohort to try swapper at
+      if(x_swap_a_ind == length(unlist(dynamic_cohorts$members[candidate_swap_origin[x_orig_ind]]))){
+        # check to see if we are at the last element of 2nd to last cohort in dynamic cohorts list- this means that the function is exhausted
+        if((x_orig_ind + 1) == length(dynamic_cohorts$members)){
+          S_Exhausted <<- TRUE
+          return()
+        }
+        else
+          # remove this cohort from the dynamic cohort df and candidate swap origin list and reset swapper a and swapper b
+          #candidate_swap_origin <<- candidate_swap_origin[- x_orig_ind]
+          #dynamic_cohorts <<- dynamic_cohorts[-c(x_orig_ind),]
+          # reset index
+          #rownames(dynamic_cohorts) <<- NULL
+          x_orig_ind <- x_orig_ind + 1
+          x_dest_ind <- x_orig_ind + 1
+          x_swapper_a <- unlist(dynamic_cohorts$members[candidate_swap_origin[x_orig_ind]])[1]
+          x_swapper_b <- unlist(dynamic_cohorts$members[candidate_swap_origin[x_dest_ind]])[1]
+          # rerun S_compare_test_and_next with updated swapper_b
+          new_test_configuration <- S_generate_test_assignments(x_cohort_assignments, x_swapper_a, x_swapper_b, x_orig_ind, x_dest_ind)
+          S_compare_test_and_next(x_cohort_assignments, new_test_configuration, x_swapper_a, x_swapper_b, x_orig_ind, x_dest_ind)
+      }
+      # there is another element in the current origin swapper cohort to move on to, update swapper a to this next element
+      else{
+        x_swap_a_ind <- x_swap_a_ind + 1
+        x_swapper_a <- unlist(dynamic_cohorts$members[candidate_swap_origin[x_orig_ind]])[x_swap_a_ind]
+        x_swap_b_ind <- 1
+        x_swapper_b <- unlist(dynamic_cohorts$members[candidate_swap_origin[x_dest_ind]])[x_swap_b_ind]
+        # rerun S_compare_test_and_next with updated swapper_b
+        new_test_configuration <- S_generate_test_assignments(x_cohort_assignments, x_swapper_a, x_swapper_b, x_orig_ind, x_dest_ind)
+        S_compare_test_and_next(x_cohort_assignments, new_test_configuration, x_swapper_a, x_swapper_b, x_orig_ind, x_dest_ind)
+      }
+    }
+  }
+  
+  
+}  
+
+
 
 ########################
 # OPTIMIZING FUNCTIONS #
@@ -308,11 +510,13 @@ compare_test_and_next <- function(x_cohort_assignments, x_test_configuration, x_
 
 # some optimizing functions that will help us improve the objective value
 
-# execute transfers that will improve the objective value
+
+#' Transfer Function: main executing method
+#'
+#' @param x_cohort_assignments current cohort assignments
+#'
 opt_transfer <- function(x_cohort_assignments){
-  # get current objective value
-  #___CODE
-  
+
   # identify candidate cohorts that can hand off or receive a member
   candidate_handoff <<- c()
   candidate_receive <<- c()
@@ -326,16 +530,13 @@ opt_transfer <- function(x_cohort_assignments){
       candidate_receive <<- append(candidate_receive, x_cohort_assignments$cohort[[i]])
     }
   }
-  # if there are no elements in handoff, or if there are no elements in receive, or if the only elements are the same cohort; break out of this 
-  # and mark as exhausted
-  #____BREAK code________
-  
+
   # OPTIMIZATION: search for better objective
   # Initial assignments for first current explorer (from a handoff cohort) and the first receive group index
   # start with first element, which we will call the explorer, in first candidate handoff cohort; remove and add to first available receiver cohort
   current_explorer <<- unlist(x_cohort_assignments$members[candidate_handoff[1]])[1]
   han_ind <<- 1
-  check <<- FALSE
+  check <- FALSE
   rec_ind <<- 0
   # need to verify that the receive and handoff cohorts are different
   while(check == FALSE){
@@ -352,59 +553,105 @@ opt_transfer <- function(x_cohort_assignments){
       }
     }
     else{
-      check <<- TRUE
+      check <- TRUE
       break
     }
   }
 }  
   
+
+
+
+#' Switch Function: main executing method
+#'
+#' @param x_cohort_assignments current cohort assignments
+#'
+opt_switch <- function(x_cohort_assignments){
+  # create list of swap origin cohorts. we need to recreate this every time we restart opt_switch as we remove elements from the list throughout the iteration
+  candidate_swap_origin <<- c()
+  for (i in 1:nrow(x_cohort_assignments)){
+    candidate_swap_origin <<- append(candidate_swap_origin, x_cohort_assignments$cohort[[i]])
+    current_swapper_a <<- unlist(x_cohort_assignments$members[candidate_swap_origin[1]])[1]
+    current_swapper_b <<- unlist(x_cohort_assignments$members[candidate_swap_origin[2]])[1]
+  }
+  
+  # initialize the origin and destination of the swap (we must have at least 2 cohorts, which is an assumption of the problem)
+  orig_ind <<- 1  
+  dest_ind <<- 2
+  
+  # make copy of cohort_assignments to be used in a dynamic way through deleting swap a elements that exhaust test swaps and do not improve the objective
+  dynamic_cohorts <<- data.frame(x_cohort_assignments)
+  
+}
+
+
+
 #######################
 # ALGORITHM EXECUTION #
 #######################
 
-# in this part of the code, we execute an algorithm that takes on the heuristic approach to the optimization problem
-# make test cohort assignments configuration; feed through transfer function
+# in this part of the code, we execute an algorithm that takes on the heuristic approach to the MIP optimization formulation
+# make test cohort assignments configuration; feed through switch and then transfer function
 #T_Exhausted <- FALSE
 
 #initialize transfer opt fx
+start_time <- Sys.time()
+
 T_Exhausted <<- FALSE
+S_Exhausted <<- FALSE
+T_improved_optimality <<- TRUE
+S_improved_optimality <<- TRUE
+Optimal_Obj <<- FALSE
 
-while(T_Exhausted == FALSE){
-  t2 <- opt_transfer(cohort_assignments)
-  test_configuration <- generate_test_assignments(cohort_assignments, current_explorer, han_ind, rec_ind)
-  compare_test_and_next(cohort_assignments, test_configuration, current_explorer, han_ind, rec_ind)  
-
+while(Optimal_Obj == FALSE){
+  T_Exhausted <<- FALSE
+  S_Exhausted <<- FALSE
+  
+  while(S_Exhausted == FALSE){
+    # first member of first cohort become the candidate swapper
+    S_improved_optimality <<- FALSE
+    s2 <- opt_switch(cohort_assignments)
+    S_test_configuration <- S_generate_test_assignments(cohort_assignments, current_swapper_a, current_swapper_b, orig_ind, dest_ind)
+    S_compare_test_and_next(cohort_assignments, S_test_configuration, current_swapper_a, current_swapper_b, orig_ind, dest_ind)
+  }
+  
+  while(T_Exhausted == FALSE){
+    T_improved_optimality <<- FALSE
+    t2 <- opt_transfer(cohort_assignments)
+    T_test_configuration <- T_generate_test_assignments(cohort_assignments, current_explorer, han_ind, rec_ind)
+    T_compare_test_and_next(cohort_assignments, T_test_configuration, current_explorer, han_ind, rec_ind)  
+  
+  }
+  if((T_improved_optimality == FALSE) & (S_improved_optimality == FALSE)){
+    Optimal_Obj <<- TRUE
+  }
 }
 
-#check 218
+end_time <- Sys.time()
 
-
-#this is not necessary
-#current_receiver <- unlist(x_cohort_assignments$members[candidate_receive[rec_ind]])[1]
-
-
-
+elapsed_time <- end_time - start_time
+elapsed_time
 
   
   
-  
+check_obj <- get_objective_Val(get_all_cohorts_adj_mat_with_graph(cohort_assignments))  
 
 
-  
-  
-#test
-get_all_cohorts_adj_mat(cohort_assignments)
+#dataframe with nodes and node attributes for cohort
+df_results <- data.frame(
+  member = 1:total_nodes,
+  cohort_assignment = NA
+)
 
-adj <- get_all_cohorts_adj_mat(cohort_assignments)
-adj_mat
-get_objective_Val(adj)  
+for(i in 1:total_cohorts){
+  for(j in 1:length(unlist(cohort_assignments$members[[i]]))){
+    df_results$cohort[unlist(cohort_assignments$members[[i]])[j]] <- i
+    sample_g$cohort[unlist(cohort_assignments$members[[i]])[j]] <- i
+  }
+}
 
-test_configuration1 <- generate_test_assignments(cohort_assignments, current_explorer, 1, 2)
-adj1 <- get_all_cohorts_adj_mat(test_configuration1)
-test1 <- compare_test_and_next(cohort_assignments, test_configuration1, current_explorer, 1, 2)
- 
-get_objective_Val(get_all_cohorts_adj_mat(cohort_assignments))
-#218
+p <- RColorBrewer::brewer.pal(8, "Set2")[ c(3, 4, 5, 6, 1, 2) ]
+x <- sample_g$cohort
+names(p) <- levels(x)
+GGally::ggnet2(sample_g, label = TRUE, palette = c("1" = p[1], "2" = p[2], "3" = p[3]), color.legend = "Cohort", color = x, size.legend = 12, legend.position = "bottom")
 
-T_Exhausted <- FALSE
-opt_transfer(cohort_assignments)
